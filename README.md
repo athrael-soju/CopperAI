@@ -78,7 +78,7 @@ These instructions will get you a copy of the project up and running on your loc
     - DALLE_API_N=1 //Leave it to this for now
     - DALLE_API_SIZE="1024x1024" //Leave it to this for now
 ```
-
+- rename backend\credentials\google.api.local.json into backend\credentials\google.api.json and paste details of you google service_account key file details
 
 ### Installing
 
@@ -109,14 +109,16 @@ You should be able to access the application at 'http://localhost:3000'
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
-TODO
+- TODO
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Express](https://expressjs.com/) - Server Framework
-- [VueJs](https://vuejs.org/) - Web Framework
-- [NodeJs](https://nodejs.org/en/) - Server Environment
+- [Docker](https://www.docker.com/) 
+- [ReactJs](https://react.dev/) - Frontend
+- [NodeJs](https://nodejs.org/en/) - Backend
+- [OpenAI Whisper API](https://openai.com/blog/introducing-chatgpt-and-whisper-apis) - ChatGPT and Whisper model integration.
+- [Google TTS](https://cloud.google.com/text-to-speech/) - Converts text into natural-sounding speech.
+- [Whisper Hook by chengsokdara](https://github.com/chengsokdara/use-whisper) - React Hook for OpenAI Whisper API with speech recorder, real-time transcription and silence removal.
 
 ## ✍️ Authors <a name = "authors"></a>
 
@@ -124,6 +126,4 @@ TODO
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
-- Hat tip to anyone whose code was used
-- Inspiration
-- References
+- TODO
