@@ -135,3 +135,4 @@ frontend/package-lock.json
 
 # credentials
 backend/credentials/google.api.json
+frontend/public/env.js
