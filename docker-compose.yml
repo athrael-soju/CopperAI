@@ -1,9 +1,9 @@
 version: "1.0.0"
 
 services:
-  gpt-backend:
+  whisper-backend:
     build: ./backend
-    container_name: gpt-backend
+    container_name: whisper-backend
     env_file:
       - ./backend/.env
     ports:
@@ -11,15 +11,15 @@ services:
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
       
-  gpt-frontend:
-    container_name: gpt-frontend
+  whisper-frontend:
+    container_name: whisper-frontend
     build: ./frontend
     ports:
       - "3000:3000"
     depends_on:
-      - gpt-backend
+      - whisper-backend
     networks:
-      - gpt-network
+      - whisper-network
 networks:
-  gpt-network:
+  whisper-network:
     driver: bridge
