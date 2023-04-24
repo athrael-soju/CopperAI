@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+backend/package-lock.json
+frontend/package-lock.json
+backend/credentials/google.api.json

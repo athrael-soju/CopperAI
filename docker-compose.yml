@@ -1,0 +1,25 @@
+version: "1.0.0"
+
+services:
+  gpt-backend:
+    build: ./backend
+    container_name: gpt-backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5000:5000"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
+      
+  gpt-frontend:
+    container_name: gpt-frontend
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - gpt-backend
+    networks:
+      - gpt-network
+networks:
+  gpt-network:
+    driver: bridge
