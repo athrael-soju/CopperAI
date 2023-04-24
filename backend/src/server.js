@@ -2,7 +2,6 @@ import express from "express";
 import messageRoute from "./routes/message.js";
 import welcomeRoute from "./routes/welcome.js";
 import speakRoute from "./routes/speak.js";
-import wallpaperRoute from "./routes/wallpaper.js";
 import cors from "cors";
 import fileUpload from "express-fileupload";
 
@@ -19,7 +18,6 @@ app.use(fileUpload());
 app.use("/message", messageRoute);
 app.use("/welcome", welcomeRoute);
 app.use("/speak", speakRoute);
-app.use("/wallpaper", wallpaperRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
