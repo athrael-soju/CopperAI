@@ -10,6 +10,8 @@ services:
       - "5000:5000"
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
+    networks:
+      - whisper-network
       
   whisper-frontend:
     container_name: whisper-frontend
@@ -18,6 +20,19 @@ services:
       - "3000:3000"
     depends_on:
       - whisper-backend
+    networks:
+      - whisper-network
+
+  database:
+    container_name: database
+    build: ./database
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+    volumes:
+      - ./database:/data/db
     networks:
       - whisper-network
 networks:

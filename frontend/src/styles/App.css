@@ -27,32 +27,15 @@
 .card {
   border: none;
 }
-/*
-@font-face {
-  font-family: "Mission Danger Super Italic";
-  src: url("../../public/assets/webfonts/CyberwayRiders-lg97d.ttf")
-    format("truetype");
+
+body {
+  overflow-y: hidden;
 }
 
-h1.mission-danger {
-  font-family: 'Mission Danger Super Italic', sans-serif;
-  font-size: 4.5rem;
-  
-  text-align: center;
-  margin-bottom: 1.5rem;
-
-  animation: flicker 1s infinite;
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
-
-@keyframes flicker {
-  0%,
-  100% {
-    text-shadow: 0 0 4px #00ffff, 0 0 14px #00ffff,
-      0 0 24px rgba(0, 255, 255, 0.5), 0 0 44px rgba(0, 255, 255, 0.2);
-  }
-  50% {
-    text-shadow: 0 0 4px #6f42c1#00ffff, 0 0 10px #00ffff,
-      0 0 18px rgba(0, 255, 255, 0.5), 0 0 28px rgba(0, 255, 255, 0.2);
-  }
-}
-*/
