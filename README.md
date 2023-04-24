@@ -16,7 +16,7 @@
 
 ---
 
-<p align="center"> whisperChat is a fully voice based conversational partner.
+<p align="center"> whisperChat is a fully voiced conversational partner.
     <br> 
 </p>
 
