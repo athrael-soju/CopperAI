@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="https://github.com/athrael-soju/whisperChat/blob/main/Landing.png" alt="Project logo"></a>
+ <img src="https://github.com/athrael-soju/whisperChat/blob/main/Landing-s.png" alt="Project logo"></a>
 </p>
 
 <h3 align="center">Project Title</h3>
