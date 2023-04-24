@@ -16,7 +16,7 @@
 
 ---
 
-<p align="center"> Few lines describing your project.
+<p align="center"> whisperChat is a fully voice based conversational partner.
     <br> 
 </p>
 
@@ -34,7 +34,7 @@
 
 ## 🧐 About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+It's fun!.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
@@ -42,57 +42,74 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
+- Software/Libraries:
+```
+- Docker 4.16 with Docker Compose V2 enabled
+- Node.js 18+
+- React.js 18+
+```
+- Credentials:
+```
+- OpenAI API key: https://platform.openai.com/account/api-keys
+- Google Cloud TTS API key: https://cloud.google.com/text-to-speech
+```
+- Environment Variables:
+```
+- Rename frontend\.env.local to frontend\.env and set the values:
+    - OPENAI_API_KEY=''
+    - DALLE_API_ENABLED=false //This should be left disabled for now, as it's getting removed
+    - SERVER_PORT=5000
+    - SERVER_ADDRESS='http://localhost'
+    - SERVER_WELCOME_ENDPOINT='/welcome'
+    - SERVER_WALLPAPER_ENDPOINT='/wallpaper'
+    - SERVER_MESSAGE_ENDPOINT='/message'
+    - SERVER_SPEAK_ENDPOINT='/speak'
+    - AUDIO_DB_SENSITIVITY='-45'
+- Rename backend\.env.local to backend\.env and set values:
+    - SERVER_PORT=5000
+    - OPENAI_API_KEY="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"
+    - OPENAI_API_MODEL="gpt-3.5-turbo"
+    - OPENAI_API_WELCOME_MSG="Welcome! What would you like to discuss?"
+    - GOOGLE_CLOUD_TTS_LANGUAGE="en-US" // You can customize from list: 
+    - GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J"	
+    - GOOGLE_CLOUD_TTS_GENDER="MALE"
+    - GOOGLE_CLOUD_TTS_ENCODING="MP3"
+    - DALLE_API_PROMPT="" //Leave it to this for now
+    - DALLE_API_N=1 //Leave it to this for now
+    - DALLE_API_SIZE="1024x1024" //Leave it to this for now
+```
 
-```
-Give examples
-```
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running.
+- Clone the repository:
+  ```
+  git clone https://github.com/athrael-soju/whisperChat.git'
+  ```
+- Run npm install in both backend and frontend folders:
+  ```
+  cd frontend
+  npm install 
 
-Say what the step will be
+  cd backend
+  npm install   
+  ```
+- Alternatively, you can run with Docker
+  ```
+  docker-compose up --build -d
+  ```
 
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo.
-
-## 🔧 Running the tests <a name = "tests"></a>
-
-Explain how to run the automated tests for this system.
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
+You should be able to access the application at 'http://localhost:3000'
 
 ## 🎈 Usage <a name="usage"></a>
 
-Add notes about how to use the system.
+- Record allows the user to initiate continuous discussion
+- Pause will pause recording, but pressing Record again will resume it.
+- Stop will stop the ongoing discussion.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
-Add additional notes about how to deploy this on a live system.
+TODO
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
@@ -103,9 +120,7 @@ Add additional notes about how to deploy this on a live system.
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [@kylelobo](https://github.com/kylelobo) - Idea & Initial work
-
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
+- [@athrael-soju](https://github.com/athrael-soju) - Idea & Initial work
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
