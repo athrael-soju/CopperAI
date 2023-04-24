@@ -99,7 +99,7 @@ These instructions will get you a copy of the project up and running on your loc
   docker-compose up --build -d
   ```
 
-You should be able to access the application at 'http://localhost:3000'
+You should be able to access the application at http://localhost:3000
 
 ## 🎈 Usage <a name="usage"></a>
 
