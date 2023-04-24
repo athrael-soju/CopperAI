@@ -101,7 +101,7 @@ You should be able to access the application at http://localhost:3000
 
 ## 🎈 Usage <a name="usage"></a>
 
-- Record allows the user to initiate continuous discussion
+- Record allows the user to initiate continuous discussion.
 - Pause will pause recording, but pressing Record again will resume it.
 - Stop will stop the ongoing discussion.
 
