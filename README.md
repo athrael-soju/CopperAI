@@ -113,7 +113,7 @@ You should be able to access the application at http://localhost:3000
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-- [Docker](https://www.docker.com/) 
+- [Docker](https://www.docker.com/) - Containerization
 - [ReactJs](https://react.dev/) - Frontend
 - [NodeJs](https://nodejs.org/en/) - Backend
 - [OpenAI Whisper API](https://openai.com/blog/introducing-chatgpt-and-whisper-apis) - ChatGPT and Whisper model integration.
