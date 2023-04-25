@@ -1,9 +1,9 @@
 version: "1.0.0"
 
 services:
-  whisper-backend:
+  backend:
     build: ./backend
-    container_name: whisper-backend
+    container_name: backend
     env_file:
       - ./backend/.env
     ports:
@@ -12,14 +12,14 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
     networks:
       - whisper-network
-      
-  whisper-frontend:
-    container_name: whisper-frontend
+
+  frontend:
+    container_name: frontend
     build: ./frontend
     ports:
       - "3000:3000"
     depends_on:
-      - whisper-backend
+      - backend
     networks:
       - whisper-network
 
