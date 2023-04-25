@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import AccountModal from "./AccountModal";
-import Login from "./Login";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
 
 function Navbar({ user, setUser, handleLogout }) {
-  const [showAccountModal, setShowAccountModal] = useState(false);
-  const handleAccountModalClose = () => setShowAccountModal(false);
-  const handleAccountModalShow = () => setShowAccountModal(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+  const handleLoginModalClose = () => setShowLoginModal(false);
+  const handleLoginModalShow = () => setShowLoginModal(true);
+  const handleSignupModalClose = () => setShowSignupModal(false);
+  const handleSignupModalShow = () => setShowSignupModal(true);
 
   return (
     <>
@@ -22,28 +26,49 @@ function Navbar({ user, setUser, handleLogout }) {
             <ul className="navbar-nav me-auto"></ul>
             <form className="d-flex">
               {user ? (
-                <Button onClick={handleLogout} className="btn btn-danger">
-                  Logout
-                </Button>
+                <>
+                  <Button
+                    onClick={handleLogout}
+                    className="btn btn-danger me-2"
+                  >
+                    Logout
+                  </Button>
+                </>
               ) : (
-                <Button
-                  className="btn btn-secondary"
-                  onClick={handleAccountModalShow}
-                >
-                  Account
-                </Button>
+                <>
+                  <Button
+                    className="btn btn-secondary me-2"
+                    onClick={handleLoginModalShow}
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    className="btn btn-secondary me-2"
+                    onClick={handleSignupModalShow}
+                  >
+                    Sign up
+                  </Button>
+                </>
               )}
             </form>
           </div>
         </div>
       </nav>
       {!user && (
-        <AccountModal
-          show={showAccountModal}
-          handleClose={handleAccountModalClose}
-        >
-          <Login setUser={setUser} />
-        </AccountModal>
+        <>
+          <AccountModal
+            show={showLoginModal}
+            handleClose={handleLoginModalClose}
+          >
+            <LoginForm setUser={setUser} />
+          </AccountModal>
+          <AccountModal
+            show={showSignupModal}
+            handleClose={handleSignupModalClose}
+          >
+            <RegisterForm setUser={setUser} /> {/* Add the SignupForm */}
+          </AccountModal>
+        </>
       )}
     </>
   );
