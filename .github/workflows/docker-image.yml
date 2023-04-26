@@ -1,0 +1,21 @@
+name: WhisperChat Docker Images
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the frontend Docker image
+      run: docker build frontend/
+    - name: Build the backend Docker image
+      run: docker build backend/
+    
