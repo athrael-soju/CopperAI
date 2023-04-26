@@ -72,7 +72,7 @@ jobs:
 
     - name: backend npm install, build, and test
       run: |
-        cd ../backend/
+        cd backend/
         npm install
         npm run build --if-present
         #npm run test --if-present
