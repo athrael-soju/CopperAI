@@ -112,6 +112,6 @@ jobs:
   
     - name: 'Deploy whisperChat to Azure'
       id: deploy-to-webapp
-      uses: azure/webapps-deploy@v3
+      uses: azure/webapps-deploy@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
