@@ -107,7 +107,7 @@ jobs:
     - name: unzip frontend artifact for deployment
       run: unzip frontend.zip  
         
-    - name: unzip artifact for deployment
+    - name: unzip backend artifact for deployment
       run: unzip backend.zip
   
     - name: 'Deploy whisperChat to Azure'
