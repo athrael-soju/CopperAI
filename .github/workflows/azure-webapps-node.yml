@@ -50,30 +50,45 @@ jobs:
         node-version: ${{ env.REACT_VERSION }}
         cache: 'npm'
         cache-dependency-path: './frontend/package-lock.json'
-
-    - name: npm install, build, and test
+    
+    - name: frontend npm install, build, and test
       run: |
         cd frontend/
         npm install
         npm run build --if-present
         #npm run test --if-present
+
+    - name: Build the frontend Docker image
+      run: docker build frontend/
+
+    - name: Zip frontend artifact for deployment
+      run: zip -r frontend.zip * .env .next
+
+    - name: Upload frontend artifact for deployment job
+      uses: actions/upload-artifact@v3
+      with:
+        name: node-app
+        path: frontend.zip
+
+    - name: backend npm install, build, and test
+      run: |
         cd ../backend/
         npm install
         npm run build --if-present
         #npm run test --if-present
 
-    - name: Upload artifact for deployment job
+    - name: Zip backend artifact for deployment
+      run: zip -r backend.zip * .env .next        
+
+    - name: Upload backend artifact for deployment job
       uses: actions/upload-artifact@v3
       with:
         name: node-app
-        path: .
-
-    - name: Build the frontend Docker image
-      run: docker build frontend/
+        path: backend.zip
       
     - name: Build the backend Docker image
       run: docker build backend/
-
+  
   deploy:
     permissions:
       contents: none
@@ -82,15 +97,21 @@ jobs:
     environment:
       name: 'Development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
+  
     steps:
-    - name: Download artifact from build job
+    - name: Download frontend artifact from build job
       uses: actions/download-artifact@v3
       with:
         name: node-app
-
+        
+    - name: unzip frontend artifact for deployment
+      run: unzip frontend.zip  
+        
+    - name: unzip artifact for deployment
+      run: unzip backend.zip
+  
     - name: 'Deploy whisperChat to Azure'
       id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
+      uses: azure/webapps-deploy@v3
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
