@@ -65,7 +65,7 @@ jobs:
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v3
       with:
-        name: whisperChat
+        name: node-app
         path: .
 
     - name: Build the frontend Docker image
@@ -87,10 +87,10 @@ jobs:
     - name: Download artifact from build job
       uses: actions/download-artifact@v3
       with:
-        name: whisperChat
+        name: node-app
 
     - name: 'Deploy whisperChat to Azure'
-      id: deploy-to-whisperchat
-      uses: azure/whisperchat-deploy@v2
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
