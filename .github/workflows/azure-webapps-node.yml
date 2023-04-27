@@ -68,13 +68,17 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: frontend.zip
-
+        path: frontend.zip
+        
     - name: backend npm install, build, and test
       run: |
         cd backend/
         npm install
         npm run build --if-present
         #npm run test --if-present
+
+    #- name: Build the backend Docker image
+    #  run: docker build backend/
 
     - name: Zip backend artifact for deployment
       run: zip -r backend.zip * .env .next        
@@ -83,10 +87,8 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: backend.zip
-      
-    #- name: Build the backend Docker image
-    #  run: docker build backend/
-  
+        path: backend.zip           
+ 
   deploy:
     permissions:
       contents: none
