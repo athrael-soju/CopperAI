@@ -10,12 +10,13 @@ function RegisterForm({ setUser }) {
   const [email, setEmail] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
   const registerUser = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
@@ -36,7 +37,7 @@ function RegisterForm({ setUser }) {
       if (response.ok) {
         setUser(data.user);
       } else {
-        alert(data.message);
+        setError(data.message);
       }
     } catch (error) {
       console.error("Error registering user:", error);
@@ -45,35 +46,41 @@ function RegisterForm({ setUser }) {
 
   return (
     <form onSubmit={registerUser}>
+      {error && <p className="text-danger">{error}</p>}
       <InputField
         type="text"
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        required
       />
       <InputField
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        required
       />
       <InputField
         type="date"
         placeholder="Birthdate"
         value={birthdate}
         onChange={(e) => setBirthdate(e.target.value)}
+        required
       />
       <InputField
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        required
       />
       <InputField
         type="password"
         placeholder="Confirm Password"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
+        required
       />
       <SubmitButton type="submit">Register</SubmitButton>
     </form>

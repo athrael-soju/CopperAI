@@ -9,7 +9,15 @@
   width: 100%;
   font-size: 1.5rem;
   padding: 0.5rem 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+}
+
+.submit-buttons {
+  width: 100%;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  /* min-height: 5vh; */
 }
 
 #live-wallpaper {
@@ -38,4 +46,27 @@ body {
   left: 0;
   right: 0;
   z-index: 1000;
+}
+
+.form-control-lg::file-selector-button {
+  padding: 0.5rem 1rem;
+  margin: -0.5rem -1rem;
+  -webkit-margin-end: 1rem;
+  margin-inline-end: 1rem;
+}
+
+.form-control:last-child {
+  margin-bottom: 1.5rem;
+}
+
+textarea.form-control {
+  min-height: calc(1.5em + 0.75rem);
+}
+
+textarea.form-control-sm {
+  min-height: calc(1.5em + 0.5rem);
+}
+
+textarea.form-control-lg {
+  min-height: calc(1.5em + 1rem);
 }

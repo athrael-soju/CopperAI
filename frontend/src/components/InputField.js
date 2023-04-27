@@ -1,15 +1,23 @@
 import React from "react";
 
-function InputField({ type, label, placeholder, value, onChange }) {
+function InputField({
+  type,
+  label,
+  placeholder,
+  value,
+  onChange,
+  required = true,
+}) {
   return (
-    <div className="form-group">
+    <div>
       {label && <label>{label}</label>}
       <input
         type={type}
-        className="form-control"
+        className="form-control form-control-lg"
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        required={required}
       />
     </div>
   );

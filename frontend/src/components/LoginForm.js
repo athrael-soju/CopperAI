@@ -6,6 +6,7 @@ import SubmitButton from "./SubmitButton";
 function Login({ setUser }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const loginUser = async (e) => {
     e.preventDefault();
@@ -23,7 +24,7 @@ function Login({ setUser }) {
       localStorage.setItem("user", JSON.stringify(data));
       setUser(data);
     } else {
-      alert("Invalid credentials");
+      setError("Invalid credentials");
     }
   };
 
@@ -38,17 +39,20 @@ function Login({ setUser }) {
   return (
     <div>
       <form onSubmit={loginUser}>
+        {error && <p className="text-danger">{error}</p>}
         <InputField
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          required
         />
         <InputField
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <SubmitButton type="submit">Login</SubmitButton>
       </form>
