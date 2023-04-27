@@ -62,12 +62,12 @@ jobs:
     #  run: docker build frontend/
 
     - name: Zip frontend artifact for deployment
-      run: zip -r frontend.zip * .env .next
+      run: zip -r frontend.zip frontend
 
     - name: Upload frontend artifact for deployment job
       uses: actions/upload-artifact@v3
       with:
-        name: frontend.zip
+        name: frontend
         path: frontend.zip
         
     - name: backend npm install, build, and test
@@ -81,12 +81,12 @@ jobs:
     #  run: docker build backend/
 
     - name: Zip backend artifact for deployment
-      run: zip -r backend.zip * .env .next        
+      run: zip -r backend.zip backend
 
     - name: Upload backend artifact for deployment job
       uses: actions/upload-artifact@v3
       with:
-        name: backend.zip
+        name: backend
         path: backend.zip           
  
   deploy:
