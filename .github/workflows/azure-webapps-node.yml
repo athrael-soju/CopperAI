@@ -67,7 +67,7 @@ jobs:
     - name: Upload frontend artifact for deployment job
       uses: actions/upload-artifact@v3
       with:
-        name: frontend
+        name: frontend.zip
         path: frontend.zip
         
     - name: backend npm install, build, and test
@@ -86,7 +86,7 @@ jobs:
     - name: Upload backend artifact for deployment job
       uses: actions/upload-artifact@v3
       with:
-        name: backend
+        name: backend.zip
         path: backend.zip           
  
   deploy:
