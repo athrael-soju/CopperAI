@@ -1,18 +1,16 @@
 import express from "express";
 import { TextToSpeechClient } from "@google-cloud/text-to-speech";
+import RateLimit from "express-rate-limit";
 import fs from "fs";
 import dotenv from "dotenv";
 dotenv.config();
 
-import RateLimit from "express-rate-limit";
 const limiter = RateLimit({
   windowMs: 1 * 60 * 1000,
   max: 5,
 });
-
-app.use(limiter);
-
 const router = express.Router();
+router.use(limiter);
 
 router.post("/", async (req, res) => {
   const { text } = req.body;

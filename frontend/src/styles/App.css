@@ -9,7 +9,15 @@
   width: 100%;
   font-size: 1.5rem;
   padding: 0.5rem 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+}
+
+.submit-buttons {
+  width: 100%;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  /* min-height: 5vh; */
 }
 
 #live-wallpaper {
@@ -27,32 +35,38 @@
 .card {
   border: none;
 }
-/*
-@font-face {
-  font-family: "Mission Danger Super Italic";
-  src: url("../../public/assets/webfonts/CyberwayRiders-lg97d.ttf")
-    format("truetype");
+
+body {
+  overflow-y: hidden;
 }
 
-h1.mission-danger {
-  font-family: 'Mission Danger Super Italic', sans-serif;
-  font-size: 4.5rem;
-  
-  text-align: center;
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.form-control-lg::file-selector-button {
+  padding: 0.5rem 1rem;
+  margin: -0.5rem -1rem;
+  -webkit-margin-end: 1rem;
+  margin-inline-end: 1rem;
+}
+
+.form-control:last-child {
   margin-bottom: 1.5rem;
-
-  animation: flicker 1s infinite;
 }
 
-@keyframes flicker {
-  0%,
-  100% {
-    text-shadow: 0 0 4px #00ffff, 0 0 14px #00ffff,
-      0 0 24px rgba(0, 255, 255, 0.5), 0 0 44px rgba(0, 255, 255, 0.2);
-  }
-  50% {
-    text-shadow: 0 0 4px #6f42c1#00ffff, 0 0 10px #00ffff,
-      0 0 18px rgba(0, 255, 255, 0.5), 0 0 28px rgba(0, 255, 255, 0.2);
-  }
+textarea.form-control {
+  min-height: calc(1.5em + 0.75rem);
 }
-*/
+
+textarea.form-control-sm {
+  min-height: calc(1.5em + 0.5rem);
+}
+
+textarea.form-control-lg {
+  min-height: calc(1.5em + 1rem);
+}
