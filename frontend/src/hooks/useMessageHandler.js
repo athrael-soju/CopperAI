@@ -1,17 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import env from "react-dotenv";
-import useFetchWelcomeMessage from "./useFetchWelcomeMessage";
 
 const useMessageHandler = () => {
   const [message, setMessage] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const welcomeMessage = useFetchWelcomeMessage();
-
-  useEffect(() => {
-    setResponse(welcomeMessage);
-  }, [welcomeMessage, setResponse]);
 
   const sendMessage = async () => {
     setLoading(true);
