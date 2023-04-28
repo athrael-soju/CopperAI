@@ -1,9 +1,30 @@
 version: "1.0.0"
 
 services:
+  mongodb-login:
+    image: mongo
+    restart: always
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    ports:
+      - "27017:27017"
+    networks:
+      - whisper-network
+
+  redis-cache:
+    image: redis
+    restart: always
+    container_name: redis
+    expose:
+      - 6379
+    networks:
+      - whisper-network
+
   backend:
     build: ./backend
-    container_name: backend
+    container_name: node-backend
     env_file:
       - ./backend/.env
     ports:
@@ -14,7 +35,7 @@ services:
       - whisper-network
 
   frontend:
-    container_name: frontend
+    container_name: react-frontend
     build: ./frontend
     ports:
       - "3000:3000"
@@ -23,18 +44,6 @@ services:
     networks:
       - whisper-network
 
-  database:
-    container_name: database
-    build: ./database
-    ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=secret
-    volumes:
-      - ./database:/data/db
-    networks:
-      - whisper-network
 networks:
   whisper-network:
     driver: bridge

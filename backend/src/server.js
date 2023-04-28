@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import { createClient } from "redis";
 import fileUpload from "express-fileupload";
 import authRoute from "./routes/auth.js";
 import cors from "cors";
@@ -18,7 +19,16 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log("Connected to MongoDB"))
-  .catch((error) => console.error("Error connecting to MongoDB", error));
+  .catch((err) => console.error("Error connecting to MongoDB", err));
+
+createClient({ url: process.env.REDIS_URI })
+  .connect()
+  .then(() => {
+    console.log("Connected to Redis");
+  })
+  .catch((err) => {
+    console.error("Redis Client Error", err);
+  });
 
 app.use(cors());
 app.use(express.json());
