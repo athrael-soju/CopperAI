@@ -23,19 +23,14 @@ function Navbar({ user, setUser, handleLogout }) {
           <a
             className="navbar-brand"
             href="https://github.com/athrael-soju/whisperChat"
+            target="_blank"
+            rel="noreferrer"
           >
             whisperChat
           </a>
           <div className="collapse navbar-collapse" id="navbarColor01">
             <ul className="navbar-nav me-auto"></ul>
             <form className="d-flex">
-              <Button
-                className="btn btn-info me-2"
-                onClick={handleAccountModalShow}
-                disabled={!user}
-              >
-                {user ? user.username : "Account"}
-              </Button>
               {user ? (
                 <>
                   <Button
@@ -61,6 +56,13 @@ function Navbar({ user, setUser, handleLogout }) {
                   </Button>
                 </>
               )}
+              <Button
+                className="btn btn-info me-2"
+                onClick={handleAccountModalShow}
+                disabled={!user}
+              >
+                {user ? user.username : "Account"}
+              </Button>
             </form>
           </div>
         </div>
