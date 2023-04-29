@@ -1,7 +1,7 @@
 import { useState } from "react";
 import env from "react-dotenv";
 
-const useMessageHandler = () => {
+const useMessageHandler = (username) => {
   const [message, setMessage] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
@@ -11,7 +11,7 @@ const useMessageHandler = () => {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ username, message }),
     };
     const response = await fetch(
       `${env.SERVER_ADDRESS}:${env.SERVER_PORT}${env.SERVER_MESSAGE_ENDPOINT}`,

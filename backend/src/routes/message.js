@@ -11,14 +11,14 @@ const openai = new OpenAIApi(configuration);
 let messages = [];
 let responseMessage;
 
-router.post("/", async (req, res) => {
+export async function sendMessage(role, userName, message) {
   try {
-    let userInput = req.body.message;
-    messages.push({ role: "user", content: userInput });
+    messages.push({ role: role, content: message });
 
     const response = await openai.createChatCompletion({
       messages,
       model: process.env.OPENAI_API_MODEL,
+      user: userName,
     });
 
     const botMessage = response.data.choices[0].message;
@@ -28,11 +28,20 @@ router.post("/", async (req, res) => {
     } else {
       responseMessage = `No response, try asking again`;
     }
-
-    res.json({ message: responseMessage });
+    return responseMessage;
   } catch (err) {
     console.log(`Error with Request: ${err}`);
   }
+}
+
+router.post("/", async (req, res) => {
+  let role = "user";
+  let responseMessage = await sendMessage(
+    role,
+    req.body.username,
+    req.body.message
+  );
+  res.json({ message: responseMessage });
 });
 
 export default router;

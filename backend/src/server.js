@@ -13,22 +13,22 @@ dotenv.config();
 
 const app = express();
 
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Error connecting to MongoDB", err));
+async function main() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("Connected to MongoDB");
 
-createClient({ url: process.env.REDIS_URI })
-  .connect()
-  .then(() => {
+    await createClient({ url: process.env.REDIS_URI }).connect();
     console.log("Connected to Redis");
-  })
-  .catch((err) => {
-    console.error("Redis Client Error", err);
-  });
+  } catch (err) {
+    console.error("Error connecting to the database or Redis", err);
+  }
+}
+
+main();
 
 app.use(cors());
 app.use(express.json());
