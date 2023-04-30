@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../models/User.js";
 import { sendMessage } from "./message.js";
+import prompts from "../data/prompts.js";
 dotenv.config();
 
 const router = express.Router();
@@ -47,7 +48,7 @@ router.post("/login", async (req, res) => {
     }
 
     if (user.firstLogin) {
-      let directive = process.env.MODEL_DIRECTIVE;
+      let directive = prompts[process.env.MODEL_DIRECTIVE];
       let role = "system";
       const directiveResponse = await sendMessage(
         role,
