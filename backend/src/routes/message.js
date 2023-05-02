@@ -11,7 +11,17 @@ const openai = new OpenAIApi(configuration);
 let messages = [];
 let responseMessage;
 
-export async function sendMessage(role, userName, message) {
+export async function initDirective(role, username, directive) {
+  const directiveResponse = await sendMessage(role, username, directive);
+  console.log("Directive message sent:", directive);
+  if (directiveResponse) {
+    console.log("Directive response received: ", directiveResponse);
+  } else {
+    console.log("No response, try asking again");
+  }
+}
+
+async function sendMessage(role = "user", userName, message) {
   try {
     messages.push({ role: role, content: message });
 
