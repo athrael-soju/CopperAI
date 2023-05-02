@@ -44,6 +44,14 @@ services:
     networks:
       - whisper-network
 
+  pinecone:
+    build: ./pinecone
+    container_name: pinecone
+    ports:
+      - "4000:4000"
+    networks:
+      - whisper-network
+
 networks:
   whisper-network:
     driver: bridge
