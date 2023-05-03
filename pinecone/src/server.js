@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 import { PineconeClient } from "@pinecone-database/pinecone";
-import { createClient } from "redis";
 import dotenv from "dotenv";
+import { Configuration, OpenAIApi } from "openai";
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 const app = express();
@@ -12,22 +13,39 @@ app.use(express.json());
 
 const port = process.env.PINECONE_PORT;
 const indexName = process.env.PINECONE_INDEX;
-const redisClientUri = process.env.REDIS_URI;
-let index, redisClient;
+const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAIApi(configuration);
+let index,
+  vectorNum = 0;
+
+async function createEmbedding(message) {
+  const response = await openai.createEmbedding({
+    input: message,
+    model: "text-embedding-ada-002",
+  });
+  console.log("createEmbedding response: ", response.data);
+  if (
+    !response.data ||
+    !response.data.data ||
+    response.data.data.length === 0 ||
+    !response.data.data[0].embedding
+  ) {
+    throw new Error("Error creating embedding for message: " + message);
+  }
+
+  return response.data.data[0].embedding;
+}
 
 async function main() {
   try {
-    redisClient = createClient({ url: redisClientUri });
-    console.log("Connected to Redis");
-
     const pinecone = new PineconeClient();
     await pinecone.init({
       environment: process.env.PINECONE_ENVIRONMENT,
       apiKey: process.env.PINECONE_API_KEY,
     });
     console.log("Connected to Pinecone");
-
-    if (!pinecone.Index(indexName)) {
+    index = pinecone.Index(indexName);
+    if (!index) {
       console.log(`Index ${indexName} does not exist, creating...`);
       await pinecone.createIndex({
         createRequest: {
@@ -43,7 +61,7 @@ async function main() {
       console.log(`Index ${indexName} exists`);
     }
   } catch (err) {
-    console.log("Error connecting to Redis or Pinecone", err);
+    console.log("Error connecting to Pinecone", err);
   }
 }
 app.listen(port, async () => {
@@ -51,40 +69,56 @@ app.listen(port, async () => {
   console.log(`Pinecone service listening at http://localhost:${port}`);
 });
 
+app.post("/query", async (req, res) => {
+  const { message, topK } = req.body;
+  console.log("Querying message:", message);
+  try {
+    let vector = await createEmbedding(message);
+    console.log("Embedded message:", vector);
+
+    const queryResponse = await index.query({
+      queryRequest: {
+        namespace: process.env.PINECONE_NAMESPACE,
+        topK: topK,
+        includeValues: true,
+        includeMetadata: true,
+        vector: vector,
+      },
+    });
+    console.log("Query result:", queryResponse);
+    res.status(200).json(queryResponse);
+  } catch (error) {
+    console.log("Error querying data", error.data);
+    res.status(500).json({ message: "Error querying data", error });
+  }
+});
+
 app.post("/upsert", async (req, res) => {
-  const { id, data } = req.body;
+  const { message, messageResponse } = req.body;
+  console.log("Upserting message:", message);
+  let conversation = {
+    message: message,
+    messageResponse: messageResponse,
+  };
   try {
-    await index.upsert(id, data);
-    await redisClient.set(id, JSON.stringify(data));
-    res.status(200).json({ message: "Upsert successful" });
-  } catch (error) {
-    res.status(500).json({ message: "Error upserting data" });
-  }
-});
+    let messageEmbedding = await createEmbedding(message);
+    console.log("Embedded message:", messageEmbedding);
+    const upsertResponse = await index.upsert({
+      upsertRequest: {
+        vectors: [
+          {
+            id: uuidv4(),
+            values: messageEmbedding,
+            metadata: conversation,
+          },
+        ],
+        namespace: "default",
+      },
+    });
 
-app.post("/delete", async (req, res) => {
-  const { id } = req.body;
-  try {
-    await index.delete(id);
-    await redisClient.del(id);
-    res.status(200).json({ message: "Delete successful" });
+    console.log("Upsert result:", upsertResponse);
+    res.status(200).json(upsertResponse);
   } catch (error) {
-    res.status(500).json({ message: "Error deleting data" });
-  }
-});
-
-app.get("/fetch/:id", async (req, res) => {
-  const id = req.params.id;
-  try {
-    const cachedData = await redisClient.get(id);
-    if (cachedData) {
-      res.status(200).json(JSON.parse(cachedData));
-    } else {
-      const pineconeData = await index.fetch(id);
-      await redisClient.set(id, JSON.stringify(pineconeData));
-      res.status(200).json(pineconeData);
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching data" });
+    res.status(500).json({ message: "Error upserting data", error });
   }
 });
