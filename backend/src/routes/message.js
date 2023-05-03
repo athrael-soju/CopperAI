@@ -1,43 +1,8 @@
 import express from "express";
-import { Configuration, OpenAIApi } from "openai";
-import dotenv from "dotenv";
-import axios from "axios";
-dotenv.config();
+import { getConversation, storeConversation } from "../api/pineconeAPI.js";
+import { generateResponse } from "../api/openaiAPI.js";
 
 const router = express.Router();
-const pineconeServiceUrl = `${process.env.PINECONE_ADDRESS}:${process.env.PINECONE_PORT}`;
-const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
-const openai = new OpenAIApi(configuration);
-
-let messages = [];
-let queryMessage, messageResponse;
-
-async function getConversation(message, topK = 5) {
-  console.log("Getting conversation for message:", `'${message}'`);
-  const response = await axios.post(`${pineconeServiceUrl}/query`, {
-    message: message,
-    topK: topK,
-  });
-  console.log("Conversation response:", response.data);
-  if (
-    response.data.matches.length === 0 ||
-    response.data.matches[0]["score"] < 0.95
-  ) {
-    console.log("No conversation found");
-    return null;
-  }
-  console.log("Conversation found:", response.data.matches[0]);
-  return response.data.matches[0]["metadata"]["messageResponse"];
-}
-
-async function storeConversation(message, messageResponse) {
-  console.log("Storing conversation for message:", message);
-  await axios.post(`${pineconeServiceUrl}/upsert`, {
-    message,
-    messageResponse,
-  });
-  console.log("Conversation stored");
-}
 
 export async function initDirective(role, username, directive) {
   const directiveResponse = await sendMessage(role, username, directive);
@@ -51,24 +16,19 @@ export async function initDirective(role, username, directive) {
 
 async function sendMessage(role = "user", userName, message) {
   try {
+    let queryMessage, messageResponse;
     console.log("Sending message:", message);
     if (process.env.PINECONE_ENABLED === "true") {
       queryMessage = await getConversation(message, 1);
     }
     if (!queryMessage) {
-      messages = [];
-      messages.push({ role: role, content: message });
-
-      const response = await openai.createChatCompletion({
-        messages,
-        model: process.env.OPENAI_API_MODEL,
-        user: userName,
-      });
+      const messages = [{ role: role, content: message }];
+      const response = await generateResponse(messages, userName);
       console.log("OpenAI response:", response.data);
       messageResponse = response.data.choices[0].message;
+
       if (messageResponse) {
         console.log("OpenAI response:", messageResponse);
-        messages.push(messageResponse);
         messageResponse = messageResponse.content;
       } else {
         console.log("No response, try asking again");
