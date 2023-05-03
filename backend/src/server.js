@@ -12,8 +12,15 @@ import speakRoute from "./routes/speak.js";
 dotenv.config();
 
 const app = express();
+app.use(cors());
+app.use(express.json());
+app.use(fileUpload());
 
-async function main() {
+app.use("/message", messageRoute);
+app.use("/speak", speakRoute);
+app.use("/auth", authRoute);
+
+app.listen(process.env.SERVER_PORT, async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
@@ -26,18 +33,5 @@ async function main() {
   } catch (err) {
     console.error("Error connecting to the database or Redis", err);
   }
-}
-
-main();
-
-app.use(cors());
-app.use(express.json());
-app.use(fileUpload());
-
-app.use("/message", messageRoute);
-app.use("/speak", speakRoute);
-app.use("/auth", authRoute);
-
-app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server is running on port ${process.env.SERVER_PORT}`);
 });

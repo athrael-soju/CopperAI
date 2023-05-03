@@ -13,41 +13,30 @@ let messages = [];
 let messageResponse;
 
 async function getConversation(message, topK = 5) {
-  console.log("Querying pinecone for matches...");
-  try {
-    const response = await axios.post(`${pineconeServiceUrl}/query`, {
-      message: message,
-      topK: topK,
-    });
-    console.log("Query response:", response.data);
-    if (
-      response.data.matches.length === 0 ||
-      response.data.matches[0]["score"] < 0.95
-    ) {
-      console.log("No Query matches found in pinecone");
-      return null;
-    }
-    console.log(
-      `Query match found. Returning response: ${response.data.matches[0]["metadata"]["messageResponse"]}`
-    );
-    return response.data.matches[0]["metadata"]["messageResponse"];
-  } catch (err) {
-    console.log("Error querying pinecone", err);
+  console.log("Getting conversation for message:", `'${message}'`);
+  const response = await axios.post(`${pineconeServiceUrl}/query`, {
+    message: message,
+    topK: topK,
+  });
+  console.log("Conversation response:", response.data);
+  if (
+    response.data.matches.length === 0 ||
+    response.data.matches[0]["score"] < 0.95
+  ) {
+    console.log("No conversation found");
     return null;
   }
+  console.log("Conversation found:", response.data.matches[0]);
+  return response.data.matches[0]["metadata"]["messageResponse"];
 }
 
 async function storeConversation(message, messageResponse) {
-  console.log("Storing conversation in pinecone...");
-  try {
-    const response = await axios.post(`${pineconeServiceUrl}/upsert`, {
-      message,
-      messageResponse,
-    });
-    console.log("Conversation stored:", response.data);
-  } catch (err) {
-    console.log("Error storing conversation in pinecone", err);
-  }
+  console.log("Storing conversation for message:", message);
+  await axios.post(`${pineconeServiceUrl}/upsert`, {
+    message,
+    messageResponse,
+  });
+  console.log("Conversation stored");
 }
 
 export async function initDirective(role, username, directive) {
@@ -62,8 +51,10 @@ export async function initDirective(role, username, directive) {
 
 async function sendMessage(role = "user", userName, message) {
   try {
+    console.log("Sending message:", message);
     let queryMessage = await getConversation(message, 1);
     if (!queryMessage) {
+      console.log("No conversation found, sending to OpenAI");
       messages = [];
       messages.push({ role: role, content: message });
 
@@ -72,11 +63,14 @@ async function sendMessage(role = "user", userName, message) {
         model: process.env.OPENAI_API_MODEL,
         user: userName,
       });
+      console.log("OpenAI response:", response.data);
       messageResponse = response.data.choices[0].message;
       if (messageResponse) {
+        console.log("OpenAI response:", messageResponse);
         messages.push(messageResponse);
         messageResponse = messageResponse.content;
       } else {
+        console.log("No response, try asking again");
         messageResponse = `No response, try asking again`;
       }
       await storeConversation(message, messageResponse);
