@@ -30,6 +30,12 @@ app.listen(process.env.SERVER_PORT, async () => {
 
     await createClient({ url: process.env.REDIS_URI }).connect();
     console.log("Connected to Redis");
+    
+    if (process.env.PINECONE_ENABLED === "true") {
+      console.log("Pinecone access enabled");
+    } else {
+      console.log("Pinecone access disabled");
+    }
   } catch (err) {
     console.error("Error connecting to the database or Redis", err);
   }

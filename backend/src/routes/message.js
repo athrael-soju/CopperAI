@@ -10,7 +10,7 @@ const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
 const openai = new OpenAIApi(configuration);
 
 let messages = [];
-let messageResponse;
+let queryMessage, messageResponse;
 
 async function getConversation(message, topK = 5) {
   console.log("Getting conversation for message:", `'${message}'`);
@@ -52,9 +52,10 @@ export async function initDirective(role, username, directive) {
 async function sendMessage(role = "user", userName, message) {
   try {
     console.log("Sending message:", message);
-    let queryMessage = await getConversation(message, 1);
+    if (process.env.PINECONE_ENABLED === "true") {
+      queryMessage = await getConversation(message, 1);
+    }
     if (!queryMessage) {
-      console.log("No conversation found, sending to OpenAI");
       messages = [];
       messages.push({ role: role, content: message });
 
@@ -73,7 +74,9 @@ async function sendMessage(role = "user", userName, message) {
         console.log("No response, try asking again");
         messageResponse = `No response, try asking again`;
       }
-      await storeConversation(message, messageResponse);
+      if (process.env.PINECONE_ENABLED === "true") {
+        await storeConversation(message, messageResponse);
+      }
       return messageResponse;
     } else {
       return queryMessage;
