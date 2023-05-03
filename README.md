@@ -41,25 +41,27 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 - Software/Libraries:
+
 ```
 - Docker 4.16 with Docker Compose V2 enabled
 - Node.js 18+
 - React.js 18+
 ```
+
 - Credentials:
+
 ```
 - OpenAI API key: https://platform.openai.com/account/api-keys
 - Google Cloud TTS API key: https://cloud.google.com/text-to-speech
 ```
+
 - Environment Variables:
+
 ```
 - Rename frontend\.env.local to frontend\.env and set the values:
     - OPENAI_API_KEY=''
-    - DALLE_API_ENABLED=false //This should be left disabled for now, as it's getting removed
     - SERVER_PORT=5000
     - SERVER_ADDRESS='http://localhost'
-    - SERVER_WELCOME_ENDPOINT='/welcome'
-    - SERVER_WALLPAPER_ENDPOINT='/wallpaper'
     - SERVER_MESSAGE_ENDPOINT='/message'
     - SERVER_SPEAK_ENDPOINT='/speak'
     - AUDIO_DB_SENSITIVITY='-45'
@@ -67,15 +69,12 @@ These instructions will get you a copy of the project up and running on your loc
     - SERVER_PORT=5000
     - OPENAI_API_KEY="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"
     - OPENAI_API_MODEL="gpt-3.5-turbo"
-    - OPENAI_API_WELCOME_MSG="Welcome! What would you like to discuss?"
-    - GOOGLE_CLOUD_TTS_LANGUAGE="en-US" // You can customize from list: 
-    - GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J"	
+    - GOOGLE_CLOUD_TTS_LANGUAGE="en-US"
+    - GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J"
     - GOOGLE_CLOUD_TTS_GENDER="MALE"
     - GOOGLE_CLOUD_TTS_ENCODING="MP3"
-    - DALLE_API_PROMPT="" //Leave it to this for now
-    - DALLE_API_N=1 //Leave it to this for now
-    - DALLE_API_SIZE="1024x1024" //Leave it to this for now
 ```
+
 - rename backend\credentials\google.api.local.json into backend\credentials\google.api.json and paste details of you google service_account key file details
 
 ### Installing
@@ -85,13 +84,15 @@ These instructions will get you a copy of the project up and running on your loc
   git clone https://github.com/athrael-soju/whisperChat.git'
   ```
 - Run npm install in both backend and frontend folders:
+
   ```
   cd frontend
-  npm install 
+  npm install
 
   cd backend
-  npm install   
+  npm install
   ```
+
 - Alternatively, you can run with Docker
   ```
   docker-compose up --build -d

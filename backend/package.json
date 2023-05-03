@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/text-to-speech": "^4.2.2",
+    "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -26,6 +27,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.4",
     "openai": "^3.2.1",
+    "redis": "^4.6.6",
     "say": "^0.16.0"
   },
   "devDependencies": {

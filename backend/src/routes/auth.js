@@ -3,10 +3,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../models/User.js";
-
+import { initDirective } from "./message.js";
+import prompts from "../data/prompts.js";
 dotenv.config();
 
 const router = express.Router();
+const directive = prompts[process.env.MODEL_DIRECTIVE];
 
 router.post("/register", async (req, res) => {
   const { username, email, birthdate, password } = req.body;
@@ -46,6 +48,12 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    if (user.firstLogin) {
+      let role = "system";
+      initDirective(role, username, directive);
+      await user.save();
+    }
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -64,6 +72,7 @@ router.post("/login", async (req, res) => {
 
 router.get("/guest", (req, res) => {
   try {
+    initDirective("system", "Guest", directive);
     res.status(200).json({ username: "Guest" });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });

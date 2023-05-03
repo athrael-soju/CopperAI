@@ -3,14 +3,18 @@ import { Button } from "react-bootstrap";
 import AccountModal from "./AccountModal";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
+import AccountDetailsForm from "./AccountDetailsForm";
 
 function Navbar({ user, setUser, handleLogout }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
   const handleLoginModalClose = () => setShowLoginModal(false);
   const handleLoginModalShow = () => setShowLoginModal(true);
   const handleSignupModalClose = () => setShowSignupModal(false);
   const handleSignupModalShow = () => setShowSignupModal(true);
+  const handleAccountModalClose = () => setShowAccountModal(false);
+  const handleAccountModalShow = () => setShowAccountModal(true);
 
   return (
     <>
@@ -19,6 +23,8 @@ function Navbar({ user, setUser, handleLogout }) {
           <a
             className="navbar-brand"
             href="https://github.com/athrael-soju/whisperChat"
+            target="_blank"
+            rel="noreferrer"
           >
             whisperChat
           </a>
@@ -50,6 +56,13 @@ function Navbar({ user, setUser, handleLogout }) {
                   </Button>
                 </>
               )}
+              <Button
+                className="btn btn-info me-2"
+                onClick={handleAccountModalShow}
+                disabled={!user}
+              >
+                {user ? user.username : "Account"}
+              </Button>
             </form>
           </div>
         </div>
@@ -66,9 +79,17 @@ function Navbar({ user, setUser, handleLogout }) {
             show={showSignupModal}
             handleClose={handleSignupModalClose}
           >
-            <RegisterForm setUser={setUser} /> {/* Add the SignupForm */}
+            <RegisterForm setUser={setUser} />
           </AccountModal>
         </>
+      )}
+      {user && (
+        <AccountModal
+          show={showAccountModal}
+          handleClose={handleAccountModalClose}
+        >
+          <AccountDetailsForm user={user} />
+        </AccountModal>
       )}
     </>
   );

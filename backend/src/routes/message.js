@@ -1,38 +1,55 @@
 import express from "express";
-import { Configuration, OpenAIApi } from "openai";
-import dotenv from "dotenv";
-dotenv.config();
+import { getConversation, storeConversation } from "../api/pineconeAPI.js";
+import { generateResponse } from "../api/openaiAPI.js";
 
 const router = express.Router();
 
-const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
-const openai = new OpenAIApi(configuration);
+export async function initDirective(role, username, directive) {
+  const directiveResponse = await sendMessage(role, username, directive);
+  console.log("Directive message sent:", directive);
+  if (directiveResponse) {
+    console.log("Directive response received: ", directiveResponse);
+  } else {
+    console.log("No response, try asking again");
+  }
+}
 
-let messages = [];
-let responseMessage;
-
-router.post("/", async (req, res) => {
+async function sendMessage(role = "user", userName, message) {
   try {
-    let userInput = req.body.message;
-    messages.push({ role: "user", content: userInput });
-
-    const response = await openai.createChatCompletion({
-      messages,
-      model: process.env.OPENAI_API_MODEL,
-    });
-
-    const botMessage = response.data.choices[0].message;
-    if (botMessage) {
-      messages.push(botMessage);
-      responseMessage = botMessage.content;
-    } else {
-      responseMessage = `No response, try asking again`;
+    let queryMessage, messageResponse;
+    console.log("Sending message:", message);
+    if (process.env.PINECONE_ENABLED === "true") {
+      queryMessage = await getConversation(message, 1);
     }
+    if (!queryMessage) {
+      const messages = [{ role: role, content: message }];
+      const response = await generateResponse(messages, userName);
+      console.log("OpenAI response:", response.data);
+      messageResponse = response.data.choices[0].message;
 
-    res.json({ message: responseMessage });
+      if (messageResponse) {
+        console.log("OpenAI response:", messageResponse);
+        messageResponse = messageResponse.content;
+      } else {
+        console.log("No response, try asking again");
+        messageResponse = `No response, try asking again`;
+      }
+      if (process.env.PINECONE_ENABLED === "true") {
+        await storeConversation(message, messageResponse);
+      }
+      return messageResponse;
+    } else {
+      return queryMessage;
+    }
   } catch (err) {
     console.log(`Error with Request: ${err}`);
   }
+}
+
+router.post("/", async (req, res) => {
+  let role = "user";
+  let response = await sendMessage(role, req.body.username, req.body.message);
+  res.json({ message: response });
 });
 
 export default router;

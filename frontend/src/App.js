@@ -27,7 +27,7 @@ function App() {
         Your browser does not support the video tag.
       </video>
       <Navbar user={user} setUser={setUser} handleLogout={handleLogout} />
-      {user ? <MainApp /> : <WelcomeMessage />}
+      {user ? <MainApp user={user} /> : <WelcomeMessage />}
     </div>
   );
 }

@@ -132,12 +132,4 @@ dist
 # credentials
 backend/credentials/google.api.json
 frontend/public/env.js
-
-# mongoose
-*.wt
-database/.mongodb/
-database/diagnostic.data/
-database/journal/
-database/WiredTiger*
-*.lock
-database/storage.bson
+.history/
