@@ -1,30 +1,32 @@
 version: "1.0.0"
 
 services:
-  mongodb-login:
+  mongodb:
     image: mongo
-    restart: always
-    container_name: mongodb
+    container_name: mongo-login-db
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: secret
     ports:
       - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
     networks:
       - whisper-network
 
-  redis-cache:
+  redis:
     image: redis
-    restart: always
-    container_name: redis
+    container_name: redis-cache
     expose:
       - 6379
+    volumes:
+      - redis-data:/data
     networks:
       - whisper-network
 
   backend:
     build: ./backend
-    container_name: node-backend
+    container_name: backend-core
     env_file:
       - ./backend/.env
     ports:
@@ -35,7 +37,7 @@ services:
       - whisper-network
 
   frontend:
-    container_name: react-frontend
+    container_name: fontend-ui
     build: ./frontend
     ports:
       - "3000:3000"
@@ -46,11 +48,15 @@ services:
 
   pinecone:
     build: ./pinecone
-    container_name: pinecone
+    container_name: pinecone-vector-db
     ports:
       - "4000:4000"
     networks:
       - whisper-network
+
+volumes:
+  mongo-data:
+  redis-data:
 
 networks:
   whisper-network:
