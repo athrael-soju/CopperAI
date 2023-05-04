@@ -133,3 +133,4 @@ dist
 backend/credentials/google.api.json
 frontend/public/env.js
 .history/
+.VSCodeCounter/
