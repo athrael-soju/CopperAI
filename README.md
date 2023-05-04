@@ -67,7 +67,7 @@ These instructions will get you a copy of the project up and running on your loc
     - AUDIO_DB_SENSITIVITY='-45'
 - Rename backend\.env.local to backend\.env and set values:
     - SERVER_PORT=5000
-    - OPENAI_API_KEY="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"
+    - OPENAI_API_KEY="YOUR_API_KEY"
     - OPENAI_API_MODEL="gpt-3.5-turbo"
     - GOOGLE_CLOUD_TTS_LANGUAGE="en-US"
     - GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J"
