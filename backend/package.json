@@ -27,7 +27,6 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.4",
     "openai": "^3.2.1",
-    "redis": "^4.6.6",
     "say": "^0.16.0"
   },
   "devDependencies": {

@@ -1,6 +1,5 @@
 import express from "express";
 import mongoose from "mongoose";
-import { createClient } from "redis";
 import fileUpload from "express-fileupload";
 import authRoute from "./routes/auth.js";
 import cors from "cors";
@@ -27,17 +26,13 @@ app.listen(process.env.SERVER_PORT, async () => {
       useUnifiedTopology: true,
     });
     console.log("Connected to MongoDB");
-
-    await createClient({ url: process.env.REDIS_URI }).connect();
-    console.log("Connected to Redis");
-    
     if (process.env.PINECONE_ENABLED === "true") {
       console.log("Pinecone access enabled");
     } else {
       console.log("Pinecone access disabled");
     }
   } catch (err) {
-    console.error("Error connecting to the database or Redis", err);
+    console.error("Error connecting to mongodb", err);
   }
   console.log(`Server is running on port ${process.env.SERVER_PORT}`);
 });

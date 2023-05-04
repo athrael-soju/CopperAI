@@ -8,14 +8,14 @@ const upsertRoute = (pinecone) => {
   router.post("/", async (req, res) => {
     let index = await getIndex(pinecone);
     const { message, messageResponse } = req.body;
-    console.log("Upserting message:", message);
+    console.log("Pinecone: upserting message:", message);
     let conversation = {
       message: message,
       messageResponse: messageResponse,
     };
     try {
       let messageEmbedding = await createEmbedding(message);
-      console.log("Embedded message:", messageEmbedding);
+      console.log("Pinecone: embeddeding message");
       const upsertResponse = await index.upsert({
         upsertRequest: {
           vectors: [
@@ -28,10 +28,12 @@ const upsertRoute = (pinecone) => {
           namespace: "default",
         },
       });
-      console.log("Upserted message:", upsertResponse);
+      console.log("Pinecone: upserted message:", upsertResponse);
       res.status(200).json(upsertResponse);
     } catch (error) {
-      res.status(500).json({ message: "Error upserting data", error });
+      res
+        .status(500)
+        .json({ message: "Pinecone: Error upserting data", error });
     }
   });
   return router;
