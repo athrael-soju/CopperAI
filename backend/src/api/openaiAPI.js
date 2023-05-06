@@ -6,16 +6,18 @@ dotenv.config();
 const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
 const openai = new OpenAIApi(configuration);
 
-export async function generateResponse(messages, userName) {
+export async function generateResponseFromOpenAI(messages, userName) {
   try {
-    const response = await openai.createChatCompletion({
+    let response = await openai.createChatCompletion({
       messages,
       model: process.env.OPENAI_API_MODEL,
       user: userName,
     });
+    response = response.data.choices[0].message.content;
+    console.log("OpenAI: response generated: ", response);
     return response;
   } catch (err) {
-    console.error("Error generating response from OpenAI:", err);
-    throw err;
+    console.error("OpenAI: error generating response", err);
+    return "No response, try asking again";
   }
 }

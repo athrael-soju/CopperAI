@@ -37,7 +37,7 @@ router.post("/", async (req, res) => {
   };
 
   try {
-    const [response] = await client.synthesizeSpeech(request);
+    const [response] = client.synthesizeSpeech(request);
     fs.writeFileSync(filePath, response.audioContent, "binary");
     res.download(filePath, fileName, (err) => {
       if (err) {

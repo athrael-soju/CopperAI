@@ -1,35 +1,36 @@
 import express from "express";
-import { getConversation, storeConversation } from "../api/pineconeAPI.js";
-import { generateResponse } from "../api/openaiAPI.js";
+import {
+  getConversationFromPinecone,
+  storeConversationToPinecone,
+} from "../api/pineconeAPI.js";
+import { generateResponseFromOpenAI } from "../api/openaiAPI.js";
 
 const router = express.Router();
-
 export async function initDirective(role, username, directive) {
   await sendMessage(role, username, directive);
 }
 
 async function sendMessage(role = "user", userName, message) {
   try {
-    let queryMessage, messageResponse;
-    if (process.env.PINECONE_ENABLED === "true") {
-      queryMessage = await getConversation(message, 1);
+    console.log(`role: ${role}, userName: ${userName}: message: ${message}`);
+    const shouldPineconeBeUsed =
+      process.env.PINECONE_ENABLED === "true" && userName !== "guest";
+    let pineconeResponse = null;
+    if (shouldPineconeBeUsed) {
+      pineconeResponse = await getConversationFromPinecone(
+        message,
+        process.env.PINECONE_TOPK
+      );
     }
-    if (!queryMessage) {
+    if (!pineconeResponse) {
       const messages = [{ role: role, content: message }];
-      const response = await generateResponse(messages, userName);
-      messageResponse = response.data.choices[0].message;
-
-      if (messageResponse) {
-        messageResponse = messageResponse.content;
-      } else {
-        messageResponse = `No response, try asking again`;
+      const response = await generateResponseFromOpenAI(messages, userName);
+      if (shouldPineconeBeUsed) {
+        await storeConversationToPinecone(message, response);
       }
-      if (process.env.PINECONE_ENABLED === "true") {
-        await storeConversation(message, messageResponse);
-      }
-      return messageResponse;
+      return response;
     } else {
-      return queryMessage;
+      return pineconeResponse;
     }
   } catch (err) {
     console.log(`Error with Request: ${err}`);
