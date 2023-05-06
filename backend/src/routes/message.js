@@ -36,6 +36,14 @@ async function sendMessage(role = "user", userName, message) {
   }
 }
 
+router.get("/", (req, res) => {
+  res
+    .status(200)
+    .send(
+      `You've reached the /message server route, running on port ${process.env.SERVER_PORT}`
+    );
+});
+
 router.post("/", async (req, res) => {
   let role = "user";
   let response = await sendMessage(role, req.body.username, req.body.message);

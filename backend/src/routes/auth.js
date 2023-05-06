@@ -10,6 +10,15 @@ dotenv.config();
 const router = express.Router();
 const directive = prompts[process.env.MODEL_DIRECTIVE];
 
+
+router.get("/", (req, res) => {
+  res
+    .status(200)
+    .send(
+      `You've reached the /auth server route, running on port ${process.env.SERVER_PORT}`
+    );
+});
+
 router.post("/register", async (req, res) => {
   const { username, email, birthdate, password } = req.body;
   try {
