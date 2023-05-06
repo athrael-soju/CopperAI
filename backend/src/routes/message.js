@@ -1,9 +1,6 @@
 import express from "express";
-import {
-  getConversationFromPinecone,
-  storeConversationToPinecone,
-} from "../api/pineconeAPI.js";
-import { generateResponseFromOpenAI } from "../api/openaiAPI.js";
+import pineconeAPI from "../api/pineconeAPI.js";
+import openaiAPI from "../api/openaiAPI.js";
 
 const router = express.Router();
 export async function initDirective(role, username, directive) {
@@ -17,16 +14,19 @@ async function sendMessage(role = "user", userName, message) {
       process.env.PINECONE_ENABLED === "true" && userName !== "guest";
     let pineconeResponse = null;
     if (shouldPineconeBeUsed) {
-      pineconeResponse = await getConversationFromPinecone(
+      pineconeResponse = await pineconeAPI.getConversationFromPinecone(
         message,
         process.env.PINECONE_TOPK
       );
     }
     if (!pineconeResponse) {
       const messages = [{ role: role, content: message }];
-      const response = await generateResponseFromOpenAI(messages, userName);
+      const response = await openaiAPI.generateResponseFromOpenAI(
+        messages,
+        userName
+      );
       if (shouldPineconeBeUsed) {
-        await storeConversationToPinecone(message, response);
+        await pineconeAPI.storeConversationToPinecone(message, response);
       }
       return response;
     } else {

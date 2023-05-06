@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "mocha --require @babel/register --recursive --timeout 5000 test/*.test.js",
+    "test": "mocha --require @babel/register --recursive --timeout 5000 test/**/*.test.js",
     "start": "node src/server.js"
   },
   "keywords": [
@@ -29,7 +29,8 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.4",
     "openai": "^3.2.1",
-    "say": "^0.16.0"
+    "say": "^0.16.0",
+    "sinon-mongoose": "^2.3.0"
   },
   "devDependencies": {
     "@types/node": "^18.14.6",

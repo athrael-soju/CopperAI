@@ -38,13 +38,16 @@ router.post("/", async (req, res) => {
     // The await here is important, otherwise an error will be thrown: object is not iterable (cannot read property Symbol(Symbol.iterator))
     const [response] = await client.synthesizeSpeech(request);
     fs.writeFileSync(filePath, response.audioContent, "binary");
+    console.log(`Audio content written to file: ${filePath}`);
     res.download(filePath, fileName, (err) => {
       if (err) {
-        console.error(err);
+        console.error(`Error sending audio file: ${err}`);
         res.status(500).json({ message: "Error sending audio file" });
       }
       fs.unlink(filePath, (err) => {
-        if (err) console.error(err);
+        if (err) {
+          console.error(`Error deleting audio file: ${err}`);
+        }
       });
     });
   } catch (err) {
