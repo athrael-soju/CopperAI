@@ -25,7 +25,6 @@ router.post("/", async (req, res) => {
   const fileName = "response.wav";
   const filePath = `./${fileName}`;
   const client = new TextToSpeechClient();
-
   const request = {
     input: { text: text },
     voice: {
@@ -35,9 +34,9 @@ router.post("/", async (req, res) => {
     },
     audioConfig: { audioEncoding: process.env.GOOGLE_CLOUD_TTS_ENCODING },
   };
-
   try {
-    const [response] = client.synthesizeSpeech(request);
+    // The await here is important, otherwise an error will be thrown: object is not iterable (cannot read property Symbol(Symbol.iterator))
+    const [response] = await client.synthesizeSpeech(request);
     fs.writeFileSync(filePath, response.audioContent, "binary");
     res.download(filePath, fileName, (err) => {
       if (err) {
@@ -49,7 +48,7 @@ router.post("/", async (req, res) => {
       });
     });
   } catch (err) {
-    console.error(err);
+    console.error(`Error generating audio file: ${err}`);
     res.status(500).json({ message: "Error generating audio file" });
   }
 });
