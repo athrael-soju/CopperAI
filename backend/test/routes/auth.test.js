@@ -4,7 +4,6 @@ import sinon from "sinon";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import sinonMongoose from "sinon-mongoose";
 
 import app from "../../src/app.js";
 import User from "../../src/models/User.js";

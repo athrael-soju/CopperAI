@@ -15,7 +15,6 @@ describe("app", () => {
         expect(res.body.message).to.equal(
           `You've reached the backend-core server, running on port ${process.env.SERVER_PORT}`
         );
-        done();
       });
   });
 
@@ -27,7 +26,6 @@ describe("app", () => {
         expect(res.body.message).to.equal(
           `You've reached the /auth server route, running on port ${process.env.SERVER_PORT}`
         );
-        done();
       });
   });
 
@@ -39,7 +37,6 @@ describe("app", () => {
         expect(res.body.message).to.equal(
           `You've reached the /message server route, running on port ${process.env.SERVER_PORT}`
         );
-        done();
       });
   });
 
@@ -51,7 +48,6 @@ describe("app", () => {
         expect(res.body.message).to.equal(
           `You've reached the /speak server route, running on port ${process.env.SERVER_PORT}`
         );
-        done();
       });
   });
 });

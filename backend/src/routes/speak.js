@@ -39,6 +39,7 @@ router.post("/", async (req, res) => {
     const [response] = await client.synthesizeSpeech(request);
     fs.writeFileSync(filePath, response.audioContent, "binary");
     console.log(`Audio content written to file: ${filePath}`);
+    // Resolve error, even when test passes rror: ENOENT: no such file or directory, stat 'E:\Projects\whisperChat\backend\response.wav'
     res.download(filePath, fileName, (err) => {
       if (err) {
         console.error(`Error sending audio file: ${err}`);
