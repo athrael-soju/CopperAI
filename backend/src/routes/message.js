@@ -9,7 +9,6 @@ export async function initDirective(role, username, directive) {
 
 async function sendMessage(role = "user", userName, message) {
   try {
-    console.log(`role: ${role}, userName: ${userName}: message: ${message}`);
     const shouldPineconeBeUsed =
       process.env.PINECONE_ENABLED === "true" && userName !== "guest";
     let pineconeResponse = null;
@@ -38,11 +37,9 @@ async function sendMessage(role = "user", userName, message) {
 }
 
 router.get("/", (req, res) => {
-  res
-    .status(200)
-    .send(
-      `You've reached the /message server route, running on port ${process.env.SERVER_PORT}`
-    );
+  res.status(200).json({
+    message: `You've reached the /message server route, running on port ${process.env.SERVER_PORT}`,
+  });
 });
 
 router.post("/", async (req, res) => {

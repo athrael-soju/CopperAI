@@ -13,11 +13,9 @@ const router = express.Router();
 router.use(limiter);
 
 router.get("/", (req, res) => {
-  res
-    .status(200)
-    .send(
-      `You've reached the /speak server route, running on port ${process.env.SERVER_PORT}`
-    );
+  res.status(200).send({
+    message: `You've reached the /speak server route, running on port ${process.env.SERVER_PORT}`,
+  });
 });
 
 router.post("/", async (req, res) => {

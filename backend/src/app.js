@@ -19,11 +19,9 @@ app.use("/message", messageRoute);
 app.use("/speak", speakRoute);
 
 app.get("/", (req, res) => {
-  res
-    .status(200)
-    .send(
-      `You've reached the backend-core server, running on port ${process.env.SERVER_PORT}`
-    );
+  res.status(200).json({
+    message: `You've reached the backend-core server, running on port ${process.env.SERVER_PORT}`,
+  });
 });
 
 export default app;
