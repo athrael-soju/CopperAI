@@ -1,39 +1,47 @@
-import express from "express";
-import cors from "cors";
-import { PineconeClient } from "@pinecone-database/pinecone";
 import dotenv from "dotenv";
-import queryRoute from "./routes/query.js";
-import upsertRoute from "./routes/upsert.js";
+import { PineconeClient } from "@pinecone-database/pinecone";
 import { createClient } from "redis";
+import app, { initRoutes } from "./app.js";
+
 dotenv.config();
-const app = express();
 
-app.use(cors());
-app.use(express.json());
-
-const port = process.env.PINECONE_PORT;
-let pinecone, redisClient;
-
-app.listen(port, async () => {
+const startPinecone = async () => {
   try {
-    pinecone = new PineconeClient();
+    const pinecone = new PineconeClient();
     await pinecone.init({
       environment: process.env.PINECONE_ENVIRONMENT,
       apiKey: process.env.PINECONE_API_KEY,
     });
+    console.log("Connected to Pinecone");
+    return pinecone;
+  } catch (err) {
+    console.log("Error connecting to Pinecone", err);
+    process.exit();
+  }
+};
 
-    redisClient = createClient({ url: process.env.REDIS_URI });
+const startRedis = async () => {
+  try {
+    const redisClient = createClient({ url: process.env.REDIS_URI });
     redisClient.on("error", (err) => console.log("Redis Client Error", err));
     await redisClient.connect();
     console.log("Connected to Redis");
-
-    app.use("/query", queryRoute(pinecone, redisClient));
-    app.use("/upsert", upsertRoute(pinecone));
-
-    console.log(`Pinecone service listening at http://localhost:${port}`);
+    return redisClient;
   } catch (err) {
-    console.log("Error connecting to Pinecone", err);
-    redisClient.disconnect();
+    console.log("Error connecting to Redis", err);
+    if (redisClient) {
+      redisClient.disconnect();
+    }
     process.exit();
   }
+};
+
+const pinecone = await startPinecone();
+const redisClient = await startRedis();
+
+app.listen(process.env.PINECONE_PORT, async () => {
+  console.log(
+    `Pinecone service listening at http://localhost:${process.env.PINECONE_PORT}`
+  );
+  await initRoutes(pinecone, redisClient);
 });

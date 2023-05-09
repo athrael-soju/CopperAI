@@ -8,6 +8,7 @@ export async function initDirective(role, username, directive) {
 }
 
 async function sendMessage(role = "user", userName, message) {
+  console.log(`Sending message: ${message}`);
   try {
     const shouldPineconeBeUsed =
       process.env.PINECONE_ENABLED === "true" && userName !== "guest";

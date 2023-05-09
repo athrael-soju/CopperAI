@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getIndex } from "../utils/utils.js";
 const router = express.Router();
 
-const upsertRoute = (pinecone) => {
+const upsertRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
     let index = await getIndex(pinecone);
     const { message, messageResponse } = req.body;
@@ -38,5 +38,11 @@ const upsertRoute = (pinecone) => {
   });
   return router;
 };
+
+router.get("/", (req, res) => {
+  res.status(200).json({
+    message: `You've reached the /upsert Pinecone route, running on port ${process.env.PINECONE_ADDRESS}:${process.env.PINECONE_PORT}`,
+  });
+});
 
 export default upsertRoute;
