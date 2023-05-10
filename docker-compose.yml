@@ -46,7 +46,6 @@ services:
 
 volumes:
   mongo-data:
-  redis-data:
 
 networks:
   whisper-network:
