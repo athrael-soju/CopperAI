@@ -1,9 +1,6 @@
 import request from "supertest";
-import dotenv from "dotenv";
 import { PineconeClient } from "@pinecone-database/pinecone";
 import app, { initRoutes } from "../src/app.js";
-
-dotenv.config();
 
 const startPinecone = async () => {
   const pinecone = new PineconeClient();
