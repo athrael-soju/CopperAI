@@ -7,15 +7,15 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - messenger
+      - backend
     networks:
       - whisper-network
 
-  messenger:
-    build: ./messenger
-    container_name: messenger
+  backend:
+    build: ./backend
+    container_name: backend
     env_file:
-      - ./messenger/.env
+      - ./backend/.env
     ports:
       - "5000:5000"
     environment:

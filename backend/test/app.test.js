@@ -12,7 +12,7 @@ describe("app", () => {
       .get("/")
       .then((err, res) => {
         expect(res.body.message).to.equal(
-          `You've reached the messenger server, running on port ${process.env.SERVER_PORT}`
+          `You've reached the backend server, running on port ${process.env.SERVER_PORT}`
         );
       });
   });
