@@ -126,7 +126,7 @@ dist
 .pnp.*
 
 # credentials
-messenger/credentials/google.api.json
 frontend/public/env.js
 .history/
 .VSCodeCounter/
+backend/credentials/google.api.json

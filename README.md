@@ -65,7 +65,7 @@ These instructions will get you a copy of the project up and running on your loc
     - SERVER_MESSAGE_ENDPOINT='/message'
     - SERVER_SPEAK_ENDPOINT='/speak'
     - AUDIO_DB_SENSITIVITY='-45'
-- Rename messenger\.env.local to messenger\.env and set values:
+- Rename backend\.env.local to backend\.env and set values:
     - SERVER_PORT=5000
     - OPENAI_API_KEY="YOUR_API_KEY"
     - OPENAI_API_MODEL="gpt-3.5-turbo"
@@ -75,7 +75,7 @@ These instructions will get you a copy of the project up and running on your loc
     - GOOGLE_CLOUD_TTS_ENCODING="MP3"
 ```
 
-- rename messenger\credentials\google.api.local.json into messenger\credentials\google.api.json and paste details of you google service_account key file details
+- rename backend\credentials\google.api.local.json into backend\credentials\google.api.json and paste details of you google service_account key file details
 
 ### Installing
 
@@ -83,13 +83,13 @@ These instructions will get you a copy of the project up and running on your loc
   ```
   git clone https://github.com/athrael-soju/whisperChat.git'
   ```
-- Run npm install in both messenger and frontend folders:
+- Run npm install in both backend and frontend folders:
 
   ```
   cd frontend
   npm install
 
-  cd messenger
+  cd backend
   npm install
   ```
 
@@ -114,7 +114,7 @@ You should be able to access the application at http://localhost:3000
 
 - [Docker](https://www.docker.com/) - Containerization
 - [ReactJs](https://react.dev/) - Frontend
-- [NodeJs](https://nodejs.org/en/) - messenger
+- [NodeJs](https://nodejs.org/en/) - backend
 - [OpenAI Whisper API](https://openai.com/blog/introducing-chatgpt-and-whisper-apis) - ChatGPT and Whisper model integration.
 - [Google TTS](https://cloud.google.com/text-to-speech/) - Converts text into natural-sounding speech.
 - [Whisper Hook by chengsokdara](https://github.com/chengsokdara/use-whisper) - React Hook for OpenAI Whisper API with speech recorder, real-time transcription and silence removal.
