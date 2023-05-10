@@ -1,10 +1,7 @@
 import request from "supertest";
-import dotenv from "dotenv";
 import { PineconeClient } from "@pinecone-database/pinecone";
-import { createClient } from "redis-mock";
-import app, { initRoutes } from "../src/app.js";
 
-dotenv.config();
+import app, { initRoutes } from "../src/app.js";
 
 const startPinecone = async () => {
   const pinecone = new PineconeClient();
@@ -16,21 +13,12 @@ const startPinecone = async () => {
   return pinecone;
 };
 
-const startRedis = async () => {
-  const redisClient = createClient();
-  redisClient.on("error", (err) => console.log("Redis Client Error", err));
-  console.log("Connected to Redis (mock)");
-  return redisClient;
-};
-
 describe("Pinecone service", () => {
   let pinecone;
-  let redisClient;
 
   beforeAll(async () => {
     pinecone = await startPinecone();
-    redisClient = await startRedis();
-    await initRoutes(pinecone, redisClient);
+    await initRoutes(pinecone);
   });
 
   it("should check if the server is running", async () => {
