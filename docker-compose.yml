@@ -44,16 +44,6 @@ services:
     networks:
       - whisper-network
 
-  # redis:
-  #   image: redis
-  #   container_name: redis-cache
-  #   expose:
-  #     - 6379
-  #   volumes:
-  #     - redis-data:/data
-  #   networks:
-  #     - whisper-network
-
 volumes:
   mongo-data:
   redis-data:
