@@ -28,7 +28,7 @@ export const createEmbedding = async (message) => {
 };
 
 export const getIndex = async (pinecone) => {
-  let index = pinecone.Index(indexName);
+  let index = await pinecone.Index(indexName);
   if (!index) {
     console.log(`Pinecone: index ${indexName} does not exist, creating...`);
     await pinecone.createIndex({

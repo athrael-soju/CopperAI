@@ -7,8 +7,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const initRoutes = async (pinecone, redisClient) => {
-  const queryRouter = await queryRoute(pinecone, redisClient);
+const initRoutes = async (pinecone) => {
+  const queryRouter = await queryRoute(pinecone);
   const upsertRouter = await upsertRoute(pinecone);
   app.use("/query", queryRouter);
   app.use("/upsert", upsertRouter);
