@@ -3,7 +3,7 @@ version: "1.0.0"
 services:
   frontend:
     container_name: fontend-ui
-    build: ./frontend
+    build: ./services/frontend
     ports:
       - "3000:3000"
     depends_on:
@@ -12,10 +12,10 @@ services:
       - whisper-network
 
   messenger:
-    build: ./messenger
+    build: ./services/messenger
     container_name: messenger
     env_file:
-      - ./messenger/.env
+      - ./services/messenger/.env
     ports:
       - "5000:5000"
     environment:
@@ -37,7 +37,7 @@ services:
       - whisper-network
 
   pinecone:
-    build: ./pinecone
+    build: ./services/pinecone
     container_name: pinecone-vector-db
     ports:
       - "4000:4000"

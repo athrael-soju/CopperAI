@@ -20,7 +20,7 @@ app.use("/speak", speakRoute);
 
 app.get("/", (req, res) => {
   res.status(200).json({
-    message: `You've reached the backend-core server, running on port ${process.env.SERVER_PORT}`,
+    message: `You've reached the messenger server, running on port ${process.env.SERVER_PORT}`,
   });
 });
 
