@@ -1,6 +1,28 @@
 version: "1.0.0"
 
 services:
+  frontend:
+    container_name: fontend-ui
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - messenger
+    networks:
+      - whisper-network
+
+  messenger:
+    build: ./messenger
+    container_name: messenger
+    env_file:
+      - ./messenger/.env
+    ports:
+      - "5000:5000"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
+    networks:
+      - whisper-network
+
   mongodb:
     image: mongo
     container_name: mongo-login-db
@@ -14,38 +36,6 @@ services:
     networks:
       - whisper-network
 
-  redis:
-    image: redis
-    container_name: redis-cache
-    expose:
-      - 6379
-    volumes:
-      - redis-data:/data
-    networks:
-      - whisper-network
-
-  backend:
-    build: ./backend
-    container_name: backend-core
-    env_file:
-      - ./backend/.env
-    ports:
-      - "5000:5000"
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
-    networks:
-      - whisper-network
-
-  frontend:
-    container_name: fontend-ui
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    networks:
-      - whisper-network
-
   pinecone:
     build: ./pinecone
     container_name: pinecone-vector-db
@@ -53,6 +43,16 @@ services:
       - "4000:4000"
     networks:
       - whisper-network
+
+  # redis:
+  #   image: redis
+  #   container_name: redis-cache
+  #   expose:
+  #     - 6379
+  #   volumes:
+  #     - redis-data:/data
+  #   networks:
+  #     - whisper-network
 
 volumes:
   mongo-data:
