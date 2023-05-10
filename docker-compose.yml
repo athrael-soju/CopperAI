@@ -1,28 +1,6 @@
 version: "1.0.0"
 
 services:
-  frontend:
-    container_name: fontend-ui
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    networks:
-      - whisper-network
-
-  backend:
-    build: ./backend
-    container_name: backend
-    env_file:
-      - ./backend/.env
-    ports:
-      - "5000:5000"
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
-    networks:
-      - whisper-network
-
   mongodb:
     image: mongo
     container_name: mongo-login-db
@@ -36,6 +14,28 @@ services:
     networks:
       - whisper-network
 
+  backend:
+    build: ./backend
+    container_name: backend-core
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5000:5000"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
+    networks:
+      - whisper-network
+
+  frontend:
+    container_name: fontend-ui
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - whisper-network
+
   pinecone:
     build: ./pinecone
     container_name: pinecone-vector-db
@@ -46,7 +46,6 @@ services:
 
 volumes:
   mongo-data:
-  redis-data:
 
 networks:
   whisper-network:

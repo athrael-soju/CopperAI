@@ -1,6 +1,5 @@
 import request from "supertest";
 import { PineconeClient } from "@pinecone-database/pinecone";
-
 import app, { initRoutes } from "../src/app.js";
 
 const startPinecone = async () => {
