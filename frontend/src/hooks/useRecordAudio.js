@@ -25,15 +25,14 @@ const useRecordAudio = (
   });
 
   const [wasTranscribing, setWasTranscribing] = useState(false);
+  const [currMsg, setCurrMsg] = useState("");
+  const [prevMsg, setPrevMsg] = useState("");
+  const [timeoutToSendMsg, setTimeoutToSendMsg] = useState(5);
+
   let isMicActive = useAudioSensitivity(activeButton);
   if (activeButton !== "start") {
     isMicActive = false;
   }
-  useEffect(() => {
-    if (transcript.text) {
-      setMessage(transcript.text);
-    }
-  }, [transcript.text, setMessage]);
 
   const handleSendMessage = useCallback(async () => {
     stopOngoingAudio();
@@ -42,12 +41,42 @@ const useRecordAudio = (
   }, [sendMessage, playResponse, stopOngoingAudio]);
 
   useEffect(() => {
-    if (
+    if (transcript.text) {
+      setPrevMsg(currMsg);
+      setCurrMsg(transcript.text);
+      console.log("Test: currMsg: ", currMsg, "prevMsg: ", prevMsg);
+      if (currMsg === prevMsg) {
+        console.log("Test: timeoutToSendMsg", timeoutToSendMsg);
+        setTimeoutToSendMsg(timeoutToSendMsg - 1);
+        if (timeoutToSendMsg === 0) {
+          console.log("Test: handleSendMessage");
+          handleSendMessage();
+          setTimeoutToSendMsg(5);
+        }
+      } else {
+        setTimeoutToSendMsg(5);
+        setMessage(transcript.text);
+      }
+    }
+  }, [
+    transcript,
+    transcript.text,
+    setMessage,
+    currMsg,
+    prevMsg,
+    timeoutToSendMsg,
+    handleSendMessage,
+  ]);
+
+  useEffect(() => {
+    let readyToSend =
       !transcribing &&
       wasTranscribing &&
       transcript.text &&
-      transcript.text.trim() !== ""
-    ) {
+      transcript.text.trim() !== "";
+
+    if (readyToSend) {
+      console.log("Test: transcript.text", transcript.text);
       handleSendMessage();
     } else {
       transcript.text = "";
@@ -57,6 +86,7 @@ const useRecordAudio = (
 
   useEffect(() => {
     if (isMicActive && !transcribing && isRecording) {
+      console.log("Test: startRecording");
       setIsRecording(true);
       stopOngoingAudio();
       startRecording();
