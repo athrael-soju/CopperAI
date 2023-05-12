@@ -21,13 +21,12 @@ const useRecordAudio = (
   } = useWhisper({
     apiKey: env.OPENAI_API_KEY,
     streaming: true,
-    nonStop: true,
   });
 
   const [wasTranscribing, setWasTranscribing] = useState(false);
   const [currMsg, setCurrMsg] = useState("");
   const [prevMsg, setPrevMsg] = useState("");
-  const [timeoutToSendMsg, setTimeoutToSendMsg] = useState(5);
+  const [timeoutToSendMsg, setTimeoutToSendMsg] = useState(2);
 
   let isMicActive = useAudioSensitivity(activeButton);
   if (activeButton !== "start") {
@@ -41,23 +40,32 @@ const useRecordAudio = (
   }, [sendMessage, playResponse, stopOngoingAudio]);
 
   useEffect(() => {
-    if (transcript.text) {
+    const timer = setTimeout(() => {
       setPrevMsg(currMsg);
-      setCurrMsg(transcript.text);
+      if (Math.random() > 0.5) {
+        setCurrMsg(currMsg + "hello world, ");
+      }
       console.log("Test: currMsg: ", currMsg, "prevMsg: ", prevMsg);
       if (currMsg === prevMsg) {
         console.log("Test: timeoutToSendMsg", timeoutToSendMsg);
         setTimeoutToSendMsg(timeoutToSendMsg - 1);
         if (timeoutToSendMsg === 0) {
+          setMessage(currMsg);
+          setCurrMsg("");
+          setPrevMsg("");
           console.log("Test: handleSendMessage");
           handleSendMessage();
-          setTimeoutToSendMsg(5);
+          setTimeoutToSendMsg(2);
         }
       } else {
-        setTimeoutToSendMsg(5);
+        setTimeoutToSendMsg(2);
         setMessage(transcript.text);
       }
-    }
+      if (transcript.text) {
+        setMessage(transcript.text);
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
   }, [
     transcript,
     transcript.text,
@@ -68,21 +76,21 @@ const useRecordAudio = (
     handleSendMessage,
   ]);
 
-  useEffect(() => {
-    let readyToSend =
-      !transcribing &&
-      wasTranscribing &&
-      transcript.text &&
-      transcript.text.trim() !== "";
+  // useEffect(() => {
+  //   let readyToSend =
+  //     !transcribing &&
+  //     wasTranscribing &&
+  //     transcript.text &&
+  //     transcript.text.trim() !== "";
 
-    if (readyToSend) {
-      console.log("Test: transcript.text", transcript.text);
-      handleSendMessage();
-    } else {
-      transcript.text = "";
-    }
-    setWasTranscribing(transcribing);
-  }, [transcribing, wasTranscribing, handleSendMessage, transcript]);
+  //   if (readyToSend) {
+  //     console.log("Test: transcript.text", transcript.text);
+  //     handleSendMessage();
+  //   } else {
+  //     transcript.text = "";
+  //   }
+  //   setWasTranscribing(transcribing);
+  // }, [transcribing, wasTranscribing, handleSendMessage, transcript]);
 
   useEffect(() => {
     if (isMicActive && !transcribing && isRecording) {
