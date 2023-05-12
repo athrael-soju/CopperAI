@@ -7,7 +7,9 @@ import useRecordAudio from "./hooks/useRecordAudio";
 import useButtonStates from "./hooks/useButtonStates";
 
 function MainApp({ user }) {
-  const { setMessage, loading, sendMessage } = useMessageHandler(user.username);
+  const { setMessage, loading, message, sendMessage } = useMessageHandler(
+    user.username
+  );
   const { playResponse, stopOngoingAudio } = useAudioHandler();
   const {
     isRecording,
@@ -21,6 +23,7 @@ function MainApp({ user }) {
     useRecordAudio(
       setMessage,
       sendMessage,
+      message,
       playResponse,
       stopOngoingAudio,
       isRecording,
