@@ -21,9 +21,10 @@ const useRecordAudio = (
   } = useWhisper({
     apiKey: env.OPENAI_API_KEY,
     streaming: true,
+    timeSlice: 2_000
   });
 
-  const [wasTranscribing, setWasTranscribing] = useState(false);
+  //const [wasTranscribing, setWasTranscribing] = useState(false);
   const [currMsg, setCurrMsg] = useState("");
   const [prevMsg, setPrevMsg] = useState("");
   const [timeoutToSendMsg, setTimeoutToSendMsg] = useState(2);
@@ -46,7 +47,7 @@ const useRecordAudio = (
         setCurrMsg(currMsg + "hello world, ");
       }
       console.log("Test: currMsg: ", currMsg, "prevMsg: ", prevMsg);
-      if (currMsg === prevMsg) {
+      if (currMsg !== null && currMsg === prevMsg) {
         console.log("Test: timeoutToSendMsg", timeoutToSendMsg);
         setTimeoutToSendMsg(timeoutToSendMsg - 1);
         if (timeoutToSendMsg === 0) {
