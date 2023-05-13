@@ -1,119 +1,54 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useWhisper } from "@chengsokdara/use-whisper";
 import env from "react-dotenv";
-import useAudioSensitivity from "./useAudioSensitivity";
 
-const useRecordAudio = (
-  setMessage,
-  sendMessage,
-  message,
-  playResponse,
-  stopOngoingAudio,
-  isRecording,
-  setIsRecording,
-  activeButton
-) => {
+const useRecordAudio = (sendMessage, playResponse, stopOngoingAudio) => {
   const {
     transcribing,
-    transcript,
-    speaking,
     pauseRecording,
     startRecording,
+    transcript,
     stopRecording,
   } = useWhisper({
     apiKey: env.OPENAI_API_KEY,
-    streaming: true,
-    nonStop: true,
-    stopTimeout: 10000,
+    nonStop: true, 
+    stopTimeout: 3000,
   });
 
-  const [wasTranscribing, setWasTranscribing] = useState(false);
-  const isMicActive = useAudioSensitivity();
-  const stopRecordingTimeoutRef = useRef();
+  const [response, setResponse] = useState(null);
+  const [lastTranscript, setLastTranscript] = useState("");
+  const sendingMessage = useRef(false);
 
   useEffect(() => {
-    console.log(
-      "isMicActive: ",
-      isMicActive,
-      "transcribing: ",
-      transcribing,
-      "speaking: ",
-      speaking,
-      "message: ",
-      message
-    );
-    if (!isMicActive && !transcribing && !speaking && message) {
-      console.log("User stopped speaking, scheduling stopRecording");
-      stopRecordingTimeoutRef.current = setTimeout(() => {
-        console.log("Executing scheduled stopRecording");
-        stopRecording().then(() => {
-          setIsRecording(false);
-        });
-      }, 2000);
-    } else if (isMicActive && stopRecordingTimeoutRef.current) {
-      console.log("User started speaking, cancelling scheduled stopRecording");
-      clearTimeout(stopRecordingTimeoutRef.current);
-      stopRecordingTimeoutRef.current = null;
-    }
-  }, [
-    isMicActive,
-    stopRecording,
-    transcript,
-    transcribing,
-    wasTranscribing,
-    speaking,
-    message,
-    setMessage,
-    setIsRecording,
-  ]);
-
-  useEffect(() => {
-    if (transcript.text) {
-      setMessage(transcript.text);
-    }
-  }, [transcript.text, setMessage]);
-
-  const handleSendMessage = useCallback(async () => {
-    stopOngoingAudio();
-    const newResponse = await sendMessage();
-    await playResponse(newResponse);
-  }, [sendMessage, playResponse, stopOngoingAudio]);
-
-  useEffect(() => {
-    if (
-      !transcribing &&
-      wasTranscribing &&
-      transcript.text &&
-      transcript.text.trim() !== ""
-    ) {
+    const handleSendMessage = async () => {
+      if (transcript.text !== lastTranscript && !sendingMessage.current) {
+        sendingMessage.current = true;
+        const response = await sendMessage(transcript.text);
+        setLastTranscript(transcript.text);
+        transcript.text = "";
+        setResponse(response);
+        sendingMessage.current = false;
+      }
+    };
+    if (!transcribing && transcript.text && transcript.text.trim() !== "") {
       handleSendMessage();
-    } else {
-      //transcript.text = "";
     }
-    setWasTranscribing(transcribing);
   }, [
-    transcribing,
-    wasTranscribing,
-    handleSendMessage,
     transcript,
+    sendMessage,
+    playResponse,
+    stopOngoingAudio,
     stopRecording,
+    transcribing,
+    lastTranscript,
   ]);
 
   useEffect(() => {
-    if (isMicActive && !transcribing && isRecording) {
-      setIsRecording(true);
-      stopOngoingAudio();
-      startRecording();
+    if (response) {
+      playResponse(response);
+      setResponse(null);
     }
-  }, [
-    isMicActive,
-    transcribing,
-    startRecording,
-    stopOngoingAudio,
-    isRecording,
-    setIsRecording,
-    activeButton,
-  ]);
+  }, [response, playResponse]);
 
   return {
     transcribing,

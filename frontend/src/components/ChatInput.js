@@ -1,14 +1,7 @@
 import React from "react";
 import { Button, Card, Form, InputGroup } from "react-bootstrap";
 
-const ChatInput = ({
-  message,
-  setMessage,
-  sendMessage,
-  transcribing,
-  playResponse,
-  stopOngoingAudio,
-}) => {
+const ChatInput = ({ sendMessage, playResponse, stopOngoingAudio }) => {
   const handleListenToAudio = () => {
     stopOngoingAudio();
     playResponse();
