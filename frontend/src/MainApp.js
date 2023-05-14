@@ -18,7 +18,7 @@ function MainApp({ user }) {
   } = useButtonStates();
 
   const { transcribing, pauseRecording, startRecording, stopRecording } =
-    useRecordAudio(sendMessage, playResponse, stopOngoingAudio);
+    useRecordAudio(sendMessage, playResponse, stopOngoingAudio, activeButton);
 
   return (
     <div className="container app-container">

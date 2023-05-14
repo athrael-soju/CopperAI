@@ -2,7 +2,20 @@ import { useState, useEffect, useRef } from "react";
 import { useWhisper } from "@chengsokdara/use-whisper";
 import env from "react-dotenv";
 
-const useRecordAudio = (sendMessage, playResponse, stopOngoingAudio) => {
+import useAudioSensitivity from "./useAudioSensitivity";
+
+const GRACE_PERIOD_DURATION = 3000;
+
+const useRecordAudio = (
+  sendMessage,
+  playResponse,
+  stopOngoingAudio,
+  activeButton
+) => {
+  const [recording, setRecording] = useState(false);
+  const isMicActive = useAudioSensitivity();
+  const gracePeriodTimeout = useRef(null);
+
   const {
     transcribing,
     pauseRecording,
@@ -11,44 +24,50 @@ const useRecordAudio = (sendMessage, playResponse, stopOngoingAudio) => {
     stopRecording,
   } = useWhisper({
     apiKey: env.OPENAI_API_KEY,
-    nonStop: true, 
-    stopTimeout: 3000,
   });
 
-  const [response, setResponse] = useState(null);
-  const [lastTranscript, setLastTranscript] = useState("");
-  const sendingMessage = useRef(false);
-
   useEffect(() => {
-    const handleSendMessage = async () => {
-      if (transcript.text !== lastTranscript && !sendingMessage.current) {
-        sendingMessage.current = true;
-        const response = await sendMessage(transcript.text);
-        setLastTranscript(transcript.text);
-        transcript.text = "";
-        setResponse(response);
-        sendingMessage.current = false;
+    if (activeButton === "start") {
+      if (isMicActive && !recording) {
+        stopOngoingAudio();
+        startRecording();
+        setRecording(true);
+      } else if (!isMicActive && recording) {
+        if (gracePeriodTimeout.current) {
+          clearTimeout(gracePeriodTimeout.current);
+        }
+        gracePeriodTimeout.current = setTimeout(() => {
+          stopRecording();
+          setRecording(false);
+        }, GRACE_PERIOD_DURATION);
       }
-    };
-    if (!transcribing && transcript.text && transcript.text.trim() !== "") {
-      handleSendMessage();
+      return () => {
+        if (gracePeriodTimeout.current) {
+          clearTimeout(gracePeriodTimeout.current);
+        }
+      };
     }
   }, [
-    transcript,
-    sendMessage,
-    playResponse,
-    stopOngoingAudio,
+    isMicActive,
+    recording,
+    startRecording,
     stopRecording,
-    transcribing,
-    lastTranscript,
+    stopOngoingAudio,
+    activeButton,
   ]);
 
   useEffect(() => {
-    if (response) {
-      playResponse(response);
-      setResponse(null);
+    if (activeButton === "start") {
+      if (!recording && transcript.text) {
+        let message = transcript.text;
+        transcript.text = "";
+        (async () => {
+          const response = await sendMessage(message);
+          playResponse(response);
+        })();
+      }
     }
-  }, [response, playResponse]);
+  }, [recording, transcript, sendMessage, playResponse, activeButton]);
 
   return {
     transcribing,
