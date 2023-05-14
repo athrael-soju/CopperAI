@@ -1,75 +1,73 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useWhisper } from "@chengsokdara/use-whisper";
 import env from "react-dotenv";
+
 import useAudioSensitivity from "./useAudioSensitivity";
 
+const GRACE_PERIOD_DURATION = 3000;
+
 const useRecordAudio = (
-  setMessage,
   sendMessage,
   playResponse,
   stopOngoingAudio,
-  isRecording,
-  setIsRecording,
   activeButton
 ) => {
+  const [recording, setRecording] = useState(false);
+  const isMicActive = useAudioSensitivity();
+  const gracePeriodTimeout = useRef(null);
+
   const {
     transcribing,
-    transcript,
     pauseRecording,
     startRecording,
+    transcript,
     stopRecording,
   } = useWhisper({
     apiKey: env.OPENAI_API_KEY,
-    streaming: true,
-    nonStop: true,
   });
 
-  const [wasTranscribing, setWasTranscribing] = useState(false);
-  let isMicActive = useAudioSensitivity(activeButton);
-  if (activeButton !== "start") {
-    isMicActive = false;
-  }
   useEffect(() => {
-    if (transcript.text) {
-      setMessage(transcript.text);
-    }
-  }, [transcript.text, setMessage]);
-
-  const handleSendMessage = useCallback(async () => {
-    stopOngoingAudio();
-    const newResponse = await sendMessage();
-    await playResponse(newResponse);
-  }, [sendMessage, playResponse, stopOngoingAudio]);
-
-  useEffect(() => {
-    if (
-      !transcribing &&
-      wasTranscribing &&
-      transcript.text &&
-      transcript.text.trim() !== ""
-    ) {
-      handleSendMessage();
-    } else {
-      transcript.text = "";
-    }
-    setWasTranscribing(transcribing);
-  }, [transcribing, wasTranscribing, handleSendMessage, transcript]);
-
-  useEffect(() => {
-    if (isMicActive && !transcribing && isRecording) {
-      setIsRecording(true);
-      stopOngoingAudio();
-      startRecording();
+    if (activeButton === "start") {
+      if (isMicActive && !recording) {
+        stopOngoingAudio();
+        startRecording();
+        setRecording(true);
+      } else if (!isMicActive && recording) {
+        if (gracePeriodTimeout.current) {
+          clearTimeout(gracePeriodTimeout.current);
+        }
+        gracePeriodTimeout.current = setTimeout(() => {
+          stopRecording();
+          setRecording(false);
+        }, GRACE_PERIOD_DURATION);
+      }
+      return () => {
+        if (gracePeriodTimeout.current) {
+          clearTimeout(gracePeriodTimeout.current);
+        }
+      };
     }
   }, [
     isMicActive,
-    transcribing,
+    recording,
     startRecording,
+    stopRecording,
     stopOngoingAudio,
-    isRecording,
-    setIsRecording,
     activeButton,
   ]);
+
+  useEffect(() => {
+    if (activeButton === "start") {
+      if (!recording && transcript.text) {
+        let message = transcript.text;
+        transcript.text = "";
+        (async () => {
+          const response = await sendMessage(message);
+          playResponse(response);
+        })();
+      }
+    }
+  }, [recording, transcript, sendMessage, playResponse, activeButton]);
 
   return {
     transcribing,

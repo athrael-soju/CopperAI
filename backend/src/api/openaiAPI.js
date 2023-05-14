@@ -18,7 +18,11 @@ const openaiAPI = {
       console.log("OpenAI: response generated: ", response);
       return response;
     } catch (err) {
-      console.error("OpenAI: error generating response", err);
+      console.error(
+        "OpenAI: error generating response:",
+        err.response.status,
+        err.response.statusText
+      );
       return "No response, try asking again";
     }
   },
