@@ -32,7 +32,10 @@
 
 ## 🧐 About <a name = "about"></a>
 
-It's fun!.
+WhisperChat is an Open Source application that allows fully voiced conversation with chatGPT. Customization allows:
+    - Use of Pinecone for reducing # of API calls to OpenAI API(although its use in conversation is limited)
+    - Initialization with a prompt, although with ChatGPT 3.5 Turbo it's not as effective/usable. 
+    - ...
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
@@ -42,40 +45,16 @@ These instructions will get you a copy of the project up and running on your loc
 
 - Software/Libraries:
 
-```
-- Docker 4.16 with Docker Compose V2 enabled
-- Node.js 18+
-- React.js 18+
-```
+    ```
+    - Docker 4.16 with Docker Compose V2 enabled
+    - Node.js 18+
+    - React.js 18+
+    ```
 
 - Credentials:
-
-```
-- OpenAI API key: https://platform.openai.com/account/api-keys
-- Google Cloud TTS API key: https://cloud.google.com/text-to-speech
-```
-
-- Environment Variables:
-
-```
-- Rename frontend\.env.local to frontend\.env and set the values:
-    - OPENAI_API_KEY=''
-    - SERVER_PORT=5000
-    - SERVER_ADDRESS='http://localhost'
-    - SERVER_MESSAGE_ENDPOINT='/message'
-    - SERVER_SPEAK_ENDPOINT='/speak'
-    - AUDIO_DB_SENSITIVITY='-45'
-- Rename backend\.env.local to backend\.env and set values:
-    - SERVER_PORT=5000
-    - OPENAI_API_KEY="YOUR_API_KEY"
-    - OPENAI_API_MODEL="gpt-3.5-turbo"
-    - GOOGLE_CLOUD_TTS_LANGUAGE="en-US"
-    - GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J"
-    - GOOGLE_CLOUD_TTS_GENDER="MALE"
-    - GOOGLE_CLOUD_TTS_ENCODING="MP3"
-```
-
-- rename backend\credentials\google.api.local.json into backend\credentials\google.api.json and paste details of you google service_account key file details
+    - [OpenAI API key](https://platform.openai.com/account/api-keys)
+    - [Google Cloud TTS API key](https://cloud.google.com/text-to-speech)
+    - [Pinecone API key](https://www.pinecone.io/)
 
 ### Installing
 
@@ -83,32 +62,94 @@ These instructions will get you a copy of the project up and running on your loc
   ```
   git clone https://github.com/athrael-soju/whisperChat.git'
   ```
-- Run npm install in both backend and frontend folders:
+- Create API keys for:
+    ```
+    - OpenAI API key (You can get some free credits upon account creation)
+    - Google Gloud Service Account JSON credentials (Again, you get some allowance with a free account creation)
+    - Pinecone API key (There's a waitlist for a free account)
+    ```
+
+- Set Environment Variables (Your values may vary):
+
+    ```
+    - Rename frontend\.env.local to frontend\.env and set the values:
+        # OpenAI
+        OPENAI_API_KEY='YOUR_API_KEY'
+        # Backend
+        SERVER_PORT=5000
+        SERVER_ADDRESS='http://localhost'
+        SERVER_MESSAGE_ENDPOINT='/message'
+        SERVER_SPEAK_ENDPOINT='/speak'
+        SERVER_LOGIN_ENDPOINT='/auth/login'
+        SERVER_REGISTER_ENDPOINT='/auth/register'
+        SERVER_GUEST_ENDPOINT='/auth/guest'
+        AUDIO_DB_SENSITIVITY='-55' - Adjust as needed
+    ```
+    ```
+    - Rename backend\.env.local to backend\.env and set values:
+        - NODE_ENV="dev"
+        - SERVER_PORT=5000
+        - # OpenAI
+        - OPENAI_API_KEY="YOUR_API_KEY"
+        - OPENAI_API_MODEL="gpt-3.5-turbo"
+        - # Model Load Parameters
+        - MODEL_DIRECTIVE="directive"
+        - # Google Cloud TTS
+        - GOOGLE_CLOUD_TTS_LANGUAGE="en-US"
+        - GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J"	
+        - GOOGLE_CLOUD_TTS_GENDER="MALE"
+        - GOOGLE_CLOUD_TTS_ENCODING="MP3"
+        - # DB & Cache
+        - MONGO_URI="mongodb://admin:secret@mongodb:27017/myapp?authSource=admin"
+        - # Secrets
+        - JWT_SECRET="secret"
+        - # Pinecone Vector Search
+        - PINECONE_ENABLED=false
+        - PINECONE_API_KEY="1edad7a6-bb98-49c7-adf0-3f714363791d"
+        - PINECONE_ADDRESS="http://pinecone"
+        - PINECONE_PORT=4000
+        - PINECONE_TOPK=5
+        - PINECONE_THRESHOLD=0.95
+    ```
+    ```
+   - If you choose to use Pinecone, Rename pinecone\.env.local to pinecone\.env and set values:    
+        # OpenAI
+        OPENAI_API_KEY="YOUR_API_KEY"
+        # Pinecone Vector Search
+        PINECONE_API_KEY="YOUR_API_KEY"
+        PINECONE_ADDRESS="http://pinecone"
+        PINECONE_PORT=4000
+        PINECONE_ENVIRONMENT="YOUR_PINECONE_ENV"
+        PINECONE_NAMESPACE="default"
+        PINECONE_INDEX="whisper-index"
+    ```
+    ```
+    - Additionally, replace backend/credentials/google.api.local.json with backend/credentials/google.api.json and copy/paste your google cloud JSON credentials there.
+    ```
+
+- Run npm install in each service folder:
 
   ```
-  cd frontend
+  cd frontend / backend / pinecone
   npm install
-
-  cd backend
-  npm install
   ```
 
-- Alternatively, you can run with Docker
+- Alternatively, you can run them all with Docker
   ```
-  docker-compose up --build -d
+  - docker-compose up --build -d for all services
   ```
 
 You should be able to access the application at http://localhost:3000
 
 ## 🎈 Usage <a name="usage"></a>
-
+- Once deployed, login as guest, or create a basic account.
 - Record allows the user to initiate continuous discussion.
 - Pause will pause recording, but pressing Record again will resume it.
 - Stop will stop the ongoing discussion.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
-- TODO
+- No Deployments currently available.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
@@ -124,5 +165,4 @@ You should be able to access the application at http://localhost:3000
 - [@athrael-soju](https://github.com/athrael-soju) - Idea & Initial work
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
-
-- TODO
+- Your name goes here :)
