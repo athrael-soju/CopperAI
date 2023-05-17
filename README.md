@@ -75,65 +75,66 @@ These instructions will get you a copy of the project up and running on your loc
 
 - Set Environment Variables for each service:
 
-  ```
   - Rename frontend\.env.local to frontend\.env and set the values:
-      # OpenAI
-      OPENAI_API_KEY='YOUR_API_KEY'
-      # Backend
-      SERVER_PORT=5000 - Adjust as needed
-      SERVER_ADDRESS='http://localhost' - Adjust as needed
-      SERVER_MESSAGE_ENDPOINT='/message'
-      SERVER_SPEAK_ENDPOINT='/speak'
-      SERVER_LOGIN_ENDPOINT='/auth/login'
-      SERVER_REGISTER_ENDPOINT='/auth/register'
-      SERVER_GUEST_ENDPOINT='/auth/guest'
-      AUDIO_DB_SENSITIVITY='-55' - Adjust as needed
-  ```
 
   ```
+  # OpenAI
+  OPENAI_API_KEY='YOUR_API_KEY'
+  # Backend
+  SERVER_PORT=5000 - Adjust as needed
+  SERVER_ADDRESS='http://localhost' - Adjust as needed
+  SERVER_MESSAGE_ENDPOINT='/message'
+  SERVER_SPEAK_ENDPOINT='/speak'
+  SERVER_LOGIN_ENDPOINT='/auth/login'
+  SERVER_REGISTER_ENDPOINT='/auth/register'
+  SERVER_GUEST_ENDPOINT='/auth/guest'
+  AUDIO_DB_SENSITIVITY='-55' - Adjust as needed
+  ```
+
   - Rename backend\.env.local to backend\.env and set values:
-      NODE_ENV="dev"
-      SERVER_PORT=5000 - Adjust as needed
-      # OpenAI
-      OPENAI_API_KEY="YOUR_API_KEY"
-      OPENAI_API_MODEL="gpt-3.5-turbo"
-      # Model Load Parameters
-      DIRECTIVE_ENABLED=false
-      MODEL_DIRECTIVE="directive" Choose a directive from the list of directives in the backend/src/data folder
-      # Google Cloud TTS
-      GOOGLE_CLOUD_TTS_LANGUAGE="en-US" - Adjust as needed
-      GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J" - Adjust as needed
-      GOOGLE_CLOUD_TTS_GENDER="MALE" - Adjust as needed
-      GOOGLE_CLOUD_TTS_ENCODING="MP3" - Adjust as needed
-      # DB & Cache
-      MONGO_URI="mongodb://admin:secret@mongodb:27017/myapp?authSource=admin" - Adjust as needed
-      # Secrets
-      JWT_SECRET="secret"
-      # Pinecone Vector Search
-      PINECONE_ENABLED=false - Adjust as needed
-      PINECONE_API_KEY="YOUR_API_KEY"
-      PINECONE_ADDRESS="http://pinecone"
-      PINECONE_PORT=4000 - Adjust as needed
-      PINECONE_TOPK=5 - Adjust as needed
-      PINECONE_THRESHOLD=0.95 - Adjust as needed
-  ```
 
   ```
+  NODE_ENV="dev"
+  SERVER_PORT=5000 - Adjust as needed
+  # OpenAI
+  OPENAI_API_KEY="YOUR_API_KEY"
+  OPENAI_API_MODEL="gpt-3.5-turbo"
+  # Model Load Parameters
+  DIRECTIVE_ENABLED=false
+  MODEL_DIRECTIVE="directive" Choose a directive from the list of directives in the backend/src/data folder
+  # Google Cloud TTS
+  GOOGLE_CLOUD_TTS_LANGUAGE="en-US" - Adjust as needed
+  GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J" - Adjust as needed
+  GOOGLE_CLOUD_TTS_GENDER="MALE" - Adjust as needed
+  GOOGLE_CLOUD_TTS_ENCODING="MP3" - Adjust as needed
+  # DB & Cache
+  MONGO_URI="mongodb://admin:secret@mongodb:27017/myapp?authSource=admin" - Adjust as needed
+  # Secrets
+  JWT_SECRET="secret"
+  # Pinecone Vector Search
+  PINECONE_ENABLED=false - Adjust as needed
+  PINECONE_API_KEY="YOUR_API_KEY"
+  PINECONE_ADDRESS="http://pinecone"
+  PINECONE_PORT=4000 - Adjust as needed
+  PINECONE_TOPK=5 - Adjust as needed
+  PINECONE_THRESHOLD=0.95 - Adjust as needed
+  ```
+
   - If you choose to use Pinecone, Rename pinecone\.env.local to pinecone\.env and set values:
-      # OpenAI
-      OPENAI_API_KEY="YOUR_API_KEY"
-      # Pinecone Vector Search
-      PINECONE_API_KEY="YOUR_API_KEY"
-      PINECONE_ADDRESS="http://pinecone" - Adjust as needed
-      PINECONE_PORT=4000 - Adjust as needed
-      PINECONE_ENVIRONMENT="YOUR_PINECONE_ENV"
-      PINECONE_NAMESPACE="default" - Adjust as needed
-      PINECONE_INDEX="whisper-index" - Adjust as needed
-  ```
 
   ```
-  - Additionally, replace backend/credentials/google.api.local.json with backend/credentials/google.api.json and copy/paste your google cloud JSON credentials there
+  # OpenAI
+  OPENAI_API_KEY="YOUR_API_KEY"
+  # Pinecone Vector Search
+  PINECONE_API_KEY="YOUR_API_KEY"
+  PINECONE_ADDRESS="http://pinecone" - Adjust as needed
+  PINECONE_PORT=4000 - Adjust as needed
+  PINECONE_ENVIRONMENT="YOUR_PINECONE_ENV"
+  PINECONE_NAMESPACE="default" - Adjust as needed
+  PINECONE_INDEX="whisper-index" - Adjust as needed
   ```
+
+- Additionally, replace backend/credentials/google.api.local.json with backend/credentials/google.api.json and copy/paste your google cloud JSON credentials there
 
 - Start Mongodb Docker container (if you don't have it installed locally):
 
