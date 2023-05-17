@@ -105,7 +105,7 @@ These instructions will get you a copy of the project up and running on your loc
         - JWT_SECRET="secret"
         - # Pinecone Vector Search
         - PINECONE_ENABLED=false
-        - PINECONE_API_KEY="1edad7a6-bb98-49c7-adf0-3f714363791d"
+        - PINECONE_API_KEY="YOUR_API_KEY"
         - PINECONE_ADDRESS="http://pinecone"
         - PINECONE_PORT=4000
         - PINECONE_TOPK=5
