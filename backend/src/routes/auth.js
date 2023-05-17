@@ -77,7 +77,9 @@ router.post("/login", async (req, res) => {
 
 router.get("/guest", (req, res) => {
   try {
-    initDirective("system", "guest", directive);
+    if (process.env.DIRECTIVE_ENABLED === "true") {
+      initDirective("system", "guest", directive);
+    }
     res.status(200).json({ username: "guest" });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
