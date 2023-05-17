@@ -33,7 +33,10 @@
 
 ## 🧐 About <a name = "about"></a>
 
-WhisperChat is an Open Source application that allows fully voiced conversation with chatGPT. Customization allows: - Use of Pinecone for reducing # of API calls to OpenAI API(although its use in conversation is limited) - Initialization with a prompt, although with ChatGPT 3.5 Turbo it's not as effective/usable. - ...
+WhisperChat is an Open Source application that allows fully voiced conversation with chatGPT. Customization allows: 
+- Use of Pinecone for reducing # of API calls to OpenAI API(although its use in conversation is limited) 
+- Initialization with a prompt, although with ChatGPT 3.5 Turbo it's not as effective/usable. 
+- More to come!
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
