@@ -92,30 +92,30 @@ These instructions will get you a copy of the project up and running on your loc
 
   ```
   - Rename backend\.env.local to backend\.env and set values:
-      - NODE_ENV="dev"
-      - SERVER_PORT=5000 - Adjust as needed
-      - # OpenAI
-      - OPENAI_API_KEY="YOUR_API_KEY"
-      - OPENAI_API_MODEL="gpt-3.5-turbo"
-      - # Model Load Parameters
-      - DIRECTIVE_ENABLED=false
-      - MODEL_DIRECTIVE="directive" Choose a directive from the list of directives in the backend/src/data folder
-      - # Google Cloud TTS
-      - GOOGLE_CLOUD_TTS_LANGUAGE="en-US" - Adjust as needed
-      - GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J" - Adjust as needed
-      - GOOGLE_CLOUD_TTS_GENDER="MALE" - Adjust as needed
-      - GOOGLE_CLOUD_TTS_ENCODING="MP3" - Adjust as needed
-      - # DB & Cache
-      - MONGO_URI="mongodb://admin:secret@mongodb:27017/myapp?authSource=admin" - Adjust as needed
-      - # Secrets
-      - JWT_SECRET="secret"
-      - # Pinecone Vector Search
-      - PINECONE_ENABLED=false - Adjust as needed
-      - PINECONE_API_KEY="YOUR_API_KEY"
-      - PINECONE_ADDRESS="http://pinecone"
-      - PINECONE_PORT=4000 - Adjust as needed
-      - PINECONE_TOPK=5 - Adjust as needed
-      - PINECONE_THRESHOLD=0.95 - Adjust as needed
+      NODE_ENV="dev"
+      SERVER_PORT=5000 - Adjust as needed
+      # OpenAI
+      OPENAI_API_KEY="YOUR_API_KEY"
+      OPENAI_API_MODEL="gpt-3.5-turbo"
+      # Model Load Parameters
+      DIRECTIVE_ENABLED=false
+      MODEL_DIRECTIVE="directive" Choose a directive from the list of directives in the backend/src/data folder
+      # Google Cloud TTS
+      GOOGLE_CLOUD_TTS_LANGUAGE="en-US" - Adjust as needed
+      GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J" - Adjust as needed
+      GOOGLE_CLOUD_TTS_GENDER="MALE" - Adjust as needed
+      GOOGLE_CLOUD_TTS_ENCODING="MP3" - Adjust as needed
+      # DB & Cache
+      MONGO_URI="mongodb://admin:secret@mongodb:27017/myapp?authSource=admin" - Adjust as needed
+      # Secrets
+      JWT_SECRET="secret"
+      # Pinecone Vector Search
+      PINECONE_ENABLED=false - Adjust as needed
+      PINECONE_API_KEY="YOUR_API_KEY"
+      PINECONE_ADDRESS="http://pinecone"
+      PINECONE_PORT=4000 - Adjust as needed
+      PINECONE_TOPK=5 - Adjust as needed
+      PINECONE_THRESHOLD=0.95 - Adjust as needed
   ```
 
   ```
