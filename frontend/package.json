@@ -36,8 +36,8 @@
   "scripts": {
     "start": "react-dotenv && react-scripts start",
     "build": "react-dotenv && react-scripts build",
+    "test": "react-dotenv && react-scripts test ",
     "serve": "react-dotenv && serve build",
-    "test": "jest --env=jsdom --coverage",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
