@@ -150,12 +150,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 - Alternatively, you can run them all with Docker.
 
-```
-docker-compose up --build -d using the docker-compose.yml file
-docker-compose up --build -d frontend for frontend only
-docker-compose up --build -d backend for backend only
-docker-compose up --build -d pinecone for pinecone only
-```
+  ```
+  docker-compose up --build -d using the docker-compose.yml file
+  docker-compose up --build -d frontend for frontend only
+  docker-compose up --build -d backend for backend only
+  docker-compose up --build -d pinecone for pinecone only
+  ```
 
 You should be able to access the application at http://localhost:3000 (or whichever port you set in the frontend\.env file)
 
