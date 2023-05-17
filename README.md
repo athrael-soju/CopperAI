@@ -134,7 +134,7 @@ These instructions will get you a copy of the project up and running on your loc
   PINECONE_INDEX="whisper-index" - Adjust as needed
   ```
 
-- Additionally, replace backend/credentials/google.api.local.json with backend/credentials/google.api.json and copy/paste your google cloud JSON credentials there
+  - Additionally, replace backend/credentials/google.api.local.json with backend/credentials/google.api.json and copy/paste your google cloud JSON credentials there
 
 - Start Mongodb Docker container (if you don't have it installed locally):
 
