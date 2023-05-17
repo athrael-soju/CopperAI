@@ -33,9 +33,10 @@
 
 ## 🧐 About <a name = "about"></a>
 
-WhisperChat is an Open Source application that allows fully voiced conversation with chatGPT. Customization allows: 
-- Use of Pinecone for reducing # of API calls to OpenAI API(although its use in conversation is limited) 
-- Initialization with a prompt, although with ChatGPT 3.5 Turbo it's not as effective/usable. 
+WhisperChat is an Open Source application that allows fully voiced conversation with chatGPT. Customization allows:
+
+- Use of Pinecone for reducing # of API calls to OpenAI API(although its use in conversation is limited)
+- Initialization with a prompt, although with ChatGPT 3.5 Turbo it's not as effective/usable.
 - More to come!
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
@@ -148,19 +149,22 @@ These instructions will get you a copy of the project up and running on your loc
   ```
 
 - Alternatively, you can run them all with Docker.
-  ```
-    - docker-compose up --build -d using the docker-compose.yml file
-    - docker-compose up --build -d frontend for frontend only
-    - docker-compose up --build -d backend for backend only
-    - docker-compose up --build -d pinecone for pinecone only
-  ```
+
+```
+docker-compose up --build -d using the docker-compose.yml file
+docker-compose up --build -d frontend for frontend only
+docker-compose up --build -d backend for backend only
+docker-compose up --build -d pinecone for pinecone only
+```
 
 You should be able to access the application at http://localhost:3000 (or whichever port you set in the frontend\.env file)
 
 ## 🎈 Usage <a name="usage"></a>
 
 - Once deployed, login as guest, or create a basic account.
-  Buttons: - Record allows the user to initiate continuous discussion. - Pause will pause recording, but pressing Record again will resume it. - Stop will stop the ongoing discussion.
+  Buttons: - Record allows the user to initiate continuous discussion.
+  - Pause will pause recording, but pressing Record again will resume it.
+  - Stop will stop the ongoing discussion.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
