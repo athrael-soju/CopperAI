@@ -6,7 +6,7 @@ const useMessageHandler = (username) => {
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async (message) => {
-    console.log("sendMessage() called", username, message);
+    console.log("User: ", username, "Message: ", message);
     setLoading(true);
     const requestOptions = {
       method: "POST",
@@ -18,7 +18,7 @@ const useMessageHandler = (username) => {
       requestOptions
     );
     const data = await response.json();
-
+    console.log("Response: ", data.message);
     setResponse(data.message);
     setLoading(false);
 
