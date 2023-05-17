@@ -29,6 +29,7 @@
 - [Built Using](#built_using)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgement)
+- [Want to Contribute?](#contribute)
 
 ## 🧐 About <a name = "about"></a>
 
@@ -179,7 +180,7 @@ You should be able to access the application at http://localhost:3000 (or whiche
 
 - [Whisper Hook by chengsokdara](https://github.com/chengsokdara/use-whisper)
 
-## Want to Contribute?
+## Want to Contribute? <a name = "#contribute"></a>
 
 - Fork the repo
 - Make your changes
