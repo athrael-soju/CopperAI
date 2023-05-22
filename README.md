@@ -164,7 +164,8 @@ You should be able to access the application at http://localhost:3000 (or whiche
 ## 🎈 Usage <a name="usage"></a>
 
 - Once deployed, login as guest, or create a basic account.
-  Buttons: - Record allows the user to initiate continuous discussion.
+  Buttons: 
+  - Record allows the user to initiate continuous discussion.
   - Pause will pause recording, but pressing Record again will resume it.
   - Stop will stop the ongoing discussion.
 
