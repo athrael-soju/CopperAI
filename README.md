@@ -23,6 +23,7 @@
 ## 📝 Table of Contents
 
 - [About](#about)
+- [Architecture](#architecture)
 - [Getting Started](#getting_started)
 - [Deployment](#deployment)
 - [Usage](#usage)
@@ -38,6 +39,13 @@ WhisperChat is an Open Source application that allows fully voiced conversation 
 - Use of Pinecone for reducing # of API calls to OpenAI API(although its use in conversation is limited)
 - Initialization with a prompt, although with ChatGPT 3.5 Turbo it's not as effective/usable.
 - More to come!
+
+## 🏗️ Architecture <a name = "architecture"></a>
+Notes: 
+- Redis Service has been removed and will be re-introduced at a later time, if needed.
+- Pinecone can be turned off via feature flag in .env of the backend Service.
+
+![whisperChat](https://github.com/athrael-soju/whisperChat/assets/25455658/becbb819-bd4c-4529-88f5-e390a280cabd)
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
