@@ -2,9 +2,6 @@
   <a href="" rel="noopener">
  <img src="https://github.com/athrael-soju/whisperChat/blob/main/Landing-s.png" alt="Project logo"></a>
 </p>
-
-<h3 align="center">This is WhisperChat</h3>
-
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
