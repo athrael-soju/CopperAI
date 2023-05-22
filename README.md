@@ -13,10 +13,6 @@
 
 ---
 
-<p align="center"> whisperChat is a fully voiced conversational partner.
-    <br> 
-</p>
-
 ## 📝 Table of Contents
 
 - [About](#about)
