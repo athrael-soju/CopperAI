@@ -150,7 +150,7 @@ These instructions will get you a copy of the project up and running on your loc
   npm install
   ```
 
-- Alternatively, you can run them all with Docker.
+- Alternatively, you can run them all with Docker (after running npm start once in the frontend to init the env.js file)
 
   ```
   docker-compose up --build -d using the docker-compose.yml file
