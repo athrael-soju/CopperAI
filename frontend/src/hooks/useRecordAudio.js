@@ -58,7 +58,7 @@ const useRecordAudio = (
 
   useEffect(() => {
     if (activeButton === "start") {
-      if (!recording && transcript.text) {
+      if (!recording && transcript.text && !transcribing) {
         let message = transcript.text;
         transcript.text = "";
         (async () => {
@@ -67,7 +67,14 @@ const useRecordAudio = (
         })();
       }
     }
-  }, [recording, transcript, sendMessage, playResponse, activeButton]);
+  }, [
+    recording,
+    transcript,
+    sendMessage,
+    playResponse,
+    activeButton,
+    transcribing,
+  ]);
 
   return {
     transcribing,
