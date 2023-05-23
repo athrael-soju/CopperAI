@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="" rel="noopener">
- <img src="https://github.com/athrael-soju/whisperChat/blob/main/Landing-s.png" alt="Project logo"></a>
+  <a href="https://youtu.be/sKZhZ-gwTqY" rel="noopener">
+ <img src="https://github.com/athrael-soju/whisperChat/blob/main/Landing-s.png" alt="Project logo"></a> 
 </p>
 <div align="center">
 
@@ -190,7 +190,7 @@ You should be able to access the application at http://localhost:3000 (or whiche
 
 - [Whisper Hook by chengsokdara](https://github.com/chengsokdara/use-whisper)
 
-## Want to Contribute? <a name = "#contribute"></a>
+## Want to Contribute? <a name = "contribute"></a>
 
 - Fork the repo
 - Make your changes
