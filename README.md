@@ -2,9 +2,6 @@
   <a href="" rel="noopener">
  <img src="https://github.com/athrael-soju/whisperChat/blob/main/Landing-s.png" alt="Project logo"></a>
 </p>
-
-<h3 align="center">Project Title</h3>
-
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
@@ -16,13 +13,10 @@
 
 ---
 
-<p align="center"> whisperChat is a fully voiced conversational partner.
-    <br> 
-</p>
-
 ## 📝 Table of Contents
 
 - [About](#about)
+- [Architecture](#architecture)
 - [Getting Started](#getting_started)
 - [Deployment](#deployment)
 - [Usage](#usage)
@@ -38,6 +32,13 @@ WhisperChat is an Open Source application that allows fully voiced conversation 
 - Use of Pinecone for reducing # of API calls to OpenAI API(although its use in conversation is limited)
 - Initialization with a prompt, although with ChatGPT 3.5 Turbo it's not as effective/usable.
 - More to come!
+
+## 🏗️ Architecture <a name = "architecture"></a>
+Notes: 
+- Redis Service has been removed and will be re-introduced at a later time, if needed.
+- Pinecone can be turned off via feature flag in .env of the backend Service.
+
+![whisperChat](https://github.com/athrael-soju/whisperChat/assets/25455658/becbb819-bd4c-4529-88f5-e390a280cabd)
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
@@ -163,7 +164,8 @@ You should be able to access the application at http://localhost:3000 (or whiche
 ## 🎈 Usage <a name="usage"></a>
 
 - Once deployed, login as guest, or create a basic account.
-  Buttons: - Record allows the user to initiate continuous discussion.
+  Buttons: 
+  - Record allows the user to initiate continuous discussion.
   - Pause will pause recording, but pressing Record again will resume it.
   - Stop will stop the ongoing discussion.
 
