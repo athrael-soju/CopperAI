@@ -4,8 +4,7 @@ import openaiAPI from "../api/openaiAPI.js";
 
 const router = express.Router();
 export async function initDirective(role, username, directive) {
-  let response = await sendMessage(role, username, directive);
-  console.log(`Response: ${response}`);
+  await sendMessage(role, username, directive);
 }
 
 async function sendMessage(role = "user", userName, message) {
