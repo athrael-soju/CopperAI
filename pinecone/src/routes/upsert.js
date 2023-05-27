@@ -1,35 +1,32 @@
 import express from "express";
-import { createEmbedding } from "../utils/utils.js";
+import { createEmbedding, getIndex } from "../utils/utils.js";
 import { v4 as uuidv4 } from "uuid";
-import { getIndex } from "../utils/utils.js";
+
 const router = express.Router();
 
 const upsertRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
     let index = await getIndex(pinecone);
-    const { message, messageResponse } = req.body;
+    const { message, summarizedHistory } = req.body;
     console.log("Pinecone: upserting message:", message);
-    let conversation = {
-      message: message,
-      messageResponse: messageResponse,
-    };
+
     try {
-      let messageEmbedding = await createEmbedding(message);
+      let summarizedHistoryEmbedding = await createEmbedding(summarizedHistory);
       console.log("Pinecone: embeddeding message");
-      const upsertResponse = await index.upsert({
+      const upsertSummaryResponse = await index.upsert({
         upsertRequest: {
           vectors: [
             {
               id: uuidv4(),
-              values: messageEmbedding,
-              metadata: conversation,
+              values: summarizedHistoryEmbedding,
+              metadata: message,
             },
           ],
           namespace: "default",
         },
       });
-      console.log("Pinecone: upserted message:", upsertResponse);
-      res.status(200).json(upsertResponse);
+      console.log("Pinecone: upserted message:", upsertSummaryResponse);
+      res.status(200).json(upsertSummaryResponse);
     } catch (error) {
       res
         .status(500)

@@ -27,6 +27,7 @@
     "http": "^0.0.1-security",
     "jest": "^29.5.0",
     "jsonwebtoken": "^9.0.0",
+    "langchain": "^0.0.83",
     "mongoose": "^7.0.4",
     "openai": "^3.2.1",
     "say": "^0.16.0"
