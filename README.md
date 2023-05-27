@@ -76,7 +76,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 - Set Environment Variables for each service:
 
-  - Rename frontend\.env.local to frontend\.env and set the values:
+  - Rename frontend/.env.local to frontend/.env and set the values:
 
   ```
   # OpenAI
@@ -92,7 +92,7 @@ These instructions will get you a copy of the project up and running on your loc
   AUDIO_DB_SENSITIVITY='-55' - Adjust as needed
   ```
 
-  - Rename backend\.env.local to backend\.env and set values:
+  - Rename backend/.env.local to backend/.env and set values:
 
   ```
   NODE_ENV="dev"
@@ -121,7 +121,7 @@ These instructions will get you a copy of the project up and running on your loc
   PINECONE_THRESHOLD=0.95 - Adjust as needed
   ```
 
-  - If you choose to use Pinecone, Rename pinecone\.env.local to pinecone\.env and set values:
+  - If you choose to use Pinecone, Rename pinecone/.env.local to pinecone/.env and set values:
 
   ```
   # OpenAI
