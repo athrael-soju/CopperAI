@@ -7,13 +7,12 @@ const openai = new OpenAIApi(configuration);
 
 const indexName = process.env.PINECONE_INDEX;
 
-export const createEmbedding = async (message) => {
-  console.log("OpenAI: creating embedding for message");
+export const createEmbedding = async (summarizedHistory) => {
+  console.log("OpenAI: creating embedding for summarizedHistory: \n", summarizedHistory);
   const response = await openai.createEmbedding({
-    input: message,
+    input: summarizedHistory,
     model: "text-embedding-ada-002",
   });
-  console.log("OpenAI: Embedding response:", response.data);
   if (
     !response.data ||
     !response.data.data ||
@@ -23,7 +22,7 @@ export const createEmbedding = async (message) => {
     console.log("OpenAI: No embedding found");
     return null;
   }
-  console.log("OpenAI: embedded message:", response.data.data[0].embedding);
+  console.log("OpenAI: embedded summarizedHistory:");
   return response.data.data[0].embedding;
 };
 

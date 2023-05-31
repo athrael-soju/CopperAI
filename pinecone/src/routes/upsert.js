@@ -7,27 +7,27 @@ const router = express.Router();
 const upsertRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
     let index = await getIndex(pinecone);
-    const { message, summarizedHistory } = req.body;
-    console.log("Pinecone: upserting message:", message);
-
+    const { userName, message, summarizedHistory } = req.body;
+    console.log("Pinecone: upserting message...");
     try {
       let summarizedHistoryEmbedding = await createEmbedding(summarizedHistory);
-      console.log("Pinecone: embeddeding message");
+      console.log("Pinecone: upserting message...");
       const upsertSummaryResponse = await index.upsert({
         upsertRequest: {
           vectors: [
             {
               id: uuidv4(),
               values: summarizedHistoryEmbedding,
-              metadata: message,
+              metadata: { userName: userName, message: message },
             },
           ],
           namespace: "default",
         },
       });
-      console.log("Pinecone: upserted message:", upsertSummaryResponse);
+      console.log("Pinecone: upserted message");
       res.status(200).json(upsertSummaryResponse);
     } catch (error) {
+      console.log("Pinecone: error upserting data:", error);
       res
         .status(500)
         .json({ message: "Pinecone: Error upserting data", error });

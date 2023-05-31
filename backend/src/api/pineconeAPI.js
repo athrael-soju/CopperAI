@@ -3,14 +3,25 @@ import axios from "axios";
 const pineconeServiceUrl = `${process.env.PINECONE_ADDRESS}:${process.env.PINECONE_PORT}`;
 
 const pineconeAPI = {
-  async getConversationFromPinecone(message, topK) {
+  async getConversationFromPinecone(userName, message, topK) {
     console.log("Pinecone: getting conversation for message:", `'${message}'`);
     try {
       const response = await axios.post(`${pineconeServiceUrl}/query`, {
+        userName: userName,
         message: message,
         topK: topK,
       });
-      console.log("Pinecone: conversation query response:", response.data);
+      // TODO: This log should really be coming from the Pinecone service, not here
+      console.log(
+        `Pinecone: Top ${topK} conversation matches:`,
+        response.data.matches
+          .map(
+            (match) => `
+      metadata: ${JSON.stringify(match.metadata)}
+      score: ${match.score}`
+          )
+          .join("\n")
+      );
       if (
         response.data.matches.length === 0 ||
         response.data.matches[0]["score"] < process.env.PINECONE_THRESHOLD
@@ -18,24 +29,25 @@ const pineconeAPI = {
         console.log("Pinecone: no conversation found");
         return null;
       }
-      console.log("Pinecone: conversation found");
-      return response.data.matches[0]["metadata"]["messageResponse"];
+      console.log("Pinecone: conversation found: ", response.data.matches[0]);
+      return response.data.matches[0]["metadata"]["message"];
     } catch (error) {
       console.log("Pinecone: error getting conversation:", error);
       return "Pinecone: error getting conversation";
     }
   },
 
-  async storeConversationToPinecone(message, summarizedHistory) {
+  async storeConversationToPinecone(userName, message, summarizedHistory) {
     console.log("Pinecone: storing conversation history for message");
     try {
       await axios.post(`${pineconeServiceUrl}/upsert`, {
-        message,
-        summarizedHistory,
+        userName: userName,
+        message: message,
+        summarizedHistory: summarizedHistory,
       });
       console.log("Pinecone: conversation stored");
     } catch (error) {
-      console.log("Pinecone: error storing conversation:", error);
+      console.log("Pinecone: error storing conversation:", error.message);
       return "Pinecone: error storing conversation";
     }
   },
