@@ -10,46 +10,71 @@ export async function initDirective(role, username, directive) {
   await sendMessage(role, username, directive);
 }
 
-async function sendMessage(role = "user", userName, message) {
-  console.log(`Sending message: ${message}`);
+// Retrieve top k rows from DB, that correspond to user
+async function getSummarizedUserHistory(userName) {
+  console.log("Backend - Retrieving User Message History...");
   try {
-    let conversationHistory = null,
-      summarizedHistory = null,
-      simplifiedHistory = null,
-      response = null;
-
-    conversationHistory = await Conversation.find({ username: userName })
+    let conversationHistory = await Conversation.find({ username: userName })
       .sort({ date: -1 })
       .limit(10)
       .exec();
-    if (conversationHistory.length > 0) {
+    const retrieveHistoryRecords = conversationHistory?.length;
+    console.log(
+      `Backend - User Message History retrieved: {${retrieveHistoryRecords}} records: \n${conversationHistory}\n`
+    );
+    if (retrieveHistoryRecords && retrieveHistoryRecords > 0) {
       let messageNumber = 0;
-      simplifiedHistory = conversationHistory
+      console.log(`Backend - Simplifying Conversation History...`);
+      let simplifiedHistory = conversationHistory
         .map(
           (conversation) => `
-  prompt: ${++messageNumber}: '${conversation.message}'
-  response: '${conversation.response}'
-  date: ${conversation.date}`
+        prompt: ${++messageNumber}: '${conversation.message}'
+        response: '${conversation.response}'
+        date: ${conversation.date}
+        `
         )
         .join("\n");
-      // summarizedHistory is sometimes null, which causes an error
-      summarizedHistory = await langChainAPI.summarizeConversation(
+      console.log(`Backend - Conversation History Simplified: \n${simplifiedHistory}\n`);
+      console.log(`Backend - Summarizing Conversation History...`);
+      let summarizedHistory = await langChainAPI.summarizeConversation(
         simplifiedHistory
       );
+      console.log(`Backend - Conversation History Summarized: \n${summarizedHistory}\n`);
+      return summarizedHistory;
     }
+  } catch (err) {
+    console.error(
+      `Backend - Failed to Retrieve User Message History: \n${err.message}\n`
+    );
+    return null;
+  }
+}
+
+// Send Message, with summarized User History used as context (When Available)
+async function sendMessage(
+  role = "user",
+  userName,
+  message,
+  summarizedHistory
+) {
+  console.log(`Backend - Preparing to Send Message: \n${message}\n`);
+  try {
+    let response = null;
     if (process.env.PINECONE_ENABLED === "true") {
+      console.log(`Backend - Pinecone enabled. Retrieving Conversation...`);
       response = await pineconeAPI.getConversationFromPinecone(
         userName,
         message,
         process.env.PINECONE_TOPK
       );
+      console.log(`Backend - Conversation retrieved from Pinecone: \n${}\n`)
       messages.push({ role: "system", content: summarizedHistory });
     }
     if (process.env.OPENAI_ENABLED === "true") {
       messages.push({ role: role, content: message });
       response = await openaiAPI.generateResponseFromOpenAI(messages, userName);
     } else {
-      response = `OpenAI is currently disabled. Using default response: ${Math.random()}`;
+      response = `Backend - OpenAI is currently disabled. Using default response: ${Math.random()}`;
     }
 
     if (process.env.PINECONE_ENABLED === "true") {
@@ -76,7 +101,13 @@ router.post("/", async (req, res) => {
     userName = req.body.username,
     message = req.body.message;
   console.log("userName", userName);
-  const response = await sendMessage(role, userName, message);
+  const summarizedUserHistory = await getSummarizedUserHistory(userName);
+  const response = await sendMessage(
+    role,
+    userName,
+    message,
+    summarizedUserHistory
+  );
   if (response) {
     const newConversation = new Conversation({
       username: userName,
@@ -85,7 +116,7 @@ router.post("/", async (req, res) => {
       date: new Date(),
     });
     await newConversation.save();
-    console.log("Saved conversation to MongoDB");
+    console.log("Backend - Saved conversation to MongoDB");
   }
 
   res.json({ message: response });

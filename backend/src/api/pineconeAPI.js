@@ -4,27 +4,17 @@ const pineconeServiceUrl = `${process.env.PINECONE_ADDRESS}:${process.env.PINECO
 
 const pineconeAPI = {
   async getConversationFromPinecone(userName, message, topK) {
-    console.log("Pinecone: getting conversation for message:", `'${message}'`);
+    console.log(`Backend - Sending Message to Pinecone Query API: \n${message}\n`);
     try {
       const response = await axios.post(`${pineconeServiceUrl}/query`, {
         userName: userName,
         message: message,
         topK: topK,
       });
-      // TODO: This log should really be coming from the Pinecone service, not here
-      console.log(
-        `Pinecone: Top ${topK} conversation matches:`,
-        response.data.matches
-          .map(
-            (match) => `
-      metadata: ${JSON.stringify(match.metadata)}
-      score: ${match.score}`
-          )
-          .join("\n")
-      );
       if (
-        response.data.matches.length === 0 ||
-        response.data.matches[0]["score"] < process.env.PINECONE_THRESHOLD
+        response.data.matches.length === 0 
+        // If there exists a history it should always be returned.
+        //|| response.data.matches[0]["score"] < process.env.PINECONE_THRESHOLD
       ) {
         console.log("Pinecone: no conversation found");
         return null;

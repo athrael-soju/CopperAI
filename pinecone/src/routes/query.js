@@ -7,11 +7,11 @@ const router = express.Router();
 const queryRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
     const { userName, message, topK } = req.body;
+    console.log(`Pinecone - Querying Message: \n${message}\n`);
     try {
       let index = await getIndex(pinecone);
       let vector = await createEmbedding(message);
 
-      console.log("Pinecone: querying message:", message);
       const queryResponse = await index.query({
         queryRequest: {
           namespace: process.env.PINECONE_NAMESPACE,
@@ -24,11 +24,18 @@ const queryRoute = async (pinecone) => {
           },
         },
       });
+      console.log(`Pinecone - Querying Message: \n${message}\n`);
 
       if (queryResponse && queryResponse.matches.length[0] > 0) {
         console.log(
-          "Pinecone: query response top match:",
-          queryResponse.matches[0].metadata
+          `Pinecone: Top ${topK} conversation matches:`,
+          queryResponse.data.matches
+            .map(
+              (match) => `
+      metadata: ${JSON.stringify(match.metadata)}
+      score: ${match.score}`
+            )
+            .join("\n")
         );
       }
       res.status(200).json(queryResponse);
