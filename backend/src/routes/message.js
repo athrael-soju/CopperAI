@@ -66,7 +66,7 @@ async function sendMessage(role = "user", userName, message) {
         summarizedHistory,
         process.env.PINECONE_TOPK
       );
-      const enhancedResponse = `Use the following summary as your knowledgebase: ${pineconeResponse}. `;
+      const enhancedResponse = `Use the following summary of our past discussion as your knowledgebase: ${pineconeResponse}. `;
       if (pineconeResponse) {
         messages.push({ role: "system", content: enhancedResponse });
       }

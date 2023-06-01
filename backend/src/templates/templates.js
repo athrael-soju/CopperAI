@@ -4,7 +4,7 @@ const templates = {
   - The Summary should only include information retrieved from the HISTORY.
   - The Summary should be 2000 characters long, if possible and under 4000 characters.  
   - The Summary should include who the conversation is with and specify who send each message. 
-  - The Summary should be verbose and not abstract any details of the discussion.
+  - The Summary should be explicit and no details of the discussion should be simplified.
 
   HISTORY: {history}
 
