@@ -55,7 +55,7 @@ router.post("/login", async (req, res) => {
     }
 
     if (user.firstLogin) {
-      initDirective("system", username, directive);
+      await initDirective("system", username, directive);
       await user.save();
     }
 
@@ -75,10 +75,10 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/guest", (req, res) => {
+router.get("/guest", async (req, res) => {
   try {
     if (process.env.DIRECTIVE_ENABLED === "true") {
-      initDirective("system", "guest", directive);
+      await initDirective("system", "guest", directive);
     }
     res.status(200).json({ username: "guest" });
   } catch (error) {

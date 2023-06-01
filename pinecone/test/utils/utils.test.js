@@ -1,5 +1,4 @@
 import * as utils from "../../src/utils/utils";
-import { OpenAIApi } from "openai";
 import { PineconeClient } from "@pinecone-database/pinecone";
 
 jest.mock("openai", () => {

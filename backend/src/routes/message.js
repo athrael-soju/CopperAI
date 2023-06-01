@@ -5,8 +5,8 @@ import Conversation from "../models/Conversation.js";
 import langChainAPI from "../api/langChainAPI.js";
 
 const router = express.Router();
-export async function initDirective(role, username, directive) {
-  await sendMessage(role, username, directive);
+export async function initDirective(username, directive, role) {
+  await sendMessage(username, directive, role);
 }
 
 async function getSummarizedUserHistory(userName) {
@@ -51,7 +51,7 @@ async function getSummarizedUserHistory(userName) {
   }
 }
 
-async function sendMessage(role = "user", userName, message) {
+async function sendMessage(userName, message, role = "user") {
   console.log(`Backend - Preparing to Send Message: \n${message}\n`);
   try {
     let summarizedHistory = await getSummarizedUserHistory(userName);
@@ -122,7 +122,7 @@ router.post("/", async (req, res) => {
   let role = "user",
     userName = req.body.username,
     message = req.body.message;
-  const response = await sendMessage(role, userName, message);
+  const response = await sendMessage(userName, message, role);
   res.json({ message: response });
 });
 

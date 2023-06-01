@@ -2,7 +2,7 @@ import { useState } from "react";
 import env from "react-dotenv";
 
 const useMessageHandler = (username) => {
-  const [response, setResponse] = useState("");
+  const [setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async (message) => {
