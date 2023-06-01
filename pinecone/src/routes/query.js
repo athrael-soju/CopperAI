@@ -1,6 +1,5 @@
-import express, { query } from "express";
-import { createEmbedding } from "../utils/utils.js";
-import { getIndex } from "../utils/utils.js";
+import express from "express";
+import { createEmbedding, getIndex } from "../utils/utils.js";
 
 const router = express.Router();
 
@@ -25,7 +24,7 @@ const queryRoute = async (pinecone) => {
         },
       });
 
-      if (queryResponse && queryResponse.matches[0]) {
+      if (queryResponse?.matches[0]) {
         console.log(
           `Pinecone: Top ${topK} Conversation Matches:`,
           queryResponse.matches
