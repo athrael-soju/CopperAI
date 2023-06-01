@@ -26,10 +26,10 @@ const pineconeAPI = {
         return null;
       } else {
         console.log(
-          `Pinecone - Top ${topK} Conversations Retrieved. Retrieving Topmost one: \n${response.data.matches
+          `Pinecone - Top ${topK} Conversations Retrieved. Retrieving Topmost one: ${response.data.matches
             .map(
               (match) => `
-              userName: ${match.metadata.userName}              
+              userName: ${match.metadata.userName}
               summarizedHistory: ${match.metadata.summarizedHistory}
               score: ${match.score}`
             )

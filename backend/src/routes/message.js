@@ -26,14 +26,14 @@ async function getSummarizedUserHistory(userName) {
       let simplifiedHistory = conversationHistory
         .map(
           (conversation) => `
-        prompt: ${messageNumber--}: '${conversation.message}'
+        prompt ${messageNumber--}: '${conversation.message}'
         response: '${conversation.response}'
         date: ${conversation.date}
         `
         )
         .join("\n");
       console.log(
-        `Backend - Conversation History Simplified: \n${simplifiedHistory}\n`
+        `Backend - Conversation History Simplified: ${simplifiedHistory}`
       );
       let summarizedHistory = await langChainAPI.summarizeConversation(
         simplifiedHistory
