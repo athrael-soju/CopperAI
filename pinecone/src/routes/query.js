@@ -10,8 +10,7 @@ const queryRoute = async (pinecone) => {
     console.log(`Pinecone - Querying Message: \n${message}\n`);
     try {
       let index = await getIndex(pinecone);
-      let combinedMessage = message + ", " + summarizedHistory;
-      let vector = await createEmbedding(combinedMessage);
+      let vector = await createEmbedding(message + summarizedHistory);
 
       const queryResponse = await index.query({
         queryRequest: {

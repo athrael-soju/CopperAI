@@ -41,7 +41,7 @@ async function getSummarizedUserHistory(userName) {
       return summarizedHistory;
     } else {
       console.log(`Backend - No Conversation History`);
-      return "";
+      return "No Conversation History";
     }
   } catch (err) {
     console.error(
@@ -54,7 +54,7 @@ async function getSummarizedUserHistory(userName) {
 async function sendMessage(role = "user", userName, message) {
   console.log(`Backend - Preparing to Send Message: \n${message}\n`);
   try {
-    const summarizedHistory = await getSummarizedUserHistory(userName);
+    let summarizedHistory = await getSummarizedUserHistory(userName);
     let openaiResponse = null;
     let messages = [];
     let pineconeResponse = "";
@@ -66,7 +66,7 @@ async function sendMessage(role = "user", userName, message) {
         summarizedHistory,
         process.env.PINECONE_TOPK
       );
-      const enhancedResponse = `Use the following summary of our past discussion as your knowledgebase: ${pineconeResponse}. `;
+      const enhancedResponse = `Use the following summary of our past discussion as your knowledgebase: ${pineconeResponse}`;
       if (pineconeResponse) {
         messages.push({ role: "system", content: enhancedResponse });
       }
@@ -84,6 +84,20 @@ async function sendMessage(role = "user", userName, message) {
       openaiResponse = `Backend - OpenAI is currently disabled. Using default response: ${Math.random()}`;
     }
 
+    if (openaiResponse) {
+      const newConversation = new Conversation({
+        username: userName,
+        message: `${userName}: ${message}`,
+        response: `AI: ${openaiResponse}`,
+        date: new Date(),
+      });
+      await newConversation.save();
+
+      console.log("Backend - Saved conversation to MongoDB");
+    }
+
+    summarizedHistory = await getSummarizedUserHistory(userName);
+
     if (process.env.PINECONE_ENABLED === "true") {
       await pineconeAPI.storeConversationToPinecone(
         userName,
@@ -91,6 +105,7 @@ async function sendMessage(role = "user", userName, message) {
         summarizedHistory
       );
     }
+
     return openaiResponse;
   } catch (err) {
     console.log(`Backend - Error with Request: ${err}`);
@@ -108,17 +123,6 @@ router.post("/", async (req, res) => {
     userName = req.body.username,
     message = req.body.message;
   const response = await sendMessage(role, userName, message);
-  if (response) {
-    const newConversation = new Conversation({
-      username: userName,
-      message: message,
-      response: response,
-      date: new Date(),
-    });
-    await newConversation.save();
-    console.log("Backend - Saved conversation to MongoDB");
-  }
-
   res.json({ message: response });
 });
 

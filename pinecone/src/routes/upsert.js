@@ -9,7 +9,9 @@ const upsertRoute = async (pinecone) => {
     let index = await getIndex(pinecone);
     const { userName, message, summarizedHistory } = req.body;
     try {
-      let summarizedHistoryEmbedding = await createEmbedding(summarizedHistory);
+      let summarizedHistoryEmbedding = await createEmbedding(
+        message + summarizedHistory
+      );
       console.log(`Pinecone - Upserting Message...`);
       const upsertSummaryResponse = await index.upsert({
         upsertRequest: {
