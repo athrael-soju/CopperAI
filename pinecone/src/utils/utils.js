@@ -8,7 +8,9 @@ const openai = new OpenAIApi(configuration);
 const indexName = process.env.PINECONE_INDEX;
 
 export const createEmbedding = async (summarizedHistory) => {
-  console.log("OpenAI: creating embedding for summarizedHistory: \n", summarizedHistory);
+  console.log(
+    `OpenAI - Creating Embedding for SummarizedHistory: \n${summarizedHistory}\n`
+  );
   const response = await openai.createEmbedding({
     input: summarizedHistory,
     model: "text-embedding-ada-002",
@@ -19,17 +21,17 @@ export const createEmbedding = async (summarizedHistory) => {
     response.data.data.length === 0 ||
     !response.data.data[0].embedding
   ) {
-    console.log("OpenAI: No embedding found");
+    console.log(`OpenAI - No Embedding Found`);
     return null;
   }
-  console.log("OpenAI: embedded summarizedHistory:");
+  console.log(`OpenAI - Embedded summarizedHistory`);
   return response.data.data[0].embedding;
 };
 
 export const getIndex = async (pinecone) => {
   let index = await pinecone.Index(indexName);
   if (!index) {
-    console.log(`Pinecone: index ${indexName} does not exist, creating...`);
+    console.log(`Pinecone - index ${indexName} does not exist, creating...`);
     await pinecone.createIndex({
       createRequest: {
         name: indexName,
@@ -38,10 +40,10 @@ export const getIndex = async (pinecone) => {
         pod_type: "Starter",
       },
     });
-    console.log(`Pinecone: index ${indexName} created`);
+    console.log(`Pinecone - index ${indexName} created`);
   } else {
     index = pinecone.Index(indexName);
-    console.log(`Pinecone: using existing index ${indexName}...`);
+    console.log(`Pinecone - using existing index ${indexName}...`);
   }
   return index;
 };

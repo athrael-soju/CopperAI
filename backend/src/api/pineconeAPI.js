@@ -4,7 +4,9 @@ const pineconeServiceUrl = `${process.env.PINECONE_ADDRESS}:${process.env.PINECO
 
 const pineconeAPI = {
   async getConversationFromPinecone(userName, message, topK) {
-    console.log(`Backend - Sending Message to Pinecone Query API: \n${message}\n`);
+    console.log(
+      `Pinecone - Sending Message to Pinecone Query API: \n${message}\n`
+    );
     try {
       const response = await axios.post(`${pineconeServiceUrl}/query`, {
         userName: userName,
@@ -12,14 +14,17 @@ const pineconeAPI = {
         topK: topK,
       });
       if (
-        response.data.matches.length === 0 
+        response.data.matches.length === 0
         // If there exists a history it should always be returned.
         //|| response.data.matches[0]["score"] < process.env.PINECONE_THRESHOLD
       ) {
         console.log("Pinecone: no conversation found");
         return null;
       }
-      console.log("Pinecone: conversation found: ", response.data.matches[0]);
+      console.log(
+        "Pinecone: conversation found: ",
+        response.data.matches[0].metadata
+      );
       return response.data.matches[0]["metadata"]["message"];
     } catch (error) {
       console.log("Pinecone: error getting conversation:", error);

@@ -34,13 +34,15 @@ async function getSummarizedUserHistory(userName) {
         `
         )
         .join("\n");
-      console.log(`Backend - Conversation History Simplified: \n${simplifiedHistory}\n`);
-      console.log(`Backend - Summarizing Conversation History...`);
+      console.log(
+        `Backend - Conversation History Simplified: \n${simplifiedHistory}\n`
+      );
       let summarizedHistory = await langChainAPI.summarizeConversation(
         simplifiedHistory
       );
-      console.log(`Backend - Conversation History Summarized: \n${summarizedHistory}\n`);
       return summarizedHistory;
+    } else {
+      console.log(`Backend - No Conversation History to Summarize`);
     }
   } catch (err) {
     console.error(
@@ -67,7 +69,9 @@ async function sendMessage(
         message,
         process.env.PINECONE_TOPK
       );
-      console.log(`Backend - Conversation retrieved from Pinecone: \n${}\n`)
+      console.log(
+        `Backend - Conversation retrieved from Pinecone: \n${response}\n`
+      );
       messages.push({ role: "system", content: summarizedHistory });
     }
     if (process.env.OPENAI_ENABLED === "true") {
@@ -86,7 +90,7 @@ async function sendMessage(
     }
     return response;
   } catch (err) {
-    console.log(`Error with Request: ${err}`);
+    console.log(`Backend - Error with Request: ${err}`);
   }
 }
 

@@ -25,7 +25,6 @@ const queryRoute = async (pinecone) => {
         },
       });
       console.log(`Pinecone - Querying Message: \n${message}\n`);
-
       if (queryResponse && queryResponse.matches.length[0] > 0) {
         console.log(
           `Pinecone: Top ${topK} conversation matches:`,
@@ -40,7 +39,7 @@ const queryRoute = async (pinecone) => {
       }
       res.status(200).json(queryResponse);
     } catch (error) {
-      console.log("Pinecone: error querying data:", error);
+      console.error("Pinecone: error querying data:", error);
       res.status(500).json({ message: "Pinecone: Error querying data", error });
     }
   });

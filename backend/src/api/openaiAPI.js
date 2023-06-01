@@ -15,13 +15,11 @@ const openaiAPI = {
         user: userName,
       });
       response = response.data.choices[0].message.content;
-      console.log("OpenAI: response generated: ", response);
+      console.log(`OpenAI - response generated: \n${response}\n`);
       return response;
     } catch (err) {
       console.error(
-        "OpenAI: error generating response:",
-        err.response.status,
-        err.response.statusText
+        `OpenAI - error generating response: \n${err.response.status} ${err.response.statusText}\n`
       );
       return "No response, try asking again";
     }

@@ -9,7 +9,7 @@ dotenv.config();
 const llm = new OpenAI({
   concurrency: 10,
   temperature: 0,
-  modelName: "gpt-3.5-turbo",
+  modelName: process.env.OPENAI_API_MODEL,
 });
 
 // Chunking function
@@ -26,7 +26,7 @@ const chunkSubstr = (str, size) => {
 
 const langChainAPI = {
   async summarizeConversation(conversationHistory) {
-    console.log("LangChain: summarizing conversation:\n", conversationHistory);
+    console.log(`LangChain - Summarizing Conversation...`);
     try {
       const template = templates.summarize;
       const prompt = new PromptTemplate({
@@ -42,11 +42,10 @@ const langChainAPI = {
         llm,
         prompt: prompt,
       });
-      console.log("LangChain: LLM Chain created");
+      console.log("LangChain - LLM Chain created");
 
-      // No evidence this works yet, so perhaps put behind a flag for now.
       if (formattedHistory.length > 4000) {
-        console.log("LangChain: conversation too long, chunking");
+        console.log(`LangChain -  Conversation too long, Chunking`);
         const chunks = chunkSubstr(formattedHistory, 4000);
         let summarizedChunks = [];
 
@@ -60,16 +59,16 @@ const langChainAPI = {
         const chunkedSummary = summarizedChunks.join("\n");
         return chunkedSummary;
       } else {
-        console.log("LangChain: conversation short enough, not chunking");
+        console.log(`LangChain - Conversation short enough, Not Chunking...`);
         const result = await chain.call({
           history: formattedHistory,
         });
-        console.log("LangChain: summarized conversation:\n", result.text);
+        console.log(`LangChain - Summarized Conversation: \n${result.text}\n`);
         return result.text;
       }
     } catch (err) {
-      console.log(`Error with Request: ${err}`);
-      return `Error with Request: ${err}`;
+      console.error(`LangChain - Error with Request: ${err}`);
+      return `LangChain - Error with Request: ${err}`;
     }
   },
 };
