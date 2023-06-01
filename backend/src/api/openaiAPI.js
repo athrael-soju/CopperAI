@@ -8,6 +8,7 @@ const openai = new OpenAIApi(configuration);
 
 const openaiAPI = {
   async generateResponseFromOpenAI(messages, userName) {
+    console.log(`OpenAI - Sending messages: \n${JSON.stringify(messages)}\n`);
     try {
       let response = await openai.createChatCompletion({
         messages,
@@ -15,15 +16,13 @@ const openaiAPI = {
         user: userName,
       });
       response = response.data.choices[0].message.content;
-      console.log("OpenAI: response generated: ", response);
+      console.log(`OpenAI - response generated: \n${response}\n`);
       return response;
     } catch (err) {
       console.error(
-        "OpenAI: error generating response:",
-        err.response.status,
-        err.response.statusText
+        `OpenAI - error generating response: \nStatus: ${err.response.status}\nError: ${err.response.statusText}\n`
       );
-      return "No response, try asking again";
+      return `OpenAI - error generating response: \nStatus: ${err.response.status}\nError: ${err.response.statusText}\n`;
     }
   },
 };

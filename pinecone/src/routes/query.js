@@ -1,4 +1,4 @@
-import express from "express";
+import express, { query } from "express";
 import { createEmbedding } from "../utils/utils.js";
 import { getIndex } from "../utils/utils.js";
 
@@ -6,29 +6,44 @@ const router = express.Router();
 
 const queryRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
-    const { message, topK } = req.body;
+    const { userName, message, summarizedHistory, topK } = req.body;
+    console.log(`Pinecone - Querying Message: \n${message}\n`);
+    try {
+      let index = await getIndex(pinecone);
+      let vector = await createEmbedding(message + summarizedHistory);
 
-    let index = await getIndex(pinecone);
-    let vector = await createEmbedding(message);
+      const queryResponse = await index.query({
+        queryRequest: {
+          namespace: process.env.PINECONE_NAMESPACE,
+          topK: topK,
+          includeValues: true,
+          includeMetadata: true,
+          vector: vector,
+          filter: {
+            userName: { $eq: userName },
+          },
+        },
+      });
 
-    console.log("Pinecone: querying message:", message);
-    const queryResponse = await index.query({
-      queryRequest: {
-        namespace: process.env.PINECONE_NAMESPACE,
-        topK: topK,
-        includeValues: true,
-        includeMetadata: true,
-        vector: vector,
-      },
-    });
-
-    if (queryResponse && queryResponse.matches) {
-      console.log("Pinecone: query response:", queryResponse.matches[0]);
+      if (queryResponse && queryResponse.matches[0]) {
+        console.log(
+          `Pinecone: Top ${topK} Conversation Matches:`,
+          queryResponse.matches
+            .map(
+              (match) => `
+              metadata: ${match.metadata.summarizedHistory}
+              score: ${match.score}`
+            )
+            .join("\n")
+        );
+      }
       res.status(200).json(queryResponse);
-    } else {
-      res.status(500).json({ message: "Pinecone: Error querying data" });
+    } catch (error) {
+      console.error("Pinecone: Error Querying Data:", error);
+      res.status(500).json({ message: "Pinecone: Error querying data", error });
     }
   });
+
   return router;
 };
 
