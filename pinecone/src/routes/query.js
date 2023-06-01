@@ -1,4 +1,4 @@
-import express from "express";
+import express, { query } from "express";
 import { createEmbedding } from "../utils/utils.js";
 import { getIndex } from "../utils/utils.js";
 
@@ -6,11 +6,12 @@ const router = express.Router();
 
 const queryRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
-    const { userName, message, topK } = req.body;
+    const { userName, message, summarizedHistory, topK } = req.body;
     console.log(`Pinecone - Querying Message: \n${message}\n`);
     try {
       let index = await getIndex(pinecone);
-      let vector = await createEmbedding(message);
+      let combinedMessage = message + ", " + summarizedHistory;
+      let vector = await createEmbedding(combinedMessage);
 
       const queryResponse = await index.query({
         queryRequest: {
@@ -19,27 +20,27 @@ const queryRoute = async (pinecone) => {
           includeValues: true,
           includeMetadata: true,
           vector: vector,
-          filters: {
-            userName: userName,
+          filter: {
+            userName: { $eq: userName },
           },
         },
       });
-      console.log(`Pinecone - Querying Message: \n${message}\n`);
-      if (queryResponse && queryResponse.matches.length[0] > 0) {
+
+      if (queryResponse && queryResponse.matches[0]) {
         console.log(
-          `Pinecone: Top ${topK} conversation matches:`,
-          queryResponse.data.matches
+          `Pinecone: Top ${topK} Conversation Matches:`,
+          queryResponse.matches
             .map(
               (match) => `
-      metadata: ${JSON.stringify(match.metadata)}
-      score: ${match.score}`
+              metadata: ${match.metadata.summarizedHistory}
+              score: ${match.score}`
             )
             .join("\n")
         );
       }
       res.status(200).json(queryResponse);
     } catch (error) {
-      console.error("Pinecone: error querying data:", error);
+      console.error("Pinecone: Error Querying Data:", error);
       res.status(500).json({ message: "Pinecone: Error querying data", error });
     }
   });

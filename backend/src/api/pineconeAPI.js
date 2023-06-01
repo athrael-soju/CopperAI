@@ -3,14 +3,18 @@ import axios from "axios";
 const pineconeServiceUrl = `${process.env.PINECONE_ADDRESS}:${process.env.PINECONE_PORT}`;
 
 const pineconeAPI = {
-  async getConversationFromPinecone(userName, message, topK) {
-    console.log(
-      `Pinecone - Sending Message to Pinecone Query API: \n${message}\n`
-    );
+  async getConversationFromPinecone(
+    userName,
+    message,
+    summarizedHistory,
+    topK
+  ) {
+    console.log(`Pinecone - Sending Message to Pinecone Query API...`);
     try {
       const response = await axios.post(`${pineconeServiceUrl}/query`, {
         userName: userName,
         message: message,
+        summarizedHistory,
         topK: topK,
       });
       if (
@@ -18,32 +22,43 @@ const pineconeAPI = {
         // If there exists a history it should always be returned.
         //|| response.data.matches[0]["score"] < process.env.PINECONE_THRESHOLD
       ) {
-        console.log("Pinecone: no conversation found");
+        console.log(`Pinecone - No Conversation Retrieved.`);
         return null;
+      } else {
+        console.log(
+          `Pinecone - Top ${topK} Conversations Retrieved. Retrieving Topmost one: \n${response.data.matches
+            .map(
+              (match) => `
+              userName: ${match.metadata.userName}              
+              summarizedHistory: ${match.metadata.summarizedHistory}
+              score: ${match.score}`
+            )
+            .join("\n")}`
+        );
+        return response.data.matches[0].metadata.summarizedHistory;
       }
-      console.log(
-        "Pinecone: conversation found: ",
-        response.data.matches[0].metadata
-      );
-      return response.data.matches[0]["metadata"]["message"];
     } catch (error) {
-      console.log("Pinecone: error getting conversation:", error);
-      return "Pinecone: error getting conversation";
+      console.error(
+        `Pinecone - Error Retrieving Conversation: \n${error.message}\n`
+      );
+      return `Pinecone - Error Retrieving Conversation: \n${error.message}\n`;
     }
   },
 
   async storeConversationToPinecone(userName, message, summarizedHistory) {
-    console.log("Pinecone: storing conversation history for message");
+    console.log(`Pinecone - Storing Conversation History for message...`);
     try {
       await axios.post(`${pineconeServiceUrl}/upsert`, {
         userName: userName,
         message: message,
         summarizedHistory: summarizedHistory,
       });
-      console.log("Pinecone: conversation stored");
+      console.log(`Pinecone: Conversation Stored`);
     } catch (error) {
-      console.log("Pinecone: error storing conversation:", error.message);
-      return "Pinecone: error storing conversation";
+      console.error(
+        `Pinecone: Error Storing Conversation: \n${error.message}\n`
+      );
+      return `Pinecone - Error Storing Conversation: \n${error.message}\n`;
     }
   },
 };

@@ -5,12 +5,10 @@ import Conversation from "../models/Conversation.js";
 import langChainAPI from "../api/langChainAPI.js";
 
 const router = express.Router();
-let messages = [];
 export async function initDirective(role, username, directive) {
   await sendMessage(role, username, directive);
 }
 
-// Retrieve top k rows from DB, that correspond to user
 async function getSummarizedUserHistory(userName) {
   console.log("Backend - Retrieving User Message History...");
   try {
@@ -18,17 +16,17 @@ async function getSummarizedUserHistory(userName) {
       .sort({ date: -1 })
       .limit(10)
       .exec();
-    const retrieveHistoryRecords = conversationHistory?.length;
+    const retrievedHistoryRecords = conversationHistory?.length;
     console.log(
-      `Backend - User Message History retrieved: {${retrieveHistoryRecords}} records: \n${conversationHistory}\n`
+      `Backend - User Message History retrieved: {${retrievedHistoryRecords}} records: \n${conversationHistory}\n`
     );
-    if (retrieveHistoryRecords && retrieveHistoryRecords > 0) {
-      let messageNumber = 0;
+    if (retrievedHistoryRecords && retrievedHistoryRecords > 0) {
+      let messageNumber = retrievedHistoryRecords;
       console.log(`Backend - Simplifying Conversation History...`);
       let simplifiedHistory = conversationHistory
         .map(
           (conversation) => `
-        prompt: ${++messageNumber}: '${conversation.message}'
+        prompt: ${messageNumber--}: '${conversation.message}'
         response: '${conversation.response}'
         date: ${conversation.date}
         `
@@ -42,7 +40,8 @@ async function getSummarizedUserHistory(userName) {
       );
       return summarizedHistory;
     } else {
-      console.log(`Backend - No Conversation History to Summarize`);
+      console.log(`Backend - No Conversation History`);
+      return "";
     }
   } catch (err) {
     console.error(
@@ -52,33 +51,37 @@ async function getSummarizedUserHistory(userName) {
   }
 }
 
-// Send Message, with summarized User History used as context (When Available)
-async function sendMessage(
-  role = "user",
-  userName,
-  message,
-  summarizedHistory
-) {
+async function sendMessage(role = "user", userName, message) {
   console.log(`Backend - Preparing to Send Message: \n${message}\n`);
   try {
-    let response = null;
+    const summarizedHistory = await getSummarizedUserHistory(userName);
+    let openaiResponse = null;
+    let messages = [];
+    let pineconeResponse = "";
     if (process.env.PINECONE_ENABLED === "true") {
       console.log(`Backend - Pinecone enabled. Retrieving Conversation...`);
-      response = await pineconeAPI.getConversationFromPinecone(
+      pineconeResponse = await pineconeAPI.getConversationFromPinecone(
         userName,
         message,
+        summarizedHistory,
         process.env.PINECONE_TOPK
       );
-      console.log(
-        `Backend - Conversation retrieved from Pinecone: \n${response}\n`
-      );
-      messages.push({ role: "system", content: summarizedHistory });
+      const enhancedResponse = `Use the following summary as your knowledgebase: ${pineconeResponse}. `;
+      if (pineconeResponse) {
+        messages.push({ role: "system", content: enhancedResponse });
+      }
     }
     if (process.env.OPENAI_ENABLED === "true") {
-      messages.push({ role: role, content: message });
-      response = await openaiAPI.generateResponseFromOpenAI(messages, userName);
+      messages.push({
+        role: role,
+        content: message,
+      });
+      openaiResponse = await openaiAPI.generateResponseFromOpenAI(
+        messages,
+        userName
+      );
     } else {
-      response = `Backend - OpenAI is currently disabled. Using default response: ${Math.random()}`;
+      openaiResponse = `Backend - OpenAI is currently disabled. Using default response: ${Math.random()}`;
     }
 
     if (process.env.PINECONE_ENABLED === "true") {
@@ -88,7 +91,7 @@ async function sendMessage(
         summarizedHistory
       );
     }
-    return response;
+    return openaiResponse;
   } catch (err) {
     console.log(`Backend - Error with Request: ${err}`);
   }
@@ -104,14 +107,7 @@ router.post("/", async (req, res) => {
   let role = "user",
     userName = req.body.username,
     message = req.body.message;
-  console.log("userName", userName);
-  const summarizedUserHistory = await getSummarizedUserHistory(userName);
-  const response = await sendMessage(
-    role,
-    userName,
-    message,
-    summarizedUserHistory
-  );
+  const response = await sendMessage(role, userName, message);
   if (response) {
     const newConversation = new Conversation({
       username: userName,
