@@ -29,7 +29,8 @@
 
 WhisperChat is an Open Source application that allows communication with OpenAI's ChatGPT and comes with additional features, such as:
 - Fully voiced conversation, using OpenAI's whisper API for STT, as well as Google's TTS.
-- The ability for chatGPT to retain memory of past conversations, via Pinecone + langchain.
+- The ability for chatGPT to retain memory of past conversations, via Pinecone + langchain. 
+  - **NOTE**: Using this feature can and will incrementally incur larger costs, a the summary of prior conversations is generated and sent along with the user prompt in the same request.
 - Initialization with a directive, to instruct chatGPT to talk in different ways and assume different personas.
 - Basic account creation, or usage via guest profile.
 
