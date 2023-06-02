@@ -39,9 +39,9 @@ const pineconeAPI = {
       }
     } catch (error) {
       console.error(
-        `Pinecone - Error Retrieving Conversation: \n${error.message}\n`
+        `Pinecone - Error Retrieving Conversation: \n${error.message}`
       );
-      return `Pinecone - Error Retrieving Conversation: \n${error.message}\n`;
+      return `Pinecone - Error Retrieving Conversation: \n${error.message}`;
     }
   },
 
@@ -56,9 +56,9 @@ const pineconeAPI = {
       console.log(`Pinecone: Conversation Stored`);
     } catch (error) {
       console.error(
-        `Pinecone: Error Storing Conversation: \n${error.message}\n`
+        `Pinecone: Error Storing Conversation: \n${error.message}`
       );
-      return `Pinecone - Error Storing Conversation: \n${error.message}\n`;
+      return `Pinecone - Error Storing Conversation: \n${error.message}`;
     }
   },
 };

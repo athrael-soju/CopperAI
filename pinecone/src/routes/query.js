@@ -6,10 +6,10 @@ const router = express.Router();
 const queryRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
     const { userName, message, summarizedHistory, topK } = req.body;
-    console.log(`Pinecone - Querying Message: \n${message}\n`);
+    console.log(`Pinecone - Querying Message: \n${message}`);
     try {
       let index = await getIndex(pinecone);
-      let vector = await createEmbedding(message + summarizedHistory);
+      let vector = await createEmbedding(message + ". " + summarizedHistory);
 
       const queryResponse = await index.query({
         queryRequest: {
