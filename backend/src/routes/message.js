@@ -18,7 +18,7 @@ async function getSummarizedUserHistory(userName) {
       .exec();
     const retrievedHistoryRecords = conversationHistory?.length;
     console.log(
-      `Backend - User Message History retrieved: {${retrievedHistoryRecords}} records: \n${conversationHistory}\n`
+      `Backend - User Message History retrieved: {${retrievedHistoryRecords}} records: \n${conversationHistory}`
     );
     if (retrievedHistoryRecords && retrievedHistoryRecords > 0) {
       let messageNumber = retrievedHistoryRecords;
@@ -45,14 +45,14 @@ async function getSummarizedUserHistory(userName) {
     }
   } catch (err) {
     console.error(
-      `Backend - Failed to Retrieve User Message History: \n${err.message}\n`
+      `Backend - Failed to Retrieve User Message History: \n${err.message}`
     );
     return null;
   }
 }
 
 async function sendMessage(userName, message, role = "user") {
-  console.log(`Backend - Preparing to Send Message: \n${message}\n`);
+  console.log(`Backend - Preparing to Send Message: \n${message}`);
   try {
     let summarizedHistory = await getSummarizedUserHistory(userName);
     let openaiResponse = null;

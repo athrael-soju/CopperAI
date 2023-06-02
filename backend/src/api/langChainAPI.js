@@ -12,7 +12,6 @@ const llm = new OpenAI({
   modelName: process.env.OPENAI_API_MODEL,
 });
 
-// Chunking function
 const chunkSubstr = (str, size) => {
   const numChunks = Math.ceil(str.length / size);
   const chunks = new Array(numChunks);
@@ -63,7 +62,7 @@ const langChainAPI = {
         const result = await chain.call({
           history: formattedHistory,
         });
-        console.log(`LangChain - Summarized Conversation: \n${result.text}\n`);
+        console.log(`LangChain - Summarized Conversation: \n${result.text}`);
         return result.text;
       }
     } catch (err) {

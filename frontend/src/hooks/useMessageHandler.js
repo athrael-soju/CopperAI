@@ -2,11 +2,11 @@ import { useState } from "react";
 import env from "react-dotenv";
 
 const useMessageHandler = (username) => {
-  const [setResponse] = useState("");
+  const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async (message) => {
-    console.log("User: ", username, "Message: ", message);
+    console.log("User: ", username, ". Message: ", message);
     setLoading(true);
     const requestOptions = {
       method: "POST",

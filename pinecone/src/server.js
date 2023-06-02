@@ -14,7 +14,6 @@ const startPinecone = async () => {
     console.log("Connected to Pinecone");
     return pinecone;
   } catch (err) {
-    // TODO: Perhaps consider a mock Pinecone service, when real service is down, or unreachable.
     console.log("Error connecting to Pinecone", err);
     process.exit();
   }
