@@ -27,16 +27,15 @@
 
 ## 🧐 About <a name = "about"></a>
 
-WhisperChat is an Open Source application that allows fully voiced conversation with chatGPT. Customization allows:
-
-- Use of Pinecone for reducing # of API calls to OpenAI API(although its use in conversation is limited)
-- Initialization with a prompt, although with ChatGPT 3.5 Turbo it's not as effective/usable.
-- More to come!
+WhisperChat is an Open Source application that allows communication with OpenAI's ChatGPT and comes with additional features, such as:
+- Fully voiced conversation, using OpenAI's whisper API for STT, as well as Google's TTS.
+- The ability for chatGPT to retain memory of past conversations, via Pinecone + langchain.
+- Initialization with a directive, to instruct chatGPT to talk in different ways and assume different personas.
+- Basic account creation, or usage via guest profile.
 
 ## 🏗️ Architecture <a name = "architecture"></a>
 Notes: 
-- Redis Service has been removed and will be re-introduced at a later time, if needed.
-- Pinecone can be turned off via feature flag in .env of the backend Service.
+- Pinecone can be turned off via feature flag in .env of the backend Service.  
 
 ![whisperChat](https://github.com/athrael-soju/whisperChat/assets/25455658/becbb819-bd4c-4529-88f5-e390a280cabd)
 
@@ -98,11 +97,12 @@ These instructions will get you a copy of the project up and running on your loc
   NODE_ENV="dev"
   SERVER_PORT=5000 - Adjust as needed
   # OpenAI
+  OPENAI_ENABLED=true - Setting this to false will respond with a generic message. Used for testing.
   OPENAI_API_KEY="YOUR_API_KEY"
   OPENAI_API_MODEL="gpt-3.5-turbo"
   # Model Load Parameters
   DIRECTIVE_ENABLED=false
-  MODEL_DIRECTIVE="directive" Choose a directive from the list of directives in the backend/src/data folder
+  MODEL_DIRECTIVE="directive" - Choose a directive from the list of directives in the backend/src/data folder
   # Google Cloud TTS
   GOOGLE_CLOUD_TTS_LANGUAGE="en-US" - Adjust as needed
   GOOGLE_CLOUD_TTS_NAME="en-US-Neural2-J" - Adjust as needed
@@ -164,10 +164,13 @@ You should be able to access the application at http://localhost:3000 (or whiche
 ## 🎈 Usage <a name="usage"></a>
 
 - Once deployed, login as guest, or create a basic account.
-  Buttons: 
+  Voice Chat: 
   - Record allows the user to initiate continuous discussion.
   - Pause will pause recording, but pressing Record again will resume it.
   - Stop will stop the ongoing discussion.
+  Text Chat:
+  - This can be achieved by sending a request to the endpoints directly, via Postman.
+  - A sample POST message can be send to localhost:5000/message and contain form-data (username, message) and the response will be returned to the body.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
@@ -175,12 +178,13 @@ You should be able to access the application at http://localhost:3000 (or whiche
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-- [Docker](https://www.docker.com/) - Containerization and deployment
-- [ReactJs](https://react.dev/) - Web Framework for frontend service
-- [NodeJs](https://nodejs.org/en/) - Server Environment for backend and pinecone services
-- [OpenAI Whisper API](https://openai.com/blog/introducing-chatgpt-and-whisper-apis) - ChatGPT and Whisper model integration for chatbot functionality
-- [Google TTS](https://cloud.google.com/text-to-speech/) - Converts text into natural-sounding speech in a variety of languages and voices
-- [Whisper Hook by chengsokdara](https://github.com/chengsokdara/use-whisper) - React Hook for OpenAI Whisper API with speech recorder, real-time transcription and silence removal functionality
+- [Docker](https://www.docker.com/) - Containerization and deployment.
+- [ReactJs](https://react.dev/) - Web Framework for frontend service.
+- [NodeJs](https://nodejs.org/en/) - Server Environment for backend and pinecone services.
+- [OpenAI Whisper API](https://openai.com/blog/introducing-chatgpt-and-whisper-apis) - ChatGPT and Whisper model integration for chatbot functionality.
+- [Google TTS](https://cloud.google.com/text-to-speech/) - Converts text into natural-sounding speech in a variety of languages and voices.
+- [Whisper Hook by chengsokdara](https://github.com/chengsokdara/use-whisper) - React Hook for OpenAI Whisper API with speech recorder, real-time transcription and silence removal functionality.
+- [Langchain](https://js.langchain.com/docs/) - Framework for developing applications powered by language models.
 
 ## ✍️ Authors <a name = "authors"></a>
 
