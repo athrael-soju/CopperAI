@@ -17,11 +17,7 @@ const pineconeAPI = {
         summarizedHistory,
         topK: topK,
       });
-      if (
-        response.data.matches.length === 0
-        // If there exists a history it should always be returned.
-        //|| response.data.matches[0]["score"] < process.env.PINECONE_THRESHOLD
-      ) {
+      if (!response.data.matches) {
         console.log(`Pinecone - No Conversation Retrieved.`);
         return null;
       } else {
@@ -55,9 +51,7 @@ const pineconeAPI = {
       });
       console.log(`Pinecone: Conversation Stored`);
     } catch (error) {
-      console.error(
-        `Pinecone: Error Storing Conversation: \n${error.message}`
-      );
+      console.error(`Pinecone: Error Storing Conversation: \n${error.message}`);
       return `Pinecone - Error Storing Conversation: \n${error.message}`;
     }
   },

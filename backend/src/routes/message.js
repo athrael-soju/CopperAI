@@ -5,6 +5,7 @@ import Conversation from "../models/Conversation.js";
 import langChainAPI from "../api/langChainAPI.js";
 
 const router = express.Router();
+
 export async function initDirective(username, directive, role) {
   await sendMessage(username, directive, role);
 }
@@ -22,7 +23,6 @@ async function getSummarizedUserHistory(userName) {
     );
     if (retrievedHistoryRecords && retrievedHistoryRecords > 0) {
       let messageNumber = retrievedHistoryRecords;
-      console.log(`Backend - Simplifying Conversation History...`);
       let simplifiedHistory = conversationHistory
         .map(
           (conversation) => `
@@ -32,11 +32,12 @@ async function getSummarizedUserHistory(userName) {
         `
         )
         .join("\n");
-      console.log(
-        `Backend - Conversation History Simplified: ${simplifiedHistory}`
-      );
+
       let summarizedHistory = await langChainAPI.summarizeConversation(
         simplifiedHistory
+      );
+      console.log(
+        `Backend - Conversation History Summarized: ${summarizedHistory}`
       );
       return summarizedHistory;
     } else {
