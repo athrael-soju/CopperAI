@@ -35,8 +35,11 @@ const queryRoute = async (pinecone) => {
             )
             .join("\n")
         );
+        res.status(200).json(queryResponse);
+      } else {
+        console.log(``);
+        res.status(200).json({ message: `` });
       }
-      res.status(200).json(queryResponse);
     } catch (error) {
       console.error("Pinecone: Error Querying Data:", error);
       res.status(500).json({ message: "Pinecone: Error querying data", error });

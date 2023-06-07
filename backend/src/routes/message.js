@@ -66,9 +66,11 @@ async function sendMessage(userName, message, role = "user") {
         summarizedHistory,
         process.env.PINECONE_TOPK
       );
-      const enhancedResponse = `Use the following summary of our past discussion as your knowledgebase: ${pineconeResponse}`;
-      if (pineconeResponse) {
-        messages.push({ role: "system", content: enhancedResponse });
+      if (pineconeResponse?.length > 0) {
+        messages.push({
+          role: "system",
+          content: `Use the following summary of our past discussion as your knowledgebase: ${pineconeResponse}`,
+        });
       }
     }
     if (process.env.OPENAI_ENABLED === "true") {
