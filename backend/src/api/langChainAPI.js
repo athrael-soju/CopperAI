@@ -27,7 +27,7 @@ const langChainAPI = {
   async summarizeConversation(conversationHistory) {
     console.log(`LangChain - Summarizing Conversation...`);
     try {
-      const template = templates.summarize;
+      const template = templates.enhanced_summarize;
       const prompt = new PromptTemplate({
         template,
         inputVariables: ["history"],

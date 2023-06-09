@@ -21,29 +21,24 @@ async function getSummarizedUserHistory(userName) {
     console.log(
       `Backend - User Message History retrieved: {${retrievedHistoryRecords}} records: \n${conversationHistory}`
     );
-    if (retrievedHistoryRecords && retrievedHistoryRecords > 0) {
-      let messageNumber = retrievedHistoryRecords;
-      let simplifiedHistory = conversationHistory
-        .map(
-          (conversation) => `
+    if (!retrievedHistoryRecords || retrievedHistoryRecords < 1) {
+      conversationHistory = [];
+    }
+    let messageNumber = retrievedHistoryRecords;
+    let simplifiedHistory = conversationHistory
+      .map(
+        (conversation) => `
         prompt ${messageNumber--}: '${conversation.message}'
         response: '${conversation.response}'
         date: ${conversation.date}
         `
-        )
-        .join("\n");
+      )
+      .join("\n");
 
-      let summarizedHistory = await langChainAPI.summarizeConversation(
-        simplifiedHistory
-      );
-      console.log(
-        `Backend - Conversation History Summarized: ${summarizedHistory}`
-      );
-      return summarizedHistory;
-    } else {
-      console.log(`Backend - No Conversation History`);
-      return "No Conversation History";
-    }
+    let summarizedHistory = await langChainAPI.summarizeConversation(
+      simplifiedHistory
+    );
+    return summarizedHistory;
   } catch (err) {
     console.error(
       `Backend - Failed to Retrieve User Message History: \n${err.message}`
