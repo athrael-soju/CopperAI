@@ -21,16 +21,7 @@ const pineconeAPI = {
         console.log(`Pinecone - No Conversation Retrieved.`);
         return null;
       } else {
-        console.log(
-          `Pinecone - Top ${topK} Conversations Retrieved. Retrieving Topmost one: ${response.data.matches
-            .map(
-              (match) => `
-              userName: ${match.metadata.userName}
-              summarizedHistory: ${match.metadata.summarizedHistory}
-              score: ${match.score}`
-            )
-            .join("\n")}`
-        );
+        console.log(`Pinecone - Top ${topK} Conversations Retrieved`);
         return response.data.matches[0].metadata.summarizedHistory;
       }
     } catch (error) {

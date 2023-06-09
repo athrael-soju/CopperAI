@@ -19,7 +19,7 @@ async function getSummarizedUserHistory(userName) {
       .exec();
     const retrievedHistoryRecords = conversationHistory?.length;
     console.log(
-      `Backend - User Message History retrieved: {${retrievedHistoryRecords}} records: \n${conversationHistory}`
+      `Backend - User Message History retrieved: {${retrievedHistoryRecords}} records`
     );
     if (!retrievedHistoryRecords || retrievedHistoryRecords < 1) {
       conversationHistory = [];
@@ -65,7 +65,7 @@ async function sendMessage(userName, message, role = "user") {
       if (pineconeResponse?.length > 0) {
         messages.push({
           role: "system",
-          content: `Use the following summary of our past discussion as your knowledgebase: ${pineconeResponse}`,
+          content: pineconeResponse,
         });
       }
     }

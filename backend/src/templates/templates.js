@@ -12,8 +12,10 @@ const templates = {
   `,
   enhanced_summarize: `Summarize the text in the History by applying the following rules:
   - Generate a set of Sentences from the History that summarize the conversation. Each sentence should summarize the user prompt and the AI response.
-  - Each sentence should use as few words as possible, but without ommiting any important information from the user prompt.
-  - Each sentence should only include information retrieved from the History. If the information is not available in the History, the AI answer should answer with "I don't know".
+  - Each sentence should use as few words as possible, but without ommiting any important information from the user prompt. The AI response can be simplified further, but should still be coherent.
+  - Each sentence should only include information retrieved from the History. If the user requests information that the AI cannot locate in the History, do not include the AI's response in the sentence.
+  - The Summary should maintain the historical order of the conversation.
+  - Every time the Summary increases by 50 characters, re-summarize using 50% less characters, but still retain the same information.
   - The Summary should be under 4000 characters.  
 
   History: {history}
