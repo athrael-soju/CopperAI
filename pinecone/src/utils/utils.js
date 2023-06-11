@@ -16,9 +16,8 @@ export const createEmbedding = async (summarizedHistory) => {
     model: "text-embedding-ada-002",
   });
   if (
-    !response.data ||
-    !response.data.data ||
-    response.data.data.length === 0 ||
+    //  Minor refactor.
+    response?.data?.data?.length === 0 ||
     !response.data.data[0].embedding
   ) {
     console.log(`OpenAI - No Embedding Found`);
@@ -32,6 +31,7 @@ export const getIndex = async (pinecone) => {
   let index = await pinecone.Index(indexName);
   if (!index) {
     console.log(`Pinecone - index ${indexName} does not exist, creating...`);
+    //  Might want to abstract this out and consider a different dim #
     await pinecone.createIndex({
       createRequest: {
         name: indexName,

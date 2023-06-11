@@ -7,11 +7,9 @@ const router = express.Router();
 const upsertRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
     let index = await getIndex(pinecone);
-    const { userName, message, summarizedHistory } = req.body;
+    const { userName, summarizedHistory } = req.body;
     try {
-      let summarizedHistoryEmbedding = await createEmbedding(
-        message + ". " + summarizedHistory
-      );
+      let summarizedHistoryEmbedding = await createEmbedding(summarizedHistory);
       console.log(`Pinecone - Upserting Message...`);
       const upsertSummaryResponse = await index.upsert({
         upsertRequest: {
@@ -21,7 +19,6 @@ const upsertRoute = async (pinecone) => {
               values: summarizedHistoryEmbedding,
               metadata: {
                 userName: userName,
-                message: message,
                 summarizedHistory: summarizedHistory,
               },
             },
