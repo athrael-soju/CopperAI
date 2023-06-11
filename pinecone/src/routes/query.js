@@ -5,17 +5,17 @@ const router = express.Router();
 
 const queryRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
-    const { userName, summarizedHistory, topK } = req.body;
+    const { userName, message, summarizedHistory, topK } = req.body;
     console.log(`Pinecone - Querying Message: \n${message}`);
     try {
       let index = await getIndex(pinecone);
-      let vector = await createEmbedding(summarizedHistory);
+      let vector = await createEmbedding(message + ". " + summarizedHistory);
 
       const queryResponse = await index.query({
         queryRequest: {
           namespace: process.env.PINECONE_NAMESPACE,
           topK: topK,
-          // includeValues: true, Not needed, right?
+          includeValues: true,
           includeMetadata: true,
           vector: vector,
           filter: {

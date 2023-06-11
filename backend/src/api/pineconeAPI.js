@@ -5,6 +5,7 @@ const pineconeServiceUrl = `${process.env.PINECONE_ADDRESS}:${process.env.PINECO
 const pineconeAPI = {
   async getConversationFromPinecone(
     userName,
+    message,
     summarizedHistory,
     topK
   ) {
@@ -12,6 +13,7 @@ const pineconeAPI = {
     try {
       const response = await axios.post(`${pineconeServiceUrl}/query`, {
         userName: userName,
+        message: message,
         summarizedHistory,
         topK: topK,
       });

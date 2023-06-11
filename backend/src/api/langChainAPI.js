@@ -27,8 +27,7 @@ const langChainAPI = {
   async summarizeConversation(conversationHistory) {
     console.log(`LangChain - Summarizing Conversation...`);
     try {
-      //  Use summarize_for_prompt as an attempt to reduce irrelevant context sent to OpenAI, thus  improve performance and reduce cost.
-      const template = templates.summarize_for_prompt;
+      const template = templates.enhanced_summarize;
       const prompt = new PromptTemplate({
         template,
         inputVariables: ["history"],
@@ -43,7 +42,7 @@ const langChainAPI = {
         prompt: prompt,
       });
       console.log("LangChain - LLM Chain created");
-      // Consider chunking in less characters, for example on average around 10 conversations worth, which will make re-summarization unnecessary. Potentially bif perf improvement. However, must ensure each chunk is relevant to the prompt.
+
       if (formattedHistory.length > 4000) {
         console.log(`LangChain -  Conversation too long, Chunking`);
         const chunks = chunkSubstr(formattedHistory, 4000);
