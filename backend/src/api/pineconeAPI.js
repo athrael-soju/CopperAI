@@ -32,12 +32,11 @@ const pineconeAPI = {
     }
   },
 
-  async storeConversationToPinecone(userName, message, summarizedHistory) {
+  async storeConversationToPinecone(userName, summarizedHistory) {
     console.log(`Pinecone - Storing Conversation History for message...`);
     try {
       await axios.post(`${pineconeServiceUrl}/upsert`, {
         userName: userName,
-        message: message,
         summarizedHistory: summarizedHistory,
       });
       console.log(`Pinecone: Conversation Stored`);

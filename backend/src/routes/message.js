@@ -10,12 +10,12 @@ export async function initDirective(username, directive, role) {
   await sendMessage(username, directive, role);
 }
 
-async function getSummarizedUserHistory(userName) {
+async function getUserConversationHistory(userName, numRows = 3) {
   console.log("Backend - Retrieving User Message History...");
   try {
     let conversationHistory = await Conversation.find({ username: userName })
       .sort({ date: -1 })
-      .limit(10)
+      .limit(numRows)
       .exec();
     const retrievedHistoryRecords = conversationHistory?.length;
     console.log(
@@ -24,21 +24,18 @@ async function getSummarizedUserHistory(userName) {
     if (!retrievedHistoryRecords || retrievedHistoryRecords < 1) {
       conversationHistory = [];
     }
-    let messageNumber = retrievedHistoryRecords;
+
     let simplifiedHistory = conversationHistory
       .map(
         (conversation) => `
-        prompt ${messageNumber--}: '${conversation.message}'
+        prompt: ${conversation.message}'
         response: '${conversation.response}'
         date: ${conversation.date}
         `
       )
       .join("\n");
 
-    let summarizedHistory = await langChainAPI.summarizeConversation(
-      simplifiedHistory
-    );
-    return summarizedHistory;
+    return simplifiedHistory;
   } catch (err) {
     console.error(
       `Backend - Failed to Retrieve User Message History: \n${err.message}`
@@ -50,22 +47,30 @@ async function getSummarizedUserHistory(userName) {
 async function sendMessage(userName, message, role = "user") {
   console.log(`Backend - Preparing to Send Message: \n${message}`);
   try {
-    let summarizedHistory = await getSummarizedUserHistory(userName);
+    let simplifiedHistory = await getUserConversationHistory(userName);
     let openaiResponse = null;
     let messages = [];
     let pineconeResponse = "";
+    let summarizedHistory = "";
+    let newConversation = "";
     if (process.env.PINECONE_ENABLED === "true") {
       console.log(`Backend - Pinecone enabled. Retrieving Conversation...`);
       pineconeResponse = await pineconeAPI.getConversationFromPinecone(
         userName,
         message,
-        summarizedHistory,
+        simplifiedHistory,
         process.env.PINECONE_TOPK
       );
+
       if (pineconeResponse?.length > 0) {
+        summarizedHistory = await langChainAPI.summarizeConversation(
+          message,
+          pineconeResponse
+        );
+
         messages.push({
           role: "system",
-          content: pineconeResponse,
+          content: summarizedHistory,
         });
       }
     }
@@ -83,7 +88,7 @@ async function sendMessage(userName, message, role = "user") {
     }
 
     if (openaiResponse) {
-      const newConversation = new Conversation({
+      newConversation = new Conversation({
         username: userName,
         message: `${userName}: ${message}`,
         response: `AI: ${openaiResponse}`,
@@ -94,13 +99,14 @@ async function sendMessage(userName, message, role = "user") {
       console.log("Backend - Saved conversation to MongoDB");
     }
 
-    summarizedHistory = await getSummarizedUserHistory(userName);
-
     if (process.env.PINECONE_ENABLED === "true") {
+      simplifiedHistory = await getUserConversationHistory(userName);
+      console.log(
+        "Backend - Storing conversation to Pinecone..." + simplifiedHistory
+      );
       await pineconeAPI.storeConversationToPinecone(
         userName,
-        message,
-        summarizedHistory
+        simplifiedHistory
       );
     }
 

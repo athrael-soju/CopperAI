@@ -22,6 +22,18 @@ const templates = {
 
   Summary:
   `,
+  summarize_for_prompt: `Summarize the text in the History to better respond to a given User Prompt, by applying the following rules:
+  - Always include the User Prompt in the Summary.
+  - Generate a brief summary from the History that is relevant to the Prompt.
+  - The summary should use as few words from the History as possible, but retain relevant context that can be used to respond to the Prompt.
+  - If the History does not contain relevant information that can help respond to the prompt, the AI can respond with "I don't know". 
+
+  History: {history}
+
+  Prompt: {prompt}
+
+  Summary:
+  `,
 };
 
 export { templates };
