@@ -1,4 +1,5 @@
 import express from "express";
+import { v4 as uuidv4 } from "uuid";
 import pineconeAPI from "../api/pineconeAPI.js";
 import openaiAPI from "../api/openaiAPI.js";
 import Conversation from "../models/Conversation.js";
@@ -10,62 +11,64 @@ export async function initDirective(username, directive, role) {
   await sendMessage(username, directive, role);
 }
 
-async function getUserConversationHistory(userName, numRows = 3) {
+async function getUserConversationHistory(pineconeResponse) {
   console.log("Backend - Retrieving User Message History...");
+  let conversationHistory = [];
+  let sortedConversationHistory = [];
+  // Retrieve Conversation History from MongoDB, from Pinecone response
   try {
-    let conversationHistory = await Conversation.find({ username: userName })
-      .sort({ date: -1 })
-      .limit(numRows)
-      .exec();
-    const retrievedHistoryRecords = conversationHistory?.length;
-    console.log(
-      `Backend - User Message History retrieved: {${retrievedHistoryRecords}} records`
+    conversationHistory = await Promise.all(
+      pineconeResponse.map(async (conversation) => {
+        const conversationTurn = await Conversation.findOne({
+          id: conversation.id,
+        }).exec();
+        return {
+          conversationTurnData: `\n${conversationTurn.message}\n${conversationTurn.response}\n${conversationTurn.date}\n`,
+          date: conversationTurn.date,
+        };
+      })
     );
-    if (!retrievedHistoryRecords || retrievedHistoryRecords < 1) {
-      conversationHistory = [];
-    }
 
-    let simplifiedHistory = conversationHistory
-      .map(
-        (conversation) => `
-        prompt: ${conversation.message}'
-        response: '${conversation.response}'
-        date: ${conversation.date}
-        `
-      )
-      .join("\n");
-
-    return simplifiedHistory;
+    console.log(
+      `Backend - User Message History Retrieved: {${conversationHistory.length}} Records`
+    );
+    // Sort Conversation History by Date and then map to only return the conversationTurnData
+    sortedConversationHistory = conversationHistory
+      .sort((convA, convB) => Number(convA.date) - Number(convB.date))
+      .map((conv) => conv.conversationTurnData);
   } catch (err) {
     console.error(
       `Backend - Failed to Retrieve User Message History: \n${err.message}`
     );
-    return null;
   }
+  return sortedConversationHistory;
 }
 
 async function sendMessage(userName, message, role = "user") {
   console.log(`Backend - Preparing to Send Message: \n${message}`);
   try {
-    let simplifiedHistory = await getUserConversationHistory(userName);
     let openaiResponse = null;
     let messages = [];
-    let pineconeResponse = "";
-    let summarizedHistory = "";
-    let newConversation = "";
+    let pineconeResponse;
+    let summarizedHistory;
+    let newConversation;
+
     if (process.env.PINECONE_ENABLED === "true") {
       console.log(`Backend - Pinecone enabled. Retrieving Conversation...`);
       pineconeResponse = await pineconeAPI.getConversationFromPinecone(
         userName,
         message,
-        simplifiedHistory,
         process.env.PINECONE_TOPK
       );
 
       if (pineconeResponse?.length > 0) {
+        let userConversationHistory = await getUserConversationHistory(
+          pineconeResponse
+        );
+
         summarizedHistory = await langChainAPI.summarizeConversation(
           message,
-          pineconeResponse
+          userConversationHistory
         );
 
         messages.push({
@@ -88,26 +91,21 @@ async function sendMessage(userName, message, role = "user") {
     }
 
     if (openaiResponse) {
+      const id = uuidv4();
+      console.log(`Backend - Id: ${id}`);
       newConversation = new Conversation({
+        id: id,
         username: userName,
-        message: `${userName}: ${message}`,
-        response: `AI: ${openaiResponse}`,
-        date: new Date(),
+        message: `${userName} prompt: ${message}`,
+        response: `AI response: ${openaiResponse}`,
+        date: `Date: ${new Date()}`,
       });
       await newConversation.save();
-
       console.log("Backend - Saved conversation to MongoDB");
-    }
 
-    if (process.env.PINECONE_ENABLED === "true") {
-      simplifiedHistory = await getUserConversationHistory(userName);
-      console.log(
-        "Backend - Storing conversation to Pinecone..." + simplifiedHistory
-      );
-      await pineconeAPI.storeConversationToPinecone(
-        userName,
-        simplifiedHistory
-      );
+      if (process.env.PINECONE_ENABLED === "true") {
+        await pineconeAPI.storeConversationToPinecone(newConversation);
+      }
     }
 
     return openaiResponse;
