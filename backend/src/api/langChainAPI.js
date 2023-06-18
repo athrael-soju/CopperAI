@@ -24,32 +24,36 @@ const chunkSubstr = (str, size) => {
 };
 
 const langChainAPI = {
-  async summarizeConversation(conversationHistory) {
+  async summarizeConversation(message, conversationHistory) {
     console.log(`LangChain - Summarizing Conversation...`);
     try {
-      const template = templates.summarize;
+      const template = templates.summarize_for_prompt;
       const prompt = new PromptTemplate({
         template,
-        inputVariables: ["history"],
+        inputVariables: ["prompt", "history"],
       });
 
       const formattedHistory = await prompt.format({
+        prompt: message,
         history: conversationHistory,
       });
-
+      console.log(
+        `LangChain - Conversation Summarized: \n${conversationHistory}`
+      );
       const chain = new LLMChain({
         llm,
         prompt: prompt,
       });
       console.log("LangChain - LLM Chain created");
 
-      if (formattedHistory.length > 4000) {
+      /*   if (formattedHistory.length > 4000) {
         console.log(`LangChain -  Conversation too long, Chunking`);
         const chunks = chunkSubstr(formattedHistory, 4000);
         let summarizedChunks = [];
 
         for (const chunk of chunks) {
           const result = await chain.call({
+            prompt: message,
             history: chunk,
           });
           summarizedChunks.push(result.text);
@@ -57,14 +61,15 @@ const langChainAPI = {
 
         const chunkedSummary = summarizedChunks.join("\n");
         return chunkedSummary;
-      } else {
-        console.log(`LangChain - Conversation short enough, Not Chunking...`);
-        const result = await chain.call({
-          history: formattedHistory,
-        });
-        console.log(`LangChain - Summarized Conversation: \n${result.text}`);
-        return result.text;
-      }
+      } else {*/
+      console.log(`LangChain - Conversation short enough, Not Chunking...`);
+      const result = await chain.call({
+        prompt: message,
+        history: formattedHistory,
+      });
+      console.log(`LangChain - Summarized Conversation: \n${result.text}`);
+      return result.text;
+      // }
     } catch (err) {
       console.error(`LangChain - Error with Request: ${err}`);
       return `LangChain - Error with Request: ${err}`;
