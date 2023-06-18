@@ -9,14 +9,14 @@ const queryRoute = async (pinecone) => {
     console.log(`Pinecone - Querying Message: \n${message}`);
     try {
       let index = await getIndex(pinecone);
-      // Create embedding for user prompt, but can return null, which needs to be handled
-      let userPromptEmbedding = await createEmbedding(message);
+      let userPromptEmbedding = await createEmbedding(
+        `${userName}: ${message}`
+      );
 
       const queryResponse = await index.query({
         queryRequest: {
           namespace: process.env.PINECONE_NAMESPACE,
           topK: topK,
-          //includeValues: true,
           includeMetadata: true,
           vector: userPromptEmbedding,
           filter: {

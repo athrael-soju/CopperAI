@@ -37,9 +37,9 @@ const langChainAPI = {
         prompt: message,
         history: conversationHistory,
       });
-
-      console.log(`LangChain - Formatted Conversation: \n${formattedHistory}`);
-
+      console.log(
+        `LangChain - Conversation Summarized: \n${conversationHistory}`
+      );
       const chain = new LLMChain({
         llm,
         prompt: prompt,
