@@ -8,7 +8,7 @@ dotenv.config();
 
 const llm = new OpenAI({
   concurrency: 10,
-  temperature: 2,
+  temperature: 0,
   modelName: process.env.OPENAI_API_MODEL,
 });
 
@@ -33,7 +33,7 @@ const langChainAPI = {
         prompt: prompt,
       });
       console.log("LangChain - LLM Chain created");
-      // Introduce chunking to avoid OpenAI API limit
+      // Should consider Introducing chunking to avoid OpenAI API limit
       const result = await chain.call({
         prompt: message,
         history: formattedHistory,

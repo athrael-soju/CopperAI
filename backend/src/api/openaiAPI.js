@@ -20,9 +20,9 @@ const openaiAPI = {
       return response;
     } catch (err) {
       console.error(
-        `OpenAI - error generating response: \nStatus: ${err.response.status}\nError: ${err.response.statusText}`
+        `OpenAI - Error Generating Response. Status: ${err.response.status}. Error: ${err.response.statusText}`
       );
-      return `OpenAI - error generating response: \nStatus: ${err.response.status}\nError: ${err.response.statusText}`;
+      return `OpenAI - Rrror Generating Response. Status: ${err.response.status}. Error: ${err.response.statusText}`;
     }
   },
 };
