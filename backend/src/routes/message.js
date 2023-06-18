@@ -4,6 +4,7 @@ import pineconeAPI from "../api/pineconeAPI.js";
 import openaiAPI from "../api/openaiAPI.js";
 import Conversation from "../models/Conversation.js";
 import langChainAPI from "../api/langChainAPI.js";
+import { templates } from "../templates/templates.js";
 
 const router = express.Router();
 
@@ -13,100 +14,91 @@ export async function initDirective(username, directive, role) {
 
 async function getUserConversationHistory(pineconeResponse) {
   console.log("Backend - Retrieving User Message History...");
-  let conversationHistory = [];
-  let sortedConversationHistory = [];
+  let conversationHistory = "";
   // Retrieve Conversation History from MongoDB, from Pinecone response
   try {
-    conversationHistory = await Promise.all(
+    await Promise.all(
       pineconeResponse.map(async (conversation) => {
         const conversationTurn = await Conversation.findOne({
           id: conversation.id,
         }).exec();
-        return {
-          conversationTurnData: `\n${conversationTurn.message}\n${conversationTurn.response}\n${conversationTurn.date}\n`,
-          date: conversationTurn.date,
-        };
+        conversationHistory += `${conversationTurn.message}. ${conversationTurn.response}. ${conversationTurn.date}\n`;
       })
     );
 
     console.log(
-      `Backend - User Message History Retrieved: {${conversationHistory.length}} Records`
+      `Backend - User Message History Retrieved: \n${conversationHistory}`
     );
-    // Sort Conversation History by Date and then map to only return the conversationTurnData
-    sortedConversationHistory = conversationHistory
-      .sort((convA, convB) => Number(convA.date) - Number(convB.date))
-      .map((conv) => conv.conversationTurnData);
   } catch (err) {
     console.error(
       `Backend - Failed to Retrieve User Message History: \n${err.message}`
     );
   }
-  return sortedConversationHistory;
+  return conversationHistory;
 }
 
 async function sendMessage(userName, message, role = "user") {
   console.log(`Backend - Preparing to Send Message: \n${message}`);
   try {
-    let openaiResponse = null;
-    let messages = [];
-    let pineconeResponse;
-    let summarizedHistory;
-    let newConversation;
+    let messages = [],
+      openaiResponse,
+      pineconeResponse,
+      summarizedHistory,
+      newConversation;
 
-    if (process.env.PINECONE_ENABLED === "true") {
-      console.log(`Backend - Pinecone enabled. Retrieving Conversation...`);
-      pineconeResponse = await pineconeAPI.getConversationFromPinecone(
-        userName,
-        message,
-        process.env.PINECONE_TOPK
+    pineconeResponse = await pineconeAPI.getConversationFromPinecone(
+      userName,
+      message,
+      process.env.PINECONE_TOPK
+    );
+    // If a conversation is found in Pinecone, retrieve the conversation history from MongoDB
+    if (pineconeResponse?.length > 0) {
+      let userConversationHistory = await getUserConversationHistory(
+        pineconeResponse
       );
-
-      if (pineconeResponse?.length > 0) {
-        let userConversationHistory = await getUserConversationHistory(
-          pineconeResponse
-        );
-
-        summarizedHistory = await langChainAPI.summarizeConversation(
+      // Summarize the conversation history using Langchain - Currently includes random text and causes issues.
+      // Temporarily disabled until a solution is found regarding Langchain Hallucinations
+      if (process.env.LANGCHAIN_ENABLED === "true") {
+        userConversationHistory = await langChainAPI.summarizeConversation(
           message,
           userConversationHistory
         );
-
-        messages.push({
-          role: "system",
-          content: summarizedHistory,
-        });
       }
-    }
-    if (process.env.OPENAI_ENABLED === "true") {
+      // Add the summarized history to the messages array
       messages.push({
-        role: role,
-        content: message,
+        role: "system",
+        content: userConversationHistory,
       });
-      openaiResponse = await openaiAPI.generateResponseFromOpenAI(
-        messages,
-        userName
-      );
-    } else {
-      openaiResponse = `Backend - OpenAI is currently disabled. Using default response: ${Math.random()}`;
     }
+    // Adjust how the AI responds based on the user's response type
+    messages.push({
+      role: "system",
+      content: templates.adjust_response_type,
+    });
+    // Add the user's message to the messages array
+    messages.push({
+      role: role,
+      content: message,
+    });
 
-    if (openaiResponse) {
-      const id = uuidv4();
-      console.log(`Backend - Id: ${id}`);
-      newConversation = new Conversation({
-        id: id,
-        username: userName,
-        message: `${userName} prompt: ${message}`,
-        response: `AI response: ${openaiResponse}`,
-        date: `Date: ${new Date()}`,
-      });
-      await newConversation.save();
-      console.log("Backend - Saved conversation to MongoDB");
-
-      if (process.env.PINECONE_ENABLED === "true") {
-        await pineconeAPI.storeConversationToPinecone(newConversation);
-      }
-    }
+    openaiResponse = await openaiAPI.generateResponseFromOpenAI(
+      messages,
+      userName
+    );
+    // Save the conversation to MongoDB
+    const id = uuidv4();
+    console.log(`Backend - Id: ${id}`);
+    newConversation = new Conversation({
+      id: id,
+      username: userName,
+      message: `${userName} prompt: ${message}`,
+      response: `AI response: ${openaiResponse}`,
+      date: `Date: ${new Date()}`,
+    });
+    await newConversation.save();
+    console.log("Backend - Saved conversation to MongoDB");
+    // Store the conversation to Pinecone
+    await pineconeAPI.storeConversationToPinecone(newConversation);
 
     return openaiResponse;
   } catch (err) {
