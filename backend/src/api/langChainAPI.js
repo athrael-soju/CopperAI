@@ -8,24 +8,15 @@ dotenv.config();
 
 const llm = new OpenAI({
   concurrency: 10,
-  temperature: 0,
+  temperature: 2,
   modelName: process.env.OPENAI_API_MODEL,
 });
 
-const chunkSubstr = (str, size) => {
-  const numChunks = Math.ceil(str.length / size);
-  const chunks = new Array(numChunks);
-
-  for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
-    chunks[i] = str.substr(o, size);
-  }
-
-  return chunks;
-};
-
 const langChainAPI = {
   async summarizeConversation(message, conversationHistory) {
-    console.log(`LangChain - Summarizing Conversation...`);
+    console.log(
+      `LangChain - Summarizing Conversation:\n${conversationHistory}`
+    );
     try {
       const template = templates.summarize_for_prompt;
       const prompt = new PromptTemplate({
@@ -37,39 +28,18 @@ const langChainAPI = {
         prompt: message,
         history: conversationHistory,
       });
-      console.log(
-        `LangChain - Conversation Summarized: \n${conversationHistory}`
-      );
       const chain = new LLMChain({
         llm,
         prompt: prompt,
       });
       console.log("LangChain - LLM Chain created");
-
-      /*   if (formattedHistory.length > 4000) {
-        console.log(`LangChain -  Conversation too long, Chunking`);
-        const chunks = chunkSubstr(formattedHistory, 4000);
-        let summarizedChunks = [];
-
-        for (const chunk of chunks) {
-          const result = await chain.call({
-            prompt: message,
-            history: chunk,
-          });
-          summarizedChunks.push(result.text);
-        }
-
-        const chunkedSummary = summarizedChunks.join("\n");
-        return chunkedSummary;
-      } else {*/
-      console.log(`LangChain - Conversation short enough, Not Chunking...`);
+      // Introduce chunking to avoid OpenAI API limit
       const result = await chain.call({
         prompt: message,
         history: formattedHistory,
       });
       console.log(`LangChain - Summarized Conversation: \n${result.text}`);
       return result.text;
-      // }
     } catch (err) {
       console.error(`LangChain - Error with Request: ${err}`);
       return `LangChain - Error with Request: ${err}`;
