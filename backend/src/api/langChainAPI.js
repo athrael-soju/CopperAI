@@ -8,7 +8,7 @@ dotenv.config();
 
 const llm = new OpenAI({
   concurrency: 10,
-  temperature: 0,
+  temperature: 8,
   modelName: process.env.OPENAI_API_MODEL,
 });
 
