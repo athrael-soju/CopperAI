@@ -43,7 +43,6 @@ async function sendMessage(userName, message, role = "user") {
     let messages = [],
       openaiResponse,
       pineconeResponse,
-      summarizedHistory,
       newConversation;
 
     pineconeResponse = await pineconeAPI.getConversationFromPinecone(

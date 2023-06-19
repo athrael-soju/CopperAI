@@ -17,9 +17,10 @@ const templates = {
   Summary:
   `,
   summarize_for_prompt: `Summarize the text in the History to better respond to a given User Prompt, by applying the following rules:
-  - Generate a brief Summary from the History that can provide context for responding to the Prompt. 
-  - Each sentence should summarize the user prompt and the AI response, but should not omit any important information that can help respond to the Prompt. 
-  - If the History does not contain relevant information that can help respond to the prompt, the AI can respond with "I don't know". 
+  - Generate a set of Sentences from the History that summarize the conversation, using as few words as possible, while retaining the same information. 
+  - Each sentence should summarize the user prompt and the AI response and only include information that is relevant to the prompt.
+  - If the History does not contain relevant information that can help respond to the prompt, the AI can respond with as few words as possible.
+  - In each sentence, ensure than the usernames are retained with their respective messages and that a date is included.
 
   History: {history}
 
