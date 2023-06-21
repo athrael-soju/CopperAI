@@ -3,12 +3,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../models/User.js";
-import { initDirective } from "./message.js";
-import prompts from "../data/prompts.js";
 dotenv.config();
 
 const router = express.Router();
-const directive = prompts[process.env.MODEL_DIRECTIVE];
 
 router.get("/", (req, res) => {
   res.status(200).json({
@@ -55,7 +52,6 @@ router.post("/login", async (req, res) => {
     }
 
     if (user.firstLogin) {
-      await initDirective("system", username, directive);
       await user.save();
     }
 
@@ -77,9 +73,6 @@ router.post("/login", async (req, res) => {
 
 router.get("/guest", async (req, res) => {
   try {
-    if (process.env.DIRECTIVE_ENABLED === "true") {
-      await initDirective("system", "guest", directive);
-    }
     res.status(200).json({ username: "guest" });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });

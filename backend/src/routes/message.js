@@ -7,11 +7,6 @@ import langChainAPI from "../api/langChainAPI.js";
 import { templates } from "../templates/templates.js";
 
 const router = express.Router();
-
-export async function initDirective(username, directive, role) {
-  await sendMessage(username, directive, role);
-}
-
 async function getUserConversationHistory(pineconeResponse) {
   console.log("Backend - Retrieving User Message History...");
   let conversationHistory = "";
