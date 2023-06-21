@@ -32,7 +32,7 @@ async function getUserConversationHistory(pineconeResponse) {
   return conversationHistory;
 }
 
-async function sendMessage(userName, message, role = "user") {
+async function sendMessage(userName, userType, message, role = "user") {
   console.log(`Backend - Preparing to Send Message: \n${message}`);
   try {
     let messages = [],
@@ -42,6 +42,7 @@ async function sendMessage(userName, message, role = "user") {
 
     pineconeResponse = await pineconeAPI.getConversationFromPinecone(
       userName,
+      userType,
       message,
       process.env.PINECONE_TOPK
     );
@@ -81,10 +82,10 @@ async function sendMessage(userName, message, role = "user") {
     );
     // Save the conversation to MongoDB
     const id = uuidv4();
-    console.log(`Backend - Id: ${id}`);
     newConversation = new Conversation({
       id: id,
       username: userName,
+      usertype: userType,
       message: `${userName} prompt: ${message}`,
       response: `AI response: ${openaiResponse}`,
       date: `Date: ${new Date()}`,
@@ -109,8 +110,10 @@ router.get("/", (req, res) => {
 router.post("/", async (req, res) => {
   let role = "user",
     userName = req.body.username,
+    userType = req.body.usertype,
     message = req.body.message;
-  const response = await sendMessage(userName, message, role);
+
+  const response = await sendMessage(userName, userType, message, role);
   res.json({ message: response });
 });
 

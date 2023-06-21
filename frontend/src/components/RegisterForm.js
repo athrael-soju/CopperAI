@@ -6,6 +6,7 @@ import env from "react-dotenv";
 
 function RegisterForm({ setUser }) {
   const [username, setUsername] = useState("");
+  const [usertype, setUsertype] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [birthdate, setBirthdate] = useState("");
@@ -28,7 +29,13 @@ function RegisterForm({ setUser }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username, password, email, birthdate }),
+          body: JSON.stringify({
+            username,
+            usertype,
+            password,
+            email,
+            birthdate,
+          }),
         }
       );
 
@@ -52,6 +59,13 @@ function RegisterForm({ setUser }) {
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        required
+      />
+      <InputField
+        type="text"
+        placeholder="Usertype"
+        value={usertype}
+        onChange={(e) => setUsertype(e.target.value)}
         required
       />
       <InputField

@@ -5,7 +5,7 @@ const router = express.Router();
 
 const queryRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
-    const { userName, message, topK } = req.body;
+    const { userName, userType, message, topK } = req.body;
     console.log(`Pinecone - Querying Message: \n${message}`);
     try {
       let index = await getIndex(pinecone);
@@ -21,6 +21,7 @@ const queryRoute = async (pinecone) => {
           vector: userPromptEmbedding,
           filter: {
             userName: { $eq: userName },
+            userType: { $eq: userType },
           },
         },
       });
