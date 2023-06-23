@@ -9,7 +9,7 @@ import backendAPI from "../api/backendAPI.js";
 let conversationList;
 
 const router = express.Router();
-async function iterateSections(userName, userType, section, parentResponse) {
+function iterateSections(userName, userType, section, parentResponse) {
   let newObject = {
     id: uuidv4(),
     username: userName,
@@ -22,7 +22,7 @@ async function iterateSections(userName, userType, section, parentResponse) {
   if (section.subsections) {
     newObject.response += "\n";
     for (let subsection of section.subsections) {
-      newObject.response += await iterateSections(
+      newObject.response += iterateSections(
         userName,
         userType,
         subsection,
@@ -44,25 +44,18 @@ async function sendConversationsToAllAPIs(conversationList) {
   const backendInjestRoute = `${process.env.SERVER_ADDRESS}:${process.env.SERVER_PORT}${process.env.SERVER_INJEST_ROUTE}`;
   let pineconeResponse, backendResponse;
 
+  backendResponse = await backendAPI.injestConversationsInMongoDB(
+    backendInjestRoute,
+    conversationList
+  );
+  console.log("Data-Injest - Conversation Injested Successfully to MongoDB");
+  //await new Promise(resolve => setTimeout(resolve, 5000));
   pineconeResponse = await pineconeAPI.injestConversationsInPinecone(
     pineconeInjestRoute,
     conversationList
   );
-
-  if (pineconeResponse) {
-    console.log("Data-Injest - Conversation Injested Successfully to Pinecone");
-    backendResponse = await backendAPI.injestConversationsInMongoDB(
-      backendInjestRoute,
-      conversationList
-    );
-    if (backendResponse) {
-      console.log(
-        "Data-Injest - Conversation Injested Successfully to MongoDB"
-      );
-      return true;
-    }
-  }
-  return false;
+  console.log("Data-Injest - Conversation Injested Successfully to Pinecone");
+  return true;
 }
 
 router.post("/", async (req, res) => {
@@ -73,10 +66,12 @@ router.post("/", async (req, res) => {
 
     conversationList = [];
     console.log("Data-Injest - Generating Conversation List from Document...");
+    await Promise.all(
+      document.sections.map((section) =>
+        iterateSections(userName, userType, section)
+      )
+    );
 
-    for (let section of document.sections) {
-      await iterateSections(userName, userType, section);
-    }
     console.log(
       "Data-Injest - Conversation List Generated Successfully",
       conversationList
