@@ -10,20 +10,23 @@ const llm = new OpenAI({
 });
 
 const langChainAPI = {
-  async summarizeConversation(message, conversationHistory, userType, level) {
+  async summarizeConversation(message, conversationHistory, userType) {
     console.log(`LangChain - Summarizing Conversation: ${conversationHistory}`);
     try {
-      const template = templates.generic.summarization;
+      const template =
+        process.env.EXTERNAL_TEMPLATE_SUMMARIZE ||
+        process.env.EXTERNAL_TEMPLATE_EXPLAIN ||
+        templates.generic.summarization;
+      console.log(`LangChain - Using Template: ${template}`);
       const prompt = new PromptTemplate({
         template,
-        inputVariables: ["prompt", "history", "usertype", "level"],
+        inputVariables: ["prompt", "history", "usertype"],
       });
 
       const formattedHistory = await prompt.format({
         prompt: message,
         history: conversationHistory,
         usertype: userType,
-        level: level,
       });
       const chain = new LLMChain({
         llm,
@@ -35,7 +38,6 @@ const langChainAPI = {
         prompt: message,
         history: formattedHistory,
         usertype: userType,
-        level: level,
       });
       console.log(`LangChain - Summarized Conversation: ${result.text}`);
       return result.text;

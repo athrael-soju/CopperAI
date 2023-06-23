@@ -58,8 +58,7 @@ async function sendMessage(userName, userType, message, role = "user") {
       userConversationHistory = await langChainAPI.summarizeConversation(
         message,
         userConversationHistory,
-        userType,
-        "Senior" //TODO: Include as part of profile generation
+        userType
       );
       // Add the summarized history to the messages array
       messages.push({
@@ -69,7 +68,8 @@ async function sendMessage(userName, userType, message, role = "user") {
     }
     messages.push({
       role: "system",
-      content: templates.generic.response,
+      content:
+        process.env.EXTERNAL_TEMPLATE_RESPOND || templates.generic.response,
     });
 
     messages.push({
