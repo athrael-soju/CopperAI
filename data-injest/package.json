@@ -1,7 +1,7 @@
 {
-  "name": "pinecone",
+  "name": "data-injest",
   "version": "1.0.0",
-  "description": "",
+  "description": "Receives data and sends it to the Pinecone database",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -15,7 +15,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
-    "openai": "^3.2.1",
+    "fs": "^0.0.1-security",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

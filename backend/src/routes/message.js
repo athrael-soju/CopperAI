@@ -1,5 +1,8 @@
 import express from "express";
 import { v4 as uuidv4 } from "uuid";
+import dotenv from "dotenv";
+dotenv.config();
+
 import pineconeAPI from "../api/pineconeAPI.js";
 import openaiAPI from "../api/openaiAPI.js";
 import Conversation from "../models/Conversation.js";
@@ -7,11 +10,6 @@ import langChainAPI from "../api/langChainAPI.js";
 import { templates } from "../templates/templates.js";
 
 const router = express.Router();
-
-export async function initDirective(username, directive, role) {
-  await sendMessage(username, directive, role);
-}
-
 async function getUserConversationHistory(pineconeResponse) {
   console.log("Backend - Retrieving User Message History...");
   let conversationHistory = "";
@@ -37,7 +35,7 @@ async function getUserConversationHistory(pineconeResponse) {
   return conversationHistory;
 }
 
-async function sendMessage(userName, message, role = "user") {
+async function sendMessage(userName, userType, message, role = "user") {
   console.log(`Backend - Preparing to Send Message: \n${message}`);
   try {
     let messages = [],
@@ -47,6 +45,7 @@ async function sendMessage(userName, message, role = "user") {
 
     pineconeResponse = await pineconeAPI.getConversationFromPinecone(
       userName,
+      userType,
       message,
       process.env.PINECONE_TOPK
     );
@@ -56,25 +55,23 @@ async function sendMessage(userName, message, role = "user") {
         pineconeResponse
       );
       // Summarize the conversation history using Langchain - Currently includes random text and causes issues.
-      // Temporarily disabled until a solution is found regarding Langchain Hallucinations
-      if (process.env.LANGCHAIN_ENABLED === "true") {
-        userConversationHistory = await langChainAPI.summarizeConversation(
-          message,
-          userConversationHistory
-        );
-      }
+      userConversationHistory = await langChainAPI.summarizeConversation(
+        message,
+        userConversationHistory,
+        userType
+      );
       // Add the summarized history to the messages array
       messages.push({
         role: "system",
         content: userConversationHistory,
       });
     }
-    // Adjust how the AI responds based on the user's response type
     messages.push({
       role: "system",
-      content: templates.adjust_response_type,
+      content:
+        process.env.EXTERNAL_TEMPLATE_RESPOND || templates.generic.response,
     });
-    // Add the user's message to the messages array
+
     messages.push({
       role: role,
       content: message,
@@ -86,10 +83,10 @@ async function sendMessage(userName, message, role = "user") {
     );
     // Save the conversation to MongoDB
     const id = uuidv4();
-    console.log(`Backend - Id: ${id}`);
     newConversation = new Conversation({
       id: id,
       username: userName,
+      usertype: userType,
       message: `${userName} prompt: ${message}`,
       response: `AI response: ${openaiResponse}`,
       date: `Date: ${new Date()}`,
@@ -114,8 +111,10 @@ router.get("/", (req, res) => {
 router.post("/", async (req, res) => {
   let role = "user",
     userName = req.body.username,
+    userType = req.body.usertype,
     message = req.body.message;
-  const response = await sendMessage(userName, message, role);
+
+  const response = await sendMessage(userName, userType, message, role);
   res.json({ message: response });
 });
 

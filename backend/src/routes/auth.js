@@ -2,13 +2,11 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import User from "../models/User.js";
-import { initDirective } from "./message.js";
-import prompts from "../data/prompts.js";
 dotenv.config();
 
+import User from "../models/User.js";
+
 const router = express.Router();
-const directive = prompts[process.env.MODEL_DIRECTIVE];
 
 router.get("/", (req, res) => {
   res.status(200).json({
@@ -17,7 +15,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { username, email, birthdate, password } = req.body;
+  const { username, usertype, email, birthdate, password } = req.body;
   try {
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
@@ -27,6 +25,7 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       username,
+      usertype,
       email,
       birthdate,
       password: hashedPassword,
@@ -55,17 +54,19 @@ router.post("/login", async (req, res) => {
     }
 
     if (user.firstLogin) {
-      await initDirective("system", username, directive);
       await user.save();
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-
-    res
-      .status(200)
-      .json({ message: "User logged in successfully", token, username });
+    let usertype = user.usertype;
+    res.status(200).json({
+      message: "User logged in successfully",
+      token,
+      username,
+      usertype,
+    });
   } catch (error) {
     console.error("Error:", error);
 
@@ -77,10 +78,7 @@ router.post("/login", async (req, res) => {
 
 router.get("/guest", async (req, res) => {
   try {
-    if (process.env.DIRECTIVE_ENABLED === "true") {
-      await initDirective("system", "guest", directive);
-    }
-    res.status(200).json({ username: "guest" });
+    res.status(200).json({ username: "guest", usertype: "basic" });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }

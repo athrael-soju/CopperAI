@@ -44,6 +44,17 @@ services:
     networks:
       - whisper-network
 
+  data-injest:
+    build: ./data-injest
+    container_name: data-injest
+    ports:
+      - "6000:6000"
+    depends_on:
+      - mongodb
+      - pinecone
+    networks:
+      - whisper-network
+
 volumes:
   mongo-data:
 

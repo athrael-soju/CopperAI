@@ -1,5 +1,7 @@
 import express from "express";
 import { createEmbedding, getIndex } from "../utils/utils.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const router = express.Router();
 
@@ -21,13 +23,14 @@ const upsertRoute = async (pinecone) => {
               metadata: {
                 id: newConversation.id,
                 userName: newConversation.username,
+                userType: newConversation.userType,
               },
             },
           ],
           namespace: `default`,
         },
       });
-      console.log(`Pinecone - Upserted summarizedHistory`);
+      console.log(`Pinecone - Upserted summarizedHistory Successfully`);
       res.status(200).json(upsertSummaryResponse);
     } catch (error) {
       console.error(`Pinecone - Error Upserting Data: \n${error.message}`);

@@ -1,11 +1,13 @@
 import express from "express";
 import { createEmbedding, getIndex } from "../utils/utils.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const router = express.Router();
 
 const queryRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
-    const { userName, message, topK } = req.body;
+    const { userName, userType, message, topK } = req.body;
     console.log(`Pinecone - Querying Message: \n${message}`);
     try {
       let index = await getIndex(pinecone);
@@ -20,7 +22,11 @@ const queryRoute = async (pinecone) => {
           includeMetadata: true,
           vector: userPromptEmbedding,
           filter: {
-            userName: { $eq: userName },
+            $or: [
+              { userName: { $eq: userName } },
+              { userType: { $eq: userType } },
+            ],
+            //$and: [{ score: { $gte: 0.65 } }],
           },
         },
       });
