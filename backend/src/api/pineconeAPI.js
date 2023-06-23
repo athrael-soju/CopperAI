@@ -27,7 +27,7 @@ const pineconeAPI = {
       await axios.post(`${pineconeServiceUrl}/upsert`, {
         newConversation: newConversation,
       });
-      console.log(`Pinecone: Conversation Stored`);
+      console.log(`Pinecone: Conversation Stored Successfully`);
     } catch (error) {
       console.error(`Pinecone: Error Storing Conversation: \n${error.message}`);
       return `Pinecone - Error Storing Conversation: \n${error.message}`;

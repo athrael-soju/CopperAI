@@ -1,129 +1,110 @@
 import express from "express";
-import Conversation from "../models/Conversation.js";
 import { v4 as uuidv4 } from "uuid";
+import dotenv from "dotenv";
+dotenv.config();
+
+import pineconeAPI from "../api/pineconeAPI.js";
+import backendAPI from "../api/backendAPI.js";
+
+let conversationList;
 
 const router = express.Router();
-
-async function generateConversation() {
-  console.log("Data-Injest - Creating Conversation Objects...");
-  try {
-
-  } catch (err) {}
-  return conversationHistory;
-}
-
-const injestRoute = async () => {
-  router.post("/", async (req, res) => {});
-  chunkedDataList = [];
-
-  let role = "user",
-    userName = req.body.username,
-    message = req.body.message;
-
-  let sampleDocList = {
-    title: "Technical Specification Document for XYZ Observability Platform",
-    user_access_list: ["user1", "user2", "user3"],
-    sections: [
-      {
-        id: 1,
-        title: "Introduction",
-        type: "section",
-        description:
-          "This document provides the technical specifications for the XYZ Observability Platform, a SaaS solution that will offer deep insights into the performance and health of complex, distributed software systems.",
-      },
-      {
-        id: 2,
-        title: "System Overview",
-        type: "section",
-        description:
-          "The XYZ Observability Platform is a comprehensive, cloud-based solution that provides real-time analytics, dynamic instrumentation, and advanced visualization of software systems. The platform will integrate seamlessly with a wide range of application frameworks, infrastructure components, and third-party services.",
-      },
-      {
-        id: 3,
-        title: "Functional Requirements",
-        description: "The platform must provide the following functionality:",
-        subsections: [
-          {
-            id: "3.1",
-            title: "Data Ingestion",
-            type: "subsection",
-            description:
-              "The platform must ingest telemetry data (logs, metrics, traces) from a variety of sources in real time. It should support both push and pull mechanisms for data ingestion.",
-          },
-          {
-            id: "3.2",
-            title: "Data Processing & Analysis",
-            type: "subsection",
-            description:
-              "The platform should provide advanced data processing and querying capabilities. It should support high-cardinality attributes and allow ad-hoc, flexible queries.",
-          },
-          {
-            id: "3.3",
-            title: "Data Visualization",
-            type: "subsection",
-            description:
-              "Users should be able to create customizable dashboards featuring charts, graphs, and other data visualizations.",
-          },
-          {
-            id: "3.4",
-            title: "Alerting & Notification",
-            type: "subsection",
-            description:
-              "The platform should support configurable alerts based on specific conditions or anomalies in the data. It should integrate with common notification channels (email, Slack, etc.).",
-          },
-        ],
-      },
-    ],
+async function iterateSections(userName, userType, section, parentResponse) {
+  let newObject = {
+    id: uuidv4(),
+    username: userName,
+    usertype: userType,
+    message: `${userName} Data Entry: Section: ${section.id}. Title: ${section.title}`,
+    response: `Description: ${section.description}`,
+    date: `Date: ${new Date()}`,
   };
 
-  // // Save each chnk to MongoDB
-  const id = uuidv4();
-  // console.log(`Backend - Id: ${id}`);
-    let conversationList = [];
-
-  // await newConversation.save();
-  // console.log("Backend - Saved conversation to MongoDB");
-  // // Store the conversation to Pinecone
-  // await pineconeAPI.storeConversationToPinecone(newConversation);
-
-  sampleDocList.sections.forEach((section) => {
-    // Each section will be stored in mongodb and pinecone
-    if (section.type === "section") {
-      console.log(`Section: ${section.title}`);
-      // Each subsection will be stored in mongodb and pinecone
-      if (subsections) {
-        subsections.forEach((subsection) => {
-          console.log(`Subsection: ${subsection.title}`);
-          let newSubsectionConversation = generateConversation(subsection.id, subsection.title, subsection.description, subsection.type);
-          conversationList.push(newSubsectionConversation);
-        });
-      }
-      let newSectioonConversation = generateConversation(section.id, section.title, section.description, section.type, subsectionSummary);
-      conversationList.push(newSubsectionConversation);
+  if (section.subsections) {
+    newObject.response += "\n";
+    for (let subsection of section.subsections) {
+      newObject.response += await iterateSections(
+        userName,
+        userType,
+        subsection,
+        newObject.response
+      );
     }
-  });
+  }
 
-  // upsertRequest: {
-  //   vectors: [
-  //     {
-  //       id: newConversation.id,
-  //       values: newConversationEmbedding,
-  //       metadata: {
-  //         id: newConversation.id,
-  //         userName: newConversation.username,
-  //       },
-  //     },
-  //   ],
-  //   namespace: `default`,
-  // },
+  if (parentResponse) {
+    parentResponse = ` Section: ${section.id}. Title: ${section.title}. ${newObject.date}\n`;
+  }
 
-  return router;
-};
+  conversationList.push(newObject);
+  return parentResponse;
+}
 
-router.get("/", (req, res) => {
+async function sendConversationsToAllAPIs(conversationList) {
+  const pineconeInjestRoute = `${process.env.PINECONE_ADDRESS}:${process.env.PINECONE_PORT}${process.env.PINECONE_INJEST_ROUTE}`;
+  const backendInjestRoute = `${process.env.SERVER_ADDRESS}:${process.env.SERVER_PORT}${process.env.SERVER_INJEST_ROUTE}`;
+  let pineconeResponse, backendResponse;
+
+  pineconeResponse = await pineconeAPI.injestConversationsInPinecone(
+    pineconeInjestRoute,
+    conversationList
+  );
+
+  if (pineconeResponse) {
+    console.log("Data-Injest - Conversation Injested Successfully to Pinecone");
+    backendResponse = await backendAPI.injestConversationsInMongoDB(
+      backendInjestRoute,
+      conversationList
+    );
+    if (backendResponse) {
+      console.log(
+        "Data-Injest - Conversation Injested Successfully to MongoDB"
+      );
+      return true;
+    }
+  }
+  return false;
+}
+
+router.post("/", async (req, res) => {
+  try {
+    const userName = req.body.username;
+    const userType = req.body.usertype;
+    let document = JSON.parse(req.files.document.data.toString());
+
+    conversationList = [];
+    console.log("Data-Injest - Generating Conversation List from Document...");
+
+    for (let section of document.sections) {
+      await iterateSections(userName, userType, section);
+    }
+    console.log(
+      "Data-Injest - Conversation List Generated Successfully",
+      conversationList
+    );
+    let finalResponse = await sendConversationsToAllAPIs(conversationList);
+    if (finalResponse) {
+      res.status(200).json({
+        message:
+          "Data-Injest - Conversations Injested Successfully to both Pinecone and MongoDB",
+      });
+    } else {
+      res.status(500).json({
+        message:
+          "Data-Injest - Conversations Failed to Injest to both Pinecone and MongoDB",
+      });
+    }
+  } catch (err) {
+    console.error(`Data-Injest - Error:\n${err.message}`);
+    res.status(500).json({
+      message: `Data-Injest - Error:\n${err.message}`,
+    });
+  }
+});
+
+router.get("/", async (req, res) => {
   res.status(200).json({
     message: `You've reached the /injest data-injest route, running on port: ${process.env.DATA_INJEST_PORT}`,
   });
 });
 
-export default injestRoute;
+export default router;

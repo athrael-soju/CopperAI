@@ -50,6 +50,7 @@ services:
     ports:
       - "6000:6000"
     depends_on:
+      - mongodb
       - pinecone
     networks:
       - whisper-network

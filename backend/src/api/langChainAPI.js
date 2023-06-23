@@ -1,10 +1,7 @@
-import dotenv from "dotenv";
 import { LLMChain } from "langchain/chains";
 import { OpenAI } from "langchain/llms/openai";
 import { PromptTemplate } from "langchain/prompts";
 import { templates } from "../templates/templates.js";
-
-dotenv.config();
 
 const llm = new OpenAI({
   concurrency: 10,

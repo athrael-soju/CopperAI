@@ -6,6 +6,7 @@ import cors from "cors";
 import authRoute from "./routes/auth.js";
 import messageRoute from "./routes/message.js";
 import speakRoute from "./routes/speak.js";
+import injestRoute from "./routes/injest.js";
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(fileUpload());
 app.use("/auth", authRoute);
 app.use("/message", messageRoute);
 app.use("/speak", speakRoute);
+app.use("/injest", injestRoute);
 
 app.get("/", (req, res) => {
   res.status(200).json({

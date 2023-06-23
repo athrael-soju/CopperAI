@@ -1,5 +1,8 @@
 import express from "express";
 import { v4 as uuidv4 } from "uuid";
+import dotenv from "dotenv";
+dotenv.config();
+
 import pineconeAPI from "../api/pineconeAPI.js";
 import openaiAPI from "../api/openaiAPI.js";
 import Conversation from "../models/Conversation.js";
