@@ -22,8 +22,10 @@ const queryRoute = async (pinecone) => {
           includeMetadata: true,
           vector: userPromptEmbedding,
           filter: {
-            userName: { $eq: userName },
-            userType: { $eq: userType },
+            $or: [
+              { userName: { $eq: userName } },
+              { userType: { $eq: userType } },
+            ],
           },
         },
       });

@@ -7,40 +7,45 @@ const router = express.Router();
 
 const injestRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
-    //let index = await getIndex(pinecone);
-    // Delay for 5 seconds
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    const { conversationList } = req.body;
-    console.log(`Pinecone - Conversation List Received: ${conversationList}`);
-    // try {
-    //   let newConversationEmbedding = await createEmbedding(
-    //     `${newConversation.message}\n${newConversation.response}\n${newConversation.date}\n`
-    //   );
-    //   console.log(`Pinecone - Upserting summarizedHistory...`);
-    //   const upsertSummaryResponse = await index.upsert({
-    //     upsertRequest: {
-    //       vectors: [
-    //         {
-    //           id: newConversation.id,
-    //           values: newConversationEmbedding,
-    //           metadata: {
-    //             id: newConversation.id,
-    //             userName: newConversation.username,
-    //           },
-    //         },
-    //       ],
-    //       namespace: `default`,
-    //     },
-    //   });
-    //   console.log(`Pinecone - Upserted summarizedHistory`);
-    //   res.status(200).json(upsertSummaryResponse);
-    // } catch (error) {
-    //   console.error(`Pinecone - Error Upserting Data: \n${error.message}`);
-    //   res.status(500).json({
-    //     message: `Pinecone - Error Upserting Data: \n${error.message}`,
-    //   });
-    // }
-    res.status(200).json({ message: "Pinecone - Injest Successful" });
+    let index = await getIndex(pinecone);
+    let conversationList = JSON.parse(req.files.document.data.toString());
+    console.log(`Pinecone - Injesting Conversation List...`);
+    try {
+      let responseList = [];
+      for (let conversation of conversationList) {
+        let conversationEmbedding = await createEmbedding(
+          `${conversation.message}. ${conversation.response}. ${conversation.date}`
+        );
+        const upsertConversationResponse = await index.upsert({
+          upsertRequest: {
+            vectors: [
+              {
+                id: conversation.id,
+                values: conversationEmbedding,
+                metadata: {
+                  id: conversation.id,
+                  userName: conversation.username,
+                },
+              },
+            ],
+            namespace: `default`,
+          },
+        });
+        responseList.push(upsertConversationResponse);
+        console.log(`Pinecone - Conversation Injested Successfully`);
+      }
+      console.log(`Pinecone - Conversation List Injested Successfully`);
+      res.status(200).json({
+        message: `Pinecone - Conversation List Injest Successful for ${responseList.length} Conversations`,
+      });
+    } catch (error) {
+      console.error(
+        `Pinecone - Error Injesting Conversation List: ${error.message}`
+      );
+      res.status(500).json({
+        message: `Pinecone - Error Injesting Conversation List: ${error.message}`,
+      });
+    }
   });
   return router;
 };

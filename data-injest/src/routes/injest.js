@@ -1,6 +1,8 @@
 import express from "express";
 import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
+import fs from "fs";
+
 dotenv.config();
 
 import pineconeAPI from "../api/pineconeAPI.js";
@@ -9,6 +11,13 @@ import backendAPI from "../api/backendAPI.js";
 let conversationList;
 
 const router = express.Router();
+
+async function processDocument(userName, userType, document) {
+  document.sections.map((section) =>
+    iterateSections(userName, userType, section)
+  );
+}
+
 function iterateSections(userName, userType, section, parentResponse) {
   let newObject = {
     id: uuidv4(),
@@ -20,7 +29,7 @@ function iterateSections(userName, userType, section, parentResponse) {
   };
 
   if (section.subsections) {
-    newObject.response += "\n";
+    newObject.response += ". Subsections:";
     for (let subsection of section.subsections) {
       newObject.response += iterateSections(
         userName,
@@ -32,30 +41,41 @@ function iterateSections(userName, userType, section, parentResponse) {
   }
 
   if (parentResponse) {
-    parentResponse = ` Section: ${section.id}. Title: ${section.title}. ${newObject.date}\n`;
+    parentResponse = `Section: ${section.id}. Title: ${section.title}. ${newObject.date}. `;
   }
 
   conversationList.push(newObject);
   return parentResponse;
 }
 
-async function sendConversationsToAllAPIs(conversationList) {
+async function sendConversationsToPineconeAPI(conversationList) {
   const pineconeInjestRoute = `${process.env.PINECONE_ADDRESS}:${process.env.PINECONE_PORT}${process.env.PINECONE_INJEST_ROUTE}`;
-  const backendInjestRoute = `${process.env.SERVER_ADDRESS}:${process.env.SERVER_PORT}${process.env.SERVER_INJEST_ROUTE}`;
-  let pineconeResponse, backendResponse;
+  let pineconeResponse;
+  try {
+    pineconeResponse = await pineconeAPI.injestConversationsInPinecone(
+      pineconeInjestRoute,
+      conversationList
+    );
+    return pineconeResponse;
+  } catch (err) {
+    console.error(`Data-Injest - Error: ${err.message}`);
+    return false;
+  }
+}
 
-  backendResponse = await backendAPI.injestConversationsInMongoDB(
-    backendInjestRoute,
-    conversationList
-  );
-  console.log("Data-Injest - Conversation Injested Successfully to MongoDB");
-  //await new Promise(resolve => setTimeout(resolve, 5000));
-  pineconeResponse = await pineconeAPI.injestConversationsInPinecone(
-    pineconeInjestRoute,
-    conversationList
-  );
-  console.log("Data-Injest - Conversation Injested Successfully to Pinecone");
-  return true;
+async function sendConversationsToBackEndAPI(conversationList) {
+  const backendInjestRoute = `${process.env.SERVER_ADDRESS}:${process.env.SERVER_PORT}${process.env.SERVER_INJEST_ROUTE}`;
+  let backendResponse;
+  try {
+    backendResponse = await backendAPI.injestConversationsInMongoDB(
+      backendInjestRoute,
+      conversationList
+    );
+    return backendResponse;
+  } catch (err) {
+    console.error(`Data-Injest - Error: ${err.message}`);
+    return false;
+  }
 }
 
 router.post("/", async (req, res) => {
@@ -66,32 +86,42 @@ router.post("/", async (req, res) => {
 
     conversationList = [];
     console.log("Data-Injest - Generating Conversation List from Document...");
-    await Promise.all(
-      document.sections.map((section) =>
-        iterateSections(userName, userType, section)
-      )
-    );
+    await processDocument(userName, userType, document);
 
     console.log(
       "Data-Injest - Conversation List Generated Successfully",
       conversationList
     );
-    let finalResponse = await sendConversationsToAllAPIs(conversationList);
-    if (finalResponse) {
-      res.status(200).json({
-        message:
-          "Data-Injest - Conversations Injested Successfully to both Pinecone and MongoDB",
-      });
-    } else {
-      res.status(500).json({
-        message:
-          "Data-Injest - Conversations Failed to Injest to both Pinecone and MongoDB",
-      });
-    }
+
+    let data = JSON.stringify(conversationList);
+
+    fs.writeFile("./src/data/conversationList.json", data, (err) => {
+      if (err) throw err;
+      console.log("Data written to file");
+    });
+    console.log(process.cwd());
+    res.status(200).json({
+      message: `Data-Injest - Conversations Injested Successfully to: conversationList.json `,
+    });
+    // let apiResponse = await sendConversationsToPineconeAPI(conversationList);
+    // if (!apiResponse.message.includes("Error")) {
+    //   apiResponse = await sendConversationsToBackEndAPI(conversationList);
+    //   if (!apiResponse.message.includes("Error")) {
+    //     res.status(200).json({
+    //       message:
+    //         "Data-Injest - Conversations Injested Successfully to both Pinecone and MongoDB",
+    //     });
+    //   }
+    // } else {
+    //   res.status(500).json({
+    //     message:
+    //       "Data-Injest - Conversations Failed to Injest to both Pinecone and MongoDB",
+    //   });
+    // }
   } catch (err) {
-    console.error(`Data-Injest - Error:\n${err.message}`);
+    console.error(`Data-Injest - Error: ${err.message}`);
     res.status(500).json({
-      message: `Data-Injest - Error:\n${err.message}`,
+      message: `Data-Injest - Error: ${err.message}`,
     });
   }
 });

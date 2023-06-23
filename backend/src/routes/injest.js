@@ -7,14 +7,28 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { conversationList } = req.body;
-    console.log(`Backend - Conversation List Received: ${conversationList}`);
+    let conversationList = JSON.parse(req.files.document.data.toString());
+    console.log(`Backend - Injesting Conversation List...`, conversationList);
 
-    res.status(200).json({ message: "MongoDB Data Injest Successful" });
+    for (let conversation of conversationList) {
+      const newConversation = new Conversation({
+        id: conversation.id,
+        username: conversation.username,
+        usertype: conversation.usertype,
+        message: conversation.message,
+        response: conversation.response,
+        date: conversation.date,
+      });
+      await newConversation.save();
+    }
+    console.log(`Backend - Conversation List Injested Successfully`);
+    res
+      .status(200)
+      .json({ message: "Backend - Conversation List Injested Successfully" });
   } catch (error) {
-    console.error(`Backend - Error:\n${error.message}`);
+    console.error(`Backend - Error: ${error.message}`);
     res.status(500).json({
-      message: `Backend - Error:\n${error.message}`,
+      message: `Backend - Error: ${error.message}`,
     });
   }
 });
