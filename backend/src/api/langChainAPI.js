@@ -10,32 +10,34 @@ const llm = new OpenAI({
 });
 
 const langChainAPI = {
-  async summarizeConversation(message, conversationHistory) {
-    console.log(
-      `LangChain - Summarizing Conversation:\n${conversationHistory}`
-    );
+  async summarizeConversation(message, conversationHistory, userType, level) {
+    console.log(`LangChain - Summarizing Conversation: ${conversationHistory}`);
     try {
-      const template = templates.summarize_for_prompt;
+      const template = templates.generic.summarization;
       const prompt = new PromptTemplate({
         template,
-        inputVariables: ["prompt", "history"],
+        inputVariables: ["prompt", "history", "usertype", "level"],
       });
 
       const formattedHistory = await prompt.format({
         prompt: message,
         history: conversationHistory,
+        usertype: userType,
+        level: level,
       });
       const chain = new LLMChain({
         llm,
         prompt: prompt,
       });
       console.log("LangChain - LLM Chain created");
-      // Should consider Introducing chunking to avoid OpenAI API limit
+      // TODO: Consider Introducing chunking to avoid OpenAI API limit
       const result = await chain.call({
         prompt: message,
         history: formattedHistory,
+        usertype: userType,
+        level: level,
       });
-      console.log(`LangChain - Summarized Conversation: \n${result.text}`);
+      console.log(`LangChain - Summarized Conversation: ${result.text}`);
       return result.text;
     } catch (err) {
       console.error(`LangChain - Error with Request: ${err}`);

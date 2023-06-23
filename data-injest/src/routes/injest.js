@@ -12,40 +12,66 @@ let conversationList;
 
 const router = express.Router();
 
-async function processDocument(userName, userType, document) {
-  document.sections.map((section) =>
-    iterateSections(userName, userType, section)
-  );
-}
-
-function iterateSections(userName, userType, section, parentResponse) {
+async function ProcessDocument(
+  userName,
+  userType,
+  section,
+  parentSectionTitle = "",
+  level = 1
+) {
   let newObject = {
     id: uuidv4(),
     username: userName,
     usertype: userType,
-    message: `${userName} Data Entry: Section: ${section.id}. Title: ${section.title}`,
+    message: `${userName} Data Entry: ${
+      level === 0 ? "Document" : "Section"
+    }: ${section.id}. Title: ${section.title}`,
     response: `Description: ${section.description}`,
-    date: `Date: ${new Date()}`,
+    date: `Date: ${new Date()}.`,
   };
 
+  if (parentSectionTitle !== "") {
+    newObject.response += ` Related to: ${parentSectionTitle}`;
+  }
+
+  // Add newObject to the conversation list
+  conversationList.push(newObject);
+
+  // Process the subsections
   if (section.subsections) {
-    newObject.response += ". Subsections:";
-    for (let subsection of section.subsections) {
-      newObject.response += iterateSections(
+    newObject.response += " Subsections: ";
+    for (let i = 0; i < section.subsections.length; i++) {
+      newObject.response += section.subsections[i].title;
+      if (i < section.subsections.length - 1) {
+        newObject.response += ", ";
+      }
+      processSection(
         userName,
         userType,
-        subsection,
-        newObject.response
+        section.subsections[i],
+        section.title,
+        level + 1
       );
     }
   }
 
-  if (parentResponse) {
-    parentResponse = `Section: ${section.id}. Title: ${section.title}. ${newObject.date}. `;
+  // Process the sections
+  if (section.sections) {
+    newObject.response += " Sections: ";
+    for (let i = 0; i < section.sections.length; i++) {
+      newObject.response += section.sections[i].title;
+      if (i < section.sections.length - 1) {
+        newObject.response += ", ";
+      }
+      processSection(
+        userName,
+        userType,
+        section.sections[i],
+        section.title,
+        level + 1
+      );
+    }
   }
-
-  conversationList.push(newObject);
-  return parentResponse;
 }
 
 async function sendConversationsToPineconeAPI(conversationList) {
@@ -86,7 +112,7 @@ router.post("/", async (req, res) => {
 
     conversationList = [];
     console.log("Data-Injest - Generating Conversation List from Document...");
-    await processDocument(userName, userType, document);
+    await ProcessDocument(userName, userType, document);
 
     console.log(
       "Data-Injest - Conversation List Generated Successfully",

@@ -55,25 +55,23 @@ async function sendMessage(userName, userType, message, role = "user") {
         pineconeResponse
       );
       // Summarize the conversation history using Langchain - Currently includes random text and causes issues.
-      // Temporarily disabled until a solution is found regarding Langchain Hallucinations
-      if (process.env.LANGCHAIN_ENABLED === "true") {
-        userConversationHistory = await langChainAPI.summarizeConversation(
-          message,
-          userConversationHistory
-        );
-      }
+      userConversationHistory = await langChainAPI.summarizeConversation(
+        message,
+        userConversationHistory,
+        userType,
+        "Senior" //TODO: Include as part of profile generation
+      );
       // Add the summarized history to the messages array
       messages.push({
         role: "system",
         content: userConversationHistory,
       });
     }
-    // Adjust how the AI responds based on the user's response type
     messages.push({
       role: "system",
-      content: templates.adjust_response_type,
+      content: templates.generic.response,
     });
-    // Add the user's message to the messages array
+
     messages.push({
       role: role,
       content: message,

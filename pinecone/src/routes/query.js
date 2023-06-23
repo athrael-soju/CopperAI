@@ -26,6 +26,7 @@ const queryRoute = async (pinecone) => {
               { userName: { $eq: userName } },
               { userType: { $eq: userType } },
             ],
+            //$and: [{ score: { $gte: 0.65 } }],
           },
         },
       });
