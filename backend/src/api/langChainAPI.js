@@ -11,7 +11,7 @@ const llm = new OpenAI({
 
 const langChainAPI = {
   async summarizeConversation(message, conversationHistory, userType) {
-    console.log(`LangChain - Summarizing Conversation: ${conversationHistory}`);
+    console.log(`LangChain - Summarizing Conversation, using Template: ${conversationHistory}`);
     try {
       const template =
         process.env.EXTERNAL_TEMPLATE_SUMMARIZE ||
