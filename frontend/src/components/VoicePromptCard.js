@@ -93,7 +93,12 @@ const VoicePromptCard = ({
           type="primary"
           shape="circle"
           size="large"
-          style={{ fontSize: "2rem", width: "100px", height: "100px" }}
+          style={{
+            fontSize: "2rem",
+            width: "100px",
+            height: "100px",
+            margin: "20px",
+          }}
           onClick={handleStartRecording}
           variant={activeButton === "start" ? "primary" : "outline-primary"}
           icon={<FontAwesomeIcon icon={faMicrophone} />}
@@ -123,9 +128,7 @@ const VoicePromptCard = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-around",
-        margin: "auto",
         width: "100%",
-        height: "80vh",
       }}
     >
       {renderButtons()}
