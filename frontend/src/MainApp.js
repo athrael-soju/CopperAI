@@ -78,7 +78,6 @@ function MainApp({ user }) {
       >
         <div
           style={{
-            // white bg rgba
             backgroundColor: "rgba(255, 255, 255, 0.4)",
             borderRadius: "1rem",
             padding: "1rem",
