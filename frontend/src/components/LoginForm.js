@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import env from "react-dotenv";
-import InputField from "./InputField";
-import SubmitButton from "./SubmitButton";
+import { Button, Form, Input, Typography } from "antd";
 
-function Login({ setUser }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const { Text } = Typography;
+
+const Login = ({ setUser }) => {
   const [error, setError] = useState("");
 
-  const loginUser = async (e) => {
-    e.preventDefault();
+  const onFinish = async (values) => {
+    const { username, password } = values;
     const response = await fetch(
       `${env.SERVER_ADDRESS}:${env.SERVER_PORT}${env.SERVER_LOGIN_ENDPOINT}`,
       {
@@ -28,37 +27,30 @@ function Login({ setUser }) {
     }
   };
 
-  const guestLogin = async () => {
-    const response = await fetch(
-      `${env.SERVER_ADDRESS}:${env.SERVER_PORT}${env.SERVER_GUEST_ENDPOINT}`
-    );
-    const data = await response.json();
-    setUser(data);
-  };
-
   return (
     <div>
-      <form onSubmit={loginUser}>
-        {error && <p className="text-danger">{error}</p>}
-        <InputField
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <InputField
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <SubmitButton type="submit">Login</SubmitButton>
-      </form>
-      <SubmitButton onClick={guestLogin}>Login as Guest</SubmitButton>
+      <Form onFinish={onFinish}>
+        {error && <Text type="danger">{error}</Text>}
+        <Form.Item
+          name="username"
+          rules={[{ required: true, message: "Please enter your username" }]}
+        >
+          <Input placeholder="Username" />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: "Please enter your password" }]}
+        >
+          <Input.Password placeholder="Password" />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Login
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
-}
+};
 
 export default Login;

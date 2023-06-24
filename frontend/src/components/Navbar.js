@@ -1,9 +1,25 @@
 import React, { useState } from "react";
-import { Button } from "react-bootstrap";
+import { Layout, Button, Space } from "antd";
+import { blue } from "@ant-design/colors";
 import AccountModal from "./AccountModal";
 import LoginForm from "./LoginForm";
+import LoginGuest from "./LoginGuest";
 import RegisterForm from "./RegisterForm";
 import AccountDetailsForm from "./AccountDetailsForm";
+
+const { Header } = Layout;
+
+const headerStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  textAlign: "center",
+  color: "#fff",
+  height: 64,
+  paddingInline: 50,
+  lineHeight: "64px",
+  backgroundColor: blue?.[10],
+};
 
 function Navbar({ user, setUser, handleLogout }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -18,79 +34,65 @@ function Navbar({ user, setUser, handleLogout }) {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container-fluid">
-          <a
-            className="navbar-brand"
-            href="https://github.com/athrael-soju/whisperChat"
-            target="_blank"
-            rel="noreferrer"
-          >
-            whisperChat
-          </a>
-          <div className="collapse navbar-collapse" id="navbarColor01">
-            <ul className="navbar-nav me-auto"></ul>
-            <form className="d-flex">
-              {user ? (
-                <>
-                  <Button
-                    onClick={handleLogout}
-                    className="btn btn-danger me-2"
-                  >
-                    Logout
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    className="btn btn-secondary me-2"
-                    onClick={handleLoginModalShow}
-                  >
-                    Login
-                  </Button>
-                  <Button
-                    className="btn btn-secondary me-2"
-                    onClick={handleSignupModalShow}
-                  >
-                    Sign up
-                  </Button>
-                </>
-              )}
-              <Button
-                className="btn btn-info me-2"
-                onClick={handleAccountModalShow}
-                disabled={!user}
+      <Header style={headerStyle}>
+        <Button
+          type="link"
+          href="https://github.com/athrael-soju/whisperChat"
+          target="_blank"
+          rel="noreferrer"
+          style={{ color: "#fff" }}
+        >
+          whisperChat
+        </Button>
+        <Space>
+          {user ? (
+            <>
+              <Button onClick={handleLogout} className="btn btn-danger me-2">
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button onClick={handleSignupModalShow} type="primary">
+                Sign up
+              </Button>
+              <Button onClick={handleLoginModalShow} type="default">
+                Login
+              </Button>
+              <LoginGuest setUser={setUser} />
+            </>
+          )}
+          {!user && (
+            <>
+              <AccountModal
+                show={showSignupModal}
+                handleClose={handleSignupModalClose}
               >
+                <RegisterForm setUser={setUser} />
+              </AccountModal>
+              <AccountModal
+                show={showLoginModal}
+                handleClose={handleLoginModalClose}
+              >
+                <LoginForm setUser={setUser} />
+              </AccountModal>
+            </>
+          )}
+          {user && (
+            <>
+              <AccountModal
+                show={showAccountModal}
+                handleClose={handleAccountModalClose}
+              >
+                <AccountDetailsForm user={user} />
+              </AccountModal>
+              <Button onClick={handleAccountModalShow}>
                 {user ? user.username : "Account"}
               </Button>
-            </form>
-          </div>
-        </div>
-      </nav>
-      {!user && (
-        <>
-          <AccountModal
-            show={showLoginModal}
-            handleClose={handleLoginModalClose}
-          >
-            <LoginForm setUser={setUser} />
-          </AccountModal>
-          <AccountModal
-            show={showSignupModal}
-            handleClose={handleSignupModalClose}
-          >
-            <RegisterForm setUser={setUser} />
-          </AccountModal>
-        </>
-      )}
-      {user && (
-        <AccountModal
-          show={showAccountModal}
-          handleClose={handleAccountModalClose}
-        >
-          <AccountDetailsForm user={user} />
-        </AccountModal>
-      )}
+            </>
+          )}
+        </Space>
+      </Header>
     </>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card } from "react-bootstrap";
+import { Button } from "antd";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -51,69 +51,86 @@ const VoicePromptCard = ({
     stopOngoingAudio();
   };
 
+  const stopBtn = (
+    <Button
+      danger
+      type="primary"
+      shape="circle"
+      size="large"
+      style={{
+        fontSize: "2rem",
+        width: "100px",
+        height: "100px",
+        margin: "20px",
+      }}
+      onClick={handleStopRecording}
+      icon={<FontAwesomeIcon icon={faStop} />}
+    ></Button>
+  );
+
   const renderButtons = () => {
     if (isPaused) {
       return (
-        <>
+        <div>
+          {stopBtn}
           <Button
             onClick={handleResumeRecording}
+            type="primary"
+            shape="circle"
+            size="large"
+            style={{ fontSize: "2rem", width: "100px", height: "100px" }}
             variant={activeButton === "resume" ? "warning" : "outline-warning"}
-            className="mx-2 voice-prompt-buttons"
           >
             <FontAwesomeIcon icon={faPlay} />
-          </Button>
-          <Button
-            onClick={handleStopRecording}
-            variant={activeButton === "stop" ? "danger" : "outline-danger"}
-            className="mx-2 voice-prompt-buttons"
-          >
-            <FontAwesomeIcon icon={faStop} />
-          </Button>
-        </>
-      );
-    }
-
-    if (!isRecording) {
-      return (
-        <div className="justify-content-center" style={{ width: "200px" }}>
-          <Button
-            onClick={handleStartRecording}
-            variant={activeButton === "start" ? "primary" : "outline-primary"}
-            className="mx-2 voice-prompt-buttons"
-          >
-            <FontAwesomeIcon icon={faMicrophone} />
           </Button>
         </div>
       );
     }
 
+    if (!isRecording) {
+      return (
+        <Button
+          type="primary"
+          shape="circle"
+          size="large"
+          style={{ fontSize: "2rem", width: "100px", height: "100px" }}
+          onClick={handleStartRecording}
+          variant={activeButton === "start" ? "primary" : "outline-primary"}
+          icon={<FontAwesomeIcon icon={faMicrophone} />}
+        ></Button>
+      );
+    }
+
     return (
-      <>
+      <div>
+        {stopBtn}
         <Button
+          type="primary"
+          shape="circle"
+          size="large"
+          style={{ fontSize: "2rem", width: "100px", height: "100px" }}
           onClick={handlePauseRecording}
+          icon={<FontAwesomeIcon icon={faPause} />}
           variant={activeButton === "pause" ? "secondary" : "outline-secondary"}
-          className="mx-2 voice-prompt-buttons"
-        >
-          <FontAwesomeIcon icon={faPause} />
-        </Button>
-        <Button
-          onClick={handleStopRecording}
-          variant={activeButton === "stop" ? "danger" : "outline-danger"}
-          className="mx-2 voice-prompt-buttons"
-        >
-          <FontAwesomeIcon icon={faStop} />
-        </Button>
-      </>
+        ></Button>
+      </div>
     );
   };
 
   return (
-    <Card>
-      <Card.Body className="d-flex justify-content-center">
-        {renderButtons()}
-      </Card.Body>
-    </Card>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-around",
+        margin: "auto",
+        width: "100%",
+        height: "80vh",
+      }}
+    >
+      {renderButtons()}
+    </div>
   );
 };
 
-export default React.memo(VoicePromptCard);
+export default VoicePromptCard;

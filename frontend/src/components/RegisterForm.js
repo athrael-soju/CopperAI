@@ -1,20 +1,14 @@
 import React, { useState } from "react";
-import InputField from "./InputField";
-import SubmitButton from "./SubmitButton";
-
+import { Form, Input, Button, Typography } from "antd";
 import env from "react-dotenv";
 
-function RegisterForm({ setUser }) {
-  const [username, setUsername] = useState("");
-  const [usertype, setUsertype] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [birthdate, setBirthdate] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+const { Text } = Typography;
+
+const RegisterForm = ({ setUser }) => {
   const [error, setError] = useState("");
 
-  const registerUser = async (e) => {
-    e.preventDefault();
+  const onFinish = async (values) => {
+    const { username, email, password, confirmPassword } = values;
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
@@ -31,10 +25,8 @@ function RegisterForm({ setUser }) {
           },
           body: JSON.stringify({
             username,
-            usertype,
-            password,
             email,
-            birthdate,
+            password,
           }),
         }
       );
@@ -52,53 +44,47 @@ function RegisterForm({ setUser }) {
   };
 
   return (
-    <form onSubmit={registerUser}>
-      {error && <p className="text-danger">{error}</p>}
-      <InputField
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        required
-      />
-      <InputField
-        type="text"
-        placeholder="Usertype"
-        value={usertype}
-        onChange={(e) => setUsertype(e.target.value)}
-        required
-      />
-      <InputField
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <InputField
-        type="date"
-        placeholder="Birthdate"
-        value={birthdate}
-        onChange={(e) => setBirthdate(e.target.value)}
-        required
-      />
-      <InputField
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      <InputField
-        type="password"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        required
-      />
-      <SubmitButton type="submit">Register</SubmitButton>
-    </form>
+    <Form onFinish={onFinish}>
+      {error && <Text type="danger">{error}</Text>}
+      <Form.Item
+        name="username"
+        rules={[{ required: true, message: "Please enter your username" }]}
+      >
+        <Input placeholder="Username" />
+      </Form.Item>
+      <Form.Item
+        name="email"
+        rules={[{ required: true, message: "Please enter your email" }]}
+      >
+        <Input placeholder="Email" />
+      </Form.Item>
+      <Form.Item
+        name="password"
+        rules={[{ required: true, message: "Please enter your password" }]}
+      >
+        <Input.Password placeholder="Password" />
+      </Form.Item>
+      <Form.Item
+        name="confirmPassword"
+        rules={[
+          { required: true, message: "Please confirm your password" },
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              if (!value || getFieldValue("password") === value) {
+                return Promise.resolve();
+              }
+              return Promise.reject("Passwords do not match");
+            },
+          }),
+        ]}
+      >
+        <Input.Password placeholder="Confirm Password" />
+      </Form.Item>
+      <Button type="primary" htmlType="submit">
+        Register
+      </Button>
+    </Form>
   );
-}
+};
 
 export default RegisterForm;
