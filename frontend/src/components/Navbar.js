@@ -3,6 +3,7 @@ import { Layout, Button, Space } from "antd";
 import { blue } from "@ant-design/colors";
 import AccountModal from "./AccountModal";
 import LoginForm from "./LoginForm";
+import LoginGuest from "./LoginGuest";
 import RegisterForm from "./RegisterForm";
 import AccountDetailsForm from "./AccountDetailsForm";
 
@@ -52,27 +53,28 @@ function Navbar({ user, setUser, handleLogout }) {
             </>
           ) : (
             <>
-              <Button onClick={handleLoginModalShow} type="default">
-                Login
-              </Button>
               <Button onClick={handleSignupModalShow} type="primary">
                 Sign up
               </Button>
+              <Button onClick={handleLoginModalShow} type="default">
+                Login
+              </Button>
+              <LoginGuest setUser={setUser} />
             </>
           )}
           {!user && (
             <>
               <AccountModal
-                show={showLoginModal}
-                handleClose={handleLoginModalClose}
-              >
-                <LoginForm setUser={setUser} />
-              </AccountModal>
-              <AccountModal
                 show={showSignupModal}
                 handleClose={handleSignupModalClose}
               >
                 <RegisterForm setUser={setUser} />
+              </AccountModal>
+              <AccountModal
+                show={showLoginModal}
+                handleClose={handleLoginModalClose}
+              >
+                <LoginForm setUser={setUser} />
               </AccountModal>
             </>
           )}

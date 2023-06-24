@@ -17,21 +17,31 @@ function WelcomeMessage() {
         textAlign: "center",
       }}
     >
-      <Title
+      <div
         style={{
-          color: blue?.[0],
+          background: "rgba(255, 255, 255, 0.5)",
+          padding: 20,
+          borderRadius: 10,
+          maxWidth: 500,
+          margin: "auto",
         }}
       >
-        Welcome to whisperChat
-      </Title>
-      <Paragraph
-        style={{
-          color: blue?.[0],
-        }}
-      >
-        This is a voice-enabled chat application. Please log in or register to
-        start using it.
-      </Paragraph>
+        <Title
+          style={{
+            color: blue?.[8],
+          }}
+        >
+          Welcome to whisperChat
+        </Title>
+        <Paragraph
+          style={{
+            color: blue?.[8],
+          }}
+        >
+          This is a voice-enabled chat application. Please log in or register to
+          start using it.
+        </Paragraph>
+      </div>
     </div>
   );
 }

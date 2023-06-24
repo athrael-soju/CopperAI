@@ -27,14 +27,6 @@ const Login = ({ setUser }) => {
     }
   };
 
-  const guestLogin = async () => {
-    const response = await fetch(
-      `${env.SERVER_ADDRESS}:${env.SERVER_PORT}${env.SERVER_GUEST_ENDPOINT}`
-    );
-    const data = await response.json();
-    setUser(data);
-  };
-
   return (
     <div>
       <Form onFinish={onFinish}>
@@ -57,7 +49,6 @@ const Login = ({ setUser }) => {
           </Button>
         </Form.Item>
       </Form>
-      <Button onClick={guestLogin}>Login as Guest</Button>
     </div>
   );
 };

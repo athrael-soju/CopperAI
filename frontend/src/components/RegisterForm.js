@@ -8,8 +8,7 @@ const RegisterForm = ({ setUser }) => {
   const [error, setError] = useState("");
 
   const onFinish = async (values) => {
-    const { username, usertype, password, email, birthdate, confirmPassword } =
-      values;
+    const { username, email, password, confirmPassword } = values;
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
@@ -26,10 +25,8 @@ const RegisterForm = ({ setUser }) => {
           },
           body: JSON.stringify({
             username,
-            usertype,
-            password,
             email,
-            birthdate,
+            password,
           }),
         }
       );
@@ -56,25 +53,10 @@ const RegisterForm = ({ setUser }) => {
         <Input placeholder="Username" />
       </Form.Item>
       <Form.Item
-        name="usertype"
-        rules={[{ required: true, message: "Please enter your usertype" }]}
-      >
-        <Input placeholder="Usertype" />
-      </Form.Item>
-      <Form.Item
         name="email"
-        rules={[
-          { required: true, message: "Please enter your email" },
-          { type: "email", message: "Please enter a valid email" },
-        ]}
+        rules={[{ required: true, message: "Please enter your email" }]}
       >
         <Input placeholder="Email" />
-      </Form.Item>
-      <Form.Item
-        name="birthdate"
-        rules={[{ required: true, message: "Please enter your birthdate" }]}
-      >
-        <Input type="date" placeholder="Birthdate" />
       </Form.Item>
       <Form.Item
         name="password"
@@ -98,11 +80,9 @@ const RegisterForm = ({ setUser }) => {
       >
         <Input.Password placeholder="Confirm Password" />
       </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Register
-        </Button>
-      </Form.Item>
+      <Button type="primary" htmlType="submit">
+        Register
+      </Button>
     </Form>
   );
 };
