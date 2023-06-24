@@ -28,6 +28,13 @@ const VoicePromptCard = ({
     startRecording();
   };
 
+  const handleResumeRecording = () => {
+    setActiveButton("start");
+    setIsPaused(false);
+    setIsRecording(true);
+    startRecording();
+  };
+
   const handlePauseRecording = () => {
     if (isRecording) {
       setActiveButton("pause");
@@ -45,23 +52,11 @@ const VoicePromptCard = ({
   };
 
   const renderButtons = () => {
-    if (!isRecording) {
-      return (
-        <Button
-          onClick={handleStartRecording}
-          variant={activeButton === "start" ? "primary" : "outline-primary"}
-          className="mx-2 voice-prompt-buttons"
-        >
-          <FontAwesomeIcon icon={faMicrophone} />
-        </Button>
-      );
-    }
-
     if (isPaused) {
       return (
         <>
           <Button
-            onClick={handleStartRecording}
+            onClick={handleResumeRecording}
             variant={activeButton === "resume" ? "warning" : "outline-warning"}
             className="mx-2 voice-prompt-buttons"
           >
@@ -75,6 +70,20 @@ const VoicePromptCard = ({
             <FontAwesomeIcon icon={faStop} />
           </Button>
         </>
+      );
+    }
+
+    if (!isRecording) {
+      return (
+        <div className="justify-content-center" style={{ width: "200px" }}>
+          <Button
+            onClick={handleStartRecording}
+            variant={activeButton === "start" ? "primary" : "outline-primary"}
+            className="mx-2 voice-prompt-buttons"
+          >
+            <FontAwesomeIcon icon={faMicrophone} />
+          </Button>
+        </div>
       );
     }
 
