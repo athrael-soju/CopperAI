@@ -9,6 +9,7 @@ const AccountModal = ({ show, handleClose, children }) => {
       open={show}
       onCancel={handleClose}
       closable
+      footer={null}
     >
       {children}
     </Modal>

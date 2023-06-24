@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card } from "antd";
+import { Button } from "antd";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -43,32 +43,43 @@ const VoicePromptCard = ({
   };
 
   return (
-    <Card>
-      <Card.Body className="d-flex justify-content-center">
-        <Button
-          onClick={handleStartRecording}
-          variant={activeButton === "start" ? "primary" : "outline-primary"}
-          className="mx-2 voice-prompt-buttons"
-        >
-          <FontAwesomeIcon icon={faMicrophone} />
-        </Button>
-        <Button
-          onClick={handlePauseRecording}
-          variant={activeButton === "pause" ? "secondary" : "outline-secondary"}
-          className="mx-2 voice-prompt-buttons"
-        >
-          <FontAwesomeIcon icon={faPause} />
-        </Button>
-        <Button
-          onClick={handleStopRecording}
-          variant={activeButton === "stop" ? "danger" : "outline-danger"}
-          className="mx-2 voice-prompt-buttons"
-        >
-          <FontAwesomeIcon icon={faStop} />
-        </Button>
-      </Card.Body>
-    </Card>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-around",
+        margin: "auto",
+        width: "100%",
+        height: "80vh",
+      }}
+    >
+      <Button
+        onClick={handleStartRecording}
+        type="primary"
+        shape="circle"
+        size="large"
+        icon={<FontAwesomeIcon icon={faMicrophone} />}
+        style={{ fontSize: "2rem", width: "100px", height: "100px" }}
+      ></Button>
+      <Button
+        onClick={handlePauseRecording}
+        type="primary"
+        shape="circle"
+        size="large"
+        icon={<FontAwesomeIcon icon={faPause} />}
+        style={{ fontSize: "2rem", width: "100px", height: "100px" }}
+      ></Button>
+      <Button
+        onClick={handleStopRecording}
+        type="primary"
+        shape="circle"
+        size="large"
+        icon={<FontAwesomeIcon icon={faStop} />}
+        style={{ fontSize: "2rem", width: "100px", height: "100px" }}
+        {...(activeButton === "stop" ? { danger: true } : {})}
+      ></Button>
+    </div>
   );
 };
 
-export default React.memo(VoicePromptCard);
+export default VoicePromptCard;
