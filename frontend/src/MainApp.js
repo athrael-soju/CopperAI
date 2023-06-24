@@ -13,6 +13,7 @@ function MainApp({ user }) {
   );
   const { playResponse, stopOngoingAudio } = useAudioHandler();
   const {
+    isPaused,
     isRecording,
     setIsRecording,
     setIsPaused,
@@ -34,6 +35,7 @@ function MainApp({ user }) {
         pauseRecording={pauseRecording}
         stopRecording={stopRecording}
         stopOngoingAudio={stopOngoingAudio}
+        isPaused={isPaused}
         isRecording={isRecording}
         setIsRecording={setIsRecording}
         setIsPaused={setIsPaused}

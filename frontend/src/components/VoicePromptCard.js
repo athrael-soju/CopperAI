@@ -6,6 +6,7 @@ import {
   faMicrophone,
   faPause,
   faStop,
+  faPlay,
 } from "@fortawesome/fontawesome-free-solid";
 
 const VoicePromptCard = ({
@@ -13,6 +14,7 @@ const VoicePromptCard = ({
   pauseRecording,
   stopRecording,
   stopOngoingAudio,
+  isPaused,
   isRecording,
   setIsRecording,
   setIsPaused,
@@ -22,6 +24,13 @@ const VoicePromptCard = ({
   const handleStartRecording = () => {
     setActiveButton("start");
     stopOngoingAudio();
+    setIsRecording(true);
+    startRecording();
+  };
+
+  const handleResumeRecording = () => {
+    setActiveButton("start");
+    setIsPaused(false);
     setIsRecording(true);
     startRecording();
   };
@@ -42,16 +51,44 @@ const VoicePromptCard = ({
     stopOngoingAudio();
   };
 
-  return (
-    <Card>
-      <Card.Body className="d-flex justify-content-center">
-        <Button
-          onClick={handleStartRecording}
-          variant={activeButton === "start" ? "primary" : "outline-primary"}
-          className="mx-2 voice-prompt-buttons"
-        >
-          <FontAwesomeIcon icon={faMicrophone} />
-        </Button>
+  const renderButtons = () => {
+    if (isPaused) {
+      return (
+        <>
+          <Button
+            onClick={handleResumeRecording}
+            variant={activeButton === "resume" ? "warning" : "outline-warning"}
+            className="mx-2 voice-prompt-buttons"
+          >
+            <FontAwesomeIcon icon={faPlay} />
+          </Button>
+          <Button
+            onClick={handleStopRecording}
+            variant={activeButton === "stop" ? "danger" : "outline-danger"}
+            className="mx-2 voice-prompt-buttons"
+          >
+            <FontAwesomeIcon icon={faStop} />
+          </Button>
+        </>
+      );
+    }
+
+    if (!isRecording) {
+      return (
+        <div className="justify-content-center" style={{ width: "200px" }}>
+          <Button
+            onClick={handleStartRecording}
+            variant={activeButton === "start" ? "primary" : "outline-primary"}
+            className="mx-2 voice-prompt-buttons"
+          >
+            <FontAwesomeIcon icon={faMicrophone} />
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <>
         <Button
           onClick={handlePauseRecording}
           variant={activeButton === "pause" ? "secondary" : "outline-secondary"}
@@ -66,6 +103,14 @@ const VoicePromptCard = ({
         >
           <FontAwesomeIcon icon={faStop} />
         </Button>
+      </>
+    );
+  };
+
+  return (
+    <Card>
+      <Card.Body className="d-flex justify-content-center">
+        {renderButtons()}
       </Card.Body>
     </Card>
   );
