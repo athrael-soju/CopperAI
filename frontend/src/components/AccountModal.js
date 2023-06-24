@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "react-bootstrap";
+import { Modal } from "antd";
 
 const AccountModal = ({ show, handleClose, children }) => {
   return (

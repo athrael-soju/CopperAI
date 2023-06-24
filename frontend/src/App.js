@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./styles/bootstrap.vapor.min.css";
-import "./styles/App.css";
 import Navbar from "./components/Navbar";
 import WelcomeMessage from "./components/WelcomeMessage";
 import MainApp from "./MainApp";
@@ -21,8 +19,16 @@ function App() {
   };
 
   return (
-    <div className="App container-fluid">
-      <video id="live-wallpaper" loop autoPlay muted>
+    <div style={{ position: "relative" }}>
+      <video
+        loop
+        autoPlay
+        muted
+        style={{
+          position: "fixed",
+          zIndex: -1,
+        }}
+      >
         <source src="assets/video/synthwave.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
