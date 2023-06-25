@@ -72,7 +72,6 @@ const VoicePromptCard = ({
     if (isPaused) {
       return (
         <div>
-          {stopBtn}
           <Button
             onClick={handleResumeRecording}
             type="primary"
@@ -83,6 +82,7 @@ const VoicePromptCard = ({
           >
             <FontAwesomeIcon icon={faPlay} />
           </Button>
+          {stopBtn}
         </div>
       );
     }
@@ -93,7 +93,12 @@ const VoicePromptCard = ({
           type="primary"
           shape="circle"
           size="large"
-          style={{ fontSize: "2rem", width: "100px", height: "100px" }}
+          style={{
+            fontSize: "2rem",
+            width: "100px",
+            height: "100px",
+            margin: "20px",
+          }}
           onClick={handleStartRecording}
           variant={activeButton === "start" ? "primary" : "outline-primary"}
           icon={<FontAwesomeIcon icon={faMicrophone} />}
@@ -103,7 +108,6 @@ const VoicePromptCard = ({
 
     return (
       <div>
-        {stopBtn}
         <Button
           type="primary"
           shape="circle"
@@ -113,6 +117,7 @@ const VoicePromptCard = ({
           icon={<FontAwesomeIcon icon={faPause} />}
           variant={activeButton === "pause" ? "secondary" : "outline-secondary"}
         ></Button>
+        {stopBtn}
       </div>
     );
   };
@@ -123,9 +128,7 @@ const VoicePromptCard = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-around",
-        margin: "auto",
         width: "100%",
-        height: "80vh",
       }}
     >
       {renderButtons()}
