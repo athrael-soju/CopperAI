@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Layout, Button, Space } from "antd";
+import { Button, Space, Layout } from "antd";
 import { gray } from "@ant-design/colors";
 import AccountModal from "./AccountModal";
 import LoginForm from "./LoginForm";
@@ -66,7 +66,10 @@ function Navbar({ user, setUser, handleLogout }) {
                 show={showSignupModal}
                 handleClose={handleSignupModalClose}
               >
-                <RegisterForm setUser={setUser} />
+                <RegisterForm
+                  setUser={setUser}
+                  onCloseModal={handleSignupModalClose}
+                />
               </AccountModal>
               <AccountModal
                 show={showLoginModal}

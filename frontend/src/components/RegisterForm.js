@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Typography } from "antd";
+import { Form, Input, Button, Typography, message } from "antd";
 import env from "react-dotenv";
 
 const { Text } = Typography;
 
-const RegisterForm = ({ setUser }) => {
+const RegisterForm = ({ onCloseModal, setUser }) => {
+  const [messageApi, contextHolder] = message.useMessage();
+
   const [error, setError] = useState("");
 
   const onFinish = async (values) => {
@@ -38,6 +40,11 @@ const RegisterForm = ({ setUser }) => {
 
       if (response.ok) {
         setUser(data.user);
+        messageApi.open({
+          type: "success",
+          content: "User registered successfully",
+        });
+        onCloseModal();
       } else {
         setError(data.message);
       }
@@ -48,6 +55,7 @@ const RegisterForm = ({ setUser }) => {
 
   return (
     <Form onFinish={onFinish}>
+      {contextHolder}
       {error && <Text type="danger">{error}</Text>}
       <Form.Item
         name="username"
