@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import env from "react-dotenv";
-import { Button, Form, Input, Typography } from "antd";
+import { Button, Divider, Form, Input, Typography } from "antd";
+import LoginGuest from "./LoginGuest";
 
 const { Text } = Typography;
 
@@ -49,6 +50,8 @@ const Login = ({ setUser }) => {
           </Button>
         </Form.Item>
       </Form>
+      <Divider />
+      <LoginGuest setUser={setUser} />
     </div>
   );
 };

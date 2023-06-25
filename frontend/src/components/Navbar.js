@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Layout, Button, Space } from "antd";
-import { blue } from "@ant-design/colors";
+import { gray } from "@ant-design/colors";
 import AccountModal from "./AccountModal";
 import LoginForm from "./LoginForm";
-import LoginGuest from "./LoginGuest";
 import RegisterForm from "./RegisterForm";
 import AccountDetailsForm from "./AccountDetailsForm";
 
@@ -18,7 +17,7 @@ const headerStyle = {
   height: 64,
   paddingInline: 50,
   lineHeight: "64px",
-  backgroundColor: blue?.[10],
+  backgroundColor: gray?.[8],
 };
 
 function Navbar({ user, setUser, handleLogout }) {
@@ -47,19 +46,18 @@ function Navbar({ user, setUser, handleLogout }) {
         <Space>
           {user ? (
             <>
-              <Button onClick={handleLogout} className="btn btn-danger me-2">
+              <Button danger onClick={handleLogout}>
                 Logout
               </Button>
             </>
           ) : (
             <>
-              <Button onClick={handleSignupModalShow} type="primary">
-                Sign up
-              </Button>
               <Button onClick={handleLoginModalShow} type="default">
                 Login
               </Button>
-              <LoginGuest setUser={setUser} />
+              <Button onClick={handleSignupModalShow} type="primary">
+                Sign up
+              </Button>
             </>
           )}
           {!user && (

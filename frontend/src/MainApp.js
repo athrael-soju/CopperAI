@@ -1,4 +1,5 @@
 import React from "react";
+import { gray } from "@ant-design/colors";
 import VoicePromptCard from "./components/VoicePromptCard";
 import LoadingAlerts from "./components/LoadingAlerts";
 import useMessageHandler from "./hooks/useMessageHandler";
@@ -78,7 +79,7 @@ function MainApp({ user }) {
       >
         <div
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.4)",
+            background: `linear-gradient(45deg, ${gray[7]}, ${gray[2]})`,
             borderRadius: "1rem",
             padding: "1rem",
             width: "100%",

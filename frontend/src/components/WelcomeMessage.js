@@ -12,14 +12,13 @@ function WelcomeMessage() {
         alignContent: "center",
         justifyContent: "center",
         flexDirection: "column",
-        padding: 50,
-        height: "80vh",
+        height: "calc(100vh - 64px)", // minus navbar height which is 64px
         textAlign: "center",
       }}
     >
       <div
         style={{
-          background: "rgba(255, 255, 255, 0.5)",
+          background: "rgba(255, 255, 255, 0.7)",
           padding: 20,
           borderRadius: 10,
           maxWidth: 500,

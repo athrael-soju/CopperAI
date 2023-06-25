@@ -4,7 +4,12 @@ import { Spin, Alert } from "antd";
 const LoadingAlerts = ({ loading, alert }) => {
   if (loading) {
     return (
-      <div className="loading-container">
+      <div
+        style={{
+          width: "100%",
+          margin: "auto",
+        }}
+      >
         <Spin size="large" />
       </div>
     );

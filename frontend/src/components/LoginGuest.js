@@ -11,7 +11,11 @@ const LoginGuest = ({ setUser }) => {
     setUser(data);
   };
 
-  return <Button onClick={guestLogin}>Login as Guest</Button>;
+  return (
+    <Button type="primary" onClick={guestLogin}>
+      Login as Guest
+    </Button>
+  );
 };
 
 export default LoginGuest;
