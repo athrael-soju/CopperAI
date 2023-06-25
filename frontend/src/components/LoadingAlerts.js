@@ -18,14 +18,27 @@ const LoadingAlerts = ({ loading, alert }) => {
   if (alert) {
     return (
       <Alert
-        message={alert.message}
+        message={
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            {alert?.message}
+            {alert?.type !== "success" && <Spin size="large" />}
+          </div>
+        }
         type={alert.type}
         description={alert?.description}
         style={{
           width: "100%",
           padding: "1rem",
         }}
-      />
+      >
+        <Spin size="large" />
+      </Alert>
     );
   }
 

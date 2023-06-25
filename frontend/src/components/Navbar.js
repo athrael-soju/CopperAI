@@ -46,7 +46,7 @@ function Navbar({ user, setUser, handleLogout }) {
         <Space>
           {user ? (
             <>
-              <Button danger onClick={handleLogout}>
+              <Button danger type="primary" onClick={handleLogout}>
                 Logout
               </Button>
             </>

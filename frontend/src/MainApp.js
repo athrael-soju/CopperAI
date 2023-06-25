@@ -33,7 +33,7 @@ function MainApp({ user }) {
   const getAlert = () => {
     if (transcribing) {
       return {
-        message: "Transcribing...",
+        message: "AI is thinking",
         type: "info",
       };
     }
@@ -55,7 +55,7 @@ function MainApp({ user }) {
 
     if (isRecording) {
       return {
-        message: "Recording...",
+        message: "User is speaking",
         type: "info",
       };
     }
