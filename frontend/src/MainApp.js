@@ -79,7 +79,6 @@ function MainApp({ user }) {
       >
         <div
           style={{
-            background: `linear-gradient(45deg, ${gray[7]}, ${gray[2]})`,
             borderRadius: "1rem",
             padding: "1rem",
             width: "100%",
