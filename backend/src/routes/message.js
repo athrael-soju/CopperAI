@@ -35,6 +35,45 @@ async function getUserConversationHistory(pineconeResponse) {
   return conversationHistory;
 }
 
+/**
+ * This function will prime the prompt messages to minimize the chance of
+ * the response containing useless statements.
+ * @param {Array<ChatCompletionRequestMessage>} messages - the messages to be primed
+ */
+function addResponsePrimers(messages) {
+  const user = "user";
+  const assistant = "assistant";
+  const primers = [
+    {
+      role: assistant,
+      content: "I'm here.",
+    },
+    {
+      role: user,
+      content: "Oh, um, hi.",
+    },
+    {
+      role: assistant,
+      content: "Hi.",
+    },
+    {
+      role: user,
+      content: "How is everything with you?",
+    },
+    {
+      role: assistant,
+      content: "Pretty good actually. It is very nice to meet you.",
+    },
+    {
+      role: user,
+      content: "Ya, it's nice to meet you too.",
+    },
+  ];
+  primers.forEach((primer) => {
+    messages.push(primer);
+  });
+}
+
 async function sendMessage(userName, userType, message, role = "user") {
   console.log(`Backend - Preparing to Send Message: \n${message}`);
   try {
@@ -50,6 +89,8 @@ async function sendMessage(userName, userType, message, role = "user") {
       process.env.PINECONE_TOPK
     );
     // If a conversation is found in Pinecone, retrieve the conversation history from MongoDB
+    let finalPrompt =
+      process.env.EXTERNAL_TEMPLATE_RESPOND || templates.generic.response;
     if (pineconeResponse?.length > 0) {
       let userConversationHistory = await getUserConversationHistory(
         pineconeResponse
@@ -60,22 +101,21 @@ async function sendMessage(userName, userType, message, role = "user") {
         userConversationHistory,
         userType
       );
-      // Add the summarized history to the messages array
-      messages.push({
-        role: "system",
-        content: userConversationHistory,
-      });
+      finalPrompt += ` The following is a summary of the conversation we had so far: ${userConversationHistory}`;
     }
     messages.push({
       role: "system",
-      content:
-        process.env.EXTERNAL_TEMPLATE_RESPOND || templates.generic.response,
+      content: finalPrompt,
     });
+
+    addResponsePrimers(messages);
 
     messages.push({
       role: role,
       content: message,
     });
+
+    console.log(messages);
 
     openaiResponse = await openaiAPI.generateResponseFromOpenAI(
       messages,
