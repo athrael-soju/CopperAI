@@ -72,7 +72,6 @@ const VoicePromptCard = ({
     if (isPaused) {
       return (
         <div>
-          {stopBtn}
           <Button
             onClick={handleResumeRecording}
             type="primary"
@@ -83,6 +82,7 @@ const VoicePromptCard = ({
           >
             <FontAwesomeIcon icon={faPlay} />
           </Button>
+          {stopBtn}
         </div>
       );
     }
@@ -108,7 +108,6 @@ const VoicePromptCard = ({
 
     return (
       <div>
-        {stopBtn}
         <Button
           type="primary"
           shape="circle"
@@ -118,6 +117,7 @@ const VoicePromptCard = ({
           icon={<FontAwesomeIcon icon={faPause} />}
           variant={activeButton === "pause" ? "secondary" : "outline-secondary"}
         ></Button>
+        {stopBtn}
       </div>
     );
   };
