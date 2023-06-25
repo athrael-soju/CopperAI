@@ -115,8 +115,6 @@ async function sendMessage(userName, userType, message, role = "user") {
       content: message,
     });
 
-    console.log(messages);
-
     openaiResponse = await openaiAPI.generateResponseFromOpenAI(
       messages,
       userName
