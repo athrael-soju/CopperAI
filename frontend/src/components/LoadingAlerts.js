@@ -1,5 +1,7 @@
 import React from "react";
-import { Spin, Alert } from "antd";
+import { Spin, Typography } from "antd";
+
+const { Title } = Typography;
 
 const LoadingAlerts = ({ loading, alert }) => {
   if (loading) {
@@ -17,28 +19,25 @@ const LoadingAlerts = ({ loading, alert }) => {
 
   if (alert) {
     return (
-      <Alert
-        message={
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            {alert?.message}
-            {alert?.type !== "success" && <Spin size="large" />}
-          </div>
-        }
-        type={alert.type}
-        description={alert?.description}
+      <div
         style={{
-          width: "100%",
-          padding: "1rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <Spin size="large" />
-      </Alert>
+        <Title
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            color: "white",
+          }}
+        >
+          {alert?.message}
+        </Title>
+        {alert?.type !== "success" && <Spin size="large" />}
+      </div>
     );
   }
 

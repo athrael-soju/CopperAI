@@ -30,16 +30,10 @@ function WelcomeMessage() {
             color: blue?.[8],
           }}
         >
-          Welcome to whisperChat
+          Welcome to WhisperChat AI
         </Title>
-        <Paragraph
-          style={{
-            color: blue?.[8],
-          }}
-        >
-          This is a voice-enabled chat application. Please log in or register to
-          start using it.
-        </Paragraph>
+        <Title level={3}>Amplify possibilities with voice</Title>
+        <Title level={4}>Please login or signup and turn on your volume</Title>
       </div>
     </div>
   );

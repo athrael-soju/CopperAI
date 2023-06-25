@@ -1,5 +1,4 @@
 import React from "react";
-import { gray } from "@ant-design/colors";
 import VoicePromptCard from "./components/VoicePromptCard";
 import LoadingAlerts from "./components/LoadingAlerts";
 import useMessageHandler from "./hooks/useMessageHandler";
