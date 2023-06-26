@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://youtu.be/sKZhZ-gwTqY" target="_blank" rel="noopener">
+  <a href="https://www.youtube.com/watch?v=AdtQZ7iXkQ0" target="_blank" rel="noopener">
  <img src="https://github.com/athrael-soju/whisperChat/blob/main/Landing-s.png" alt="Project logo"></a> 
 </p>
 <div align="center">
