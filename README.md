@@ -34,9 +34,7 @@ WhisperChat is an advanced voice assistant for efficient communication, personal
 
 ## 🏗️ Architecture <a name = "architecture"></a>
 Notes: 
-- Pinecone can be turned off via feature flag in .env of the backend Service.  
-
-![whisperChat](https://github.com/athrael-soju/whisperChat/assets/25455658/becbb819-bd4c-4529-88f5-e390a280cabd)
+![whisperChat](https://github.com/athrael-soju/whisperChat/assets/25455658/215be5fb-ce47-4d6a-bad3-7d2d443b169b)
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
