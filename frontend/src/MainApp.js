@@ -21,27 +21,14 @@ function MainApp({ user }) {
     setActiveButton,
   } = useButtonStates();
 
-  const {
-    transcribing,
-    pauseRecording,
-    startRecording,
-    stopRecording,
-    transcriptText,
-  } = useRecordAudio(sendMessage, playResponse, stopOngoingAudio, activeButton);
+  const { transcribing, pauseRecording, startRecording, stopRecording } =
+    useRecordAudio(sendMessage, playResponse, stopOngoingAudio, activeButton);
 
   const getAlert = () => {
     if (transcribing) {
       return {
         message: "AI is thinking",
         type: "info",
-      };
-    }
-
-    if (transcriptText) {
-      return {
-        message: "Transcription complete",
-        description: transcriptText,
-        type: "success",
       };
     }
 

@@ -78,7 +78,6 @@ const useRecordAudio = (
 
   return {
     transcribing,
-    transcriptText: transcript?.text,
     pauseRecording,
     startRecording,
     stopRecording,

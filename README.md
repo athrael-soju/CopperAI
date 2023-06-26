@@ -28,13 +28,16 @@
 ## 🧐 About <a name = "about"></a>
 
 WhisperChat is an advanced voice assistant for efficient communication, personalized context-aware interaction, persistent memory, and tailored data interpretation.". Features include:
+
 - Fully voiced, hands free interaction, using the OpenAI whisper API for speech to text, as well as the Google cloud API text to speech.
 - Persistent, multi user memory, with the ability to injest and interact with custom documents.
 - The ability to adjust its persona and response type based on user profile and professional aptitude.
 
 ## 🏗️ Architecture <a name = "architecture"></a>
-Notes: 
-- Pinecone can be turned off via feature flag in .env of the backend Service.  
+
+Notes:
+
+- Pinecone can be turned off via feature flag in .env of the backend Service.
 
 ![whisperChat](https://github.com/athrael-soju/whisperChat/assets/25455658/becbb819-bd4c-4529-88f5-e390a280cabd)
 
@@ -139,7 +142,7 @@ These instructions will get you a copy of the project up and running on your loc
 - Start Mongodb Docker container (if you don't have it installed locally):
 
   ```
-  docker run --name mongodb -d mongo:latest
+  docker run -d -p 27017:27017 --name mongodb mongo:latest
   ```
 
 - Run npm install in each service folder (frontend, backend, pinecone):
@@ -163,11 +166,11 @@ You should be able to access the application at http://localhost:3000 (or whiche
 ## 🎈 Usage <a name="usage"></a>
 
 - Once deployed, login as guest, or create a basic account.
-  Voice Chat: 
+  Voice Chat:
   - Record allows the user to initiate continuous discussion.
   - Pause will pause recording, but pressing Record again will resume it.
   - Stop will stop the ongoing discussion.
-  Text Chat:
+    Text Chat:
   - This can be achieved by sending a request to the endpoints directly, via Postman.
   - A sample POST message can be send to localhost:5000/message and contain form-data (username, message) and the response will be returned to the body.
 
