@@ -34,7 +34,7 @@ WhisperChat is an advanced voice assistant for efficient communication, personal
 
 ## 🏗️ Architecture <a name = "architecture"></a>
 
-![whisperChat](https://github.com/athrael-soju/whisperChat/assets/25455658/215be5fb-ce47-4d6a-bad3-7d2d443b169b)
+![whisperChat](https://github.com/athrael-soju/whisperChat/assets/25455658/105eedc4-e1d9-4d79-9e13-f3547440e567)
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
