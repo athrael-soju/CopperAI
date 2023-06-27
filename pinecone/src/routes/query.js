@@ -12,7 +12,7 @@ const queryRoute = async (pinecone) => {
     try {
       let index = await getIndex(pinecone);
       let userPromptEmbedding = await createEmbedding(
-        `${userName}: ${message}`
+        `${message}`
       );
 
       const queryResponse = await index.query({
@@ -22,11 +22,7 @@ const queryRoute = async (pinecone) => {
           includeMetadata: true,
           vector: userPromptEmbedding,
           filter: {
-            $or: [
-              { userName: { $eq: userName } },
-              { userType: { $eq: userType } },
-            ],
-            //$and: [{ score: { $gte: 0.65 } }],
+            userName: { $eq: userName },
           },
         },
       });

@@ -23,9 +23,9 @@ async function ProcessDocument(
     id: uuidv4(),
     username: userName,
     usertype: userType,
-    message: `${userName} Data Entry: ${
-      level === 0 ? "Document" : "Section"
-    }: ${section.id}. Title: ${section.title}`,
+    message: `${level === 0 ? "Document" : "Section"}: ${
+      section.id
+    }. Title: ${section.title}`,
     response: `Description: ${section.description}`,
     date: `Date: ${new Date()}.`,
   };
@@ -45,7 +45,7 @@ async function ProcessDocument(
       if (i < section.subsections.length - 1) {
         newObject.response += ", ";
       }
-      processSection(
+      ProcessDocument(
         userName,
         userType,
         section.subsections[i],
@@ -63,7 +63,7 @@ async function ProcessDocument(
       if (i < section.sections.length - 1) {
         newObject.response += ", ";
       }
-      processSection(
+      ProcessDocument(
         userName,
         userType,
         section.sections[i],
