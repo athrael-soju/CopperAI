@@ -33,7 +33,7 @@ WhisperChat is an advanced voice assistant for efficient communication, personal
 - The ability to adjust its persona and response type based on user profile and professional aptitude.
 
 ## 🏗️ Architecture <a name = "architecture"></a>
-Notes: 
+
 ![whisperChat](https://github.com/athrael-soju/whisperChat/assets/25455658/215be5fb-ce47-4d6a-bad3-7d2d443b169b)
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
