@@ -11,9 +11,7 @@ const queryRoute = async (pinecone) => {
     console.log(`Pinecone - Querying Message: \n${message}`);
     try {
       let index = await getIndex(pinecone);
-      let userPromptEmbedding = await createEmbedding(
-        `${message}`
-      );
+      let userPromptEmbedding = await createEmbedding(message);
 
       const queryResponse = await index.query({
         queryRequest: {
@@ -22,7 +20,11 @@ const queryRoute = async (pinecone) => {
           includeMetadata: true,
           vector: userPromptEmbedding,
           filter: {
-            userName: { $eq: userName },
+            $or: [
+              { userName: { $eq: userName } },
+              { userType: { $eq: userType } },
+            ],
+            $and: [{ score: { $gte: process.env.PINECONE_SIMILARITY_CUTOFF } }],
           },
         },
       });

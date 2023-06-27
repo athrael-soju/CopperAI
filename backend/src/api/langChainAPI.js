@@ -11,12 +11,11 @@ const llm = new OpenAI({
 
 const langChainAPI = {
   async summarizeConversation(message, conversationHistory, userType) {
-    console.log(`LangChain - Summarizing Conversation, using Template: ${conversationHistory}`);
+    console.log(
+      `LangChain - Summarizing Conversation, using Template: ${conversationHistory}`
+    );
     try {
-      const template =
-        process.env.EXTERNAL_TEMPLATE_SUMMARIZE ||
-        process.env.EXTERNAL_TEMPLATE_EXPLAIN ||
-        templates.generic.summarization;
+      const template = templates.generic.summarization;
       console.log(`LangChain - Using Template: ${template}`);
       const prompt = new PromptTemplate({
         template,
