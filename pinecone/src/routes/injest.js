@@ -22,7 +22,7 @@ const injestRoute = async (pinecone) => {
           metadata: {
             id: conversation.id,
             userName: conversation.username,
-            userType: conversation.usertype,
+            userDomain: conversation.userdomain,
           },
         });
       }

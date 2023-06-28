@@ -9,7 +9,7 @@ import useButtonStates from "./hooks/useButtonStates";
 function MainApp({ user }) {
   const { sendMessage, loading } = useMessageHandler(
     user.username,
-    user.usertype
+    user.userdomain
   );
   const { playResponse, stopOngoingAudio } = useAudioHandler();
   const {

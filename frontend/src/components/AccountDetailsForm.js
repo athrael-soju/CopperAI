@@ -5,7 +5,7 @@ function AccountDetailsForm({ user }) {
     <div>
       <h5>Account Details</h5>
       <p>Username: {user.username}</p>
-      <p>Usertype: {user.usertype}</p>
+      <p>Userdomain: {user.userdomain}</p>
       <p>Email: {user.email}</p>
     </div>
   );

@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { username, usertype, email, birthdate, password } = req.body;
+  const { username, userdomain, email, birthdate, password } = req.body;
   try {
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
@@ -25,7 +25,7 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       username,
-      usertype,
+      userdomain,
       email,
       birthdate,
       password: hashedPassword,
@@ -60,12 +60,12 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    let usertype = user.usertype;
+    let userdomain = user.userdomain;
     res.status(200).json({
       message: "User logged in successfully",
       token,
       username,
-      usertype,
+      userdomain,
     });
   } catch (error) {
     console.error("Error:", error);
@@ -78,7 +78,7 @@ router.post("/login", async (req, res) => {
 
 router.get("/guest", async (req, res) => {
   try {
-    res.status(200).json({ username: "guest", usertype: "basic" });
+    res.status(200).json({ username: "guest", userdomain: "basic" });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }
