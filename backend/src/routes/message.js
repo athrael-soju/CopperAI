@@ -56,7 +56,7 @@ async function sendMessage(userName, userDomain, message, role = "user") {
         pineconeResponse
       );
     }
-    if (process.env.LANGCHAIN_ENABLED) {
+    if (process.env.LANGCHAIN_ENABLED === "true") {
       //  Summarize the conversation history using Langchain
       userConversationHistory = await langChainAPI.summarizeConversation(
         message,
