@@ -9,34 +9,36 @@ const injestRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
     let index = await getIndex(pinecone);
     let conversationList = JSON.parse(req.files.document.data.toString());
+    let vectorList = [];
     console.log(`Pinecone - Injesting Conversation List...`);
     try {
-      let responseList = [];
       for (let conversation of conversationList) {
         let conversationEmbedding = await createEmbedding(
           `${conversation.message}. ${conversation.response}. ${conversation.date}`
         );
-        const upsertConversationResponse = await index.upsert({
-          upsertRequest: {
-            vectors: [
-              {
-                id: conversation.id,
-                values: conversationEmbedding,
-                metadata: {
-                  id: conversation.id,
-                  userName: conversation.username,
-                },
-              },
-            ],
-            namespace: `default`,
+        vectorList.push({
+          id: conversation.id,
+          values: conversationEmbedding,
+          metadata: {
+            id: conversation.id,
+            userName: conversation.username,
+            userDomain: conversation.userdomain,
           },
         });
-        responseList.push(upsertConversationResponse);
-        console.log(`Pinecone - Conversation Injested Successfully`);
       }
+      const upsertConversationResponse = await index.upsert({
+        upsertRequest: {
+          vectors: vectorList,
+          namespace: `default`,
+        },
+      });
       console.log(`Pinecone - Conversation List Injested Successfully`);
       res.status(200).json({
-        message: `Pinecone - Conversation List Injest Successful for ${responseList.length} Conversations`,
+        message: `Pinecone - Conversation List Injest Successful for ${
+          vectorList.length
+        } Conversations. Response: ${JSON.stringify(
+          upsertConversationResponse
+        )}`,
       });
     } catch (error) {
       console.error(

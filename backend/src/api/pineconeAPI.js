@@ -3,12 +3,12 @@ import axios from "axios";
 const pineconeServiceUrl = `${process.env.PINECONE_ADDRESS}:${process.env.PINECONE_PORT}`;
 
 const pineconeAPI = {
-  async getConversationFromPinecone(userName, userType, message, topK) {
+  async getConversationFromPinecone(userName, userDomain, message, topK) {
     console.log(`Pinecone - Sending Message to Pinecone Query API...`);
     try {
       const response = await axios.post(`${pineconeServiceUrl}/query`, {
         userName: userName,
-        userType: userType,
+        userDomain: userDomain,
         message: message,
         topK: topK,
       });

@@ -35,67 +35,79 @@ async function getUserConversationHistory(pineconeResponse) {
   return conversationHistory;
 }
 
-async function sendMessage(userName, userType, message, role = "user") {
+async function sendMessage(userName, userDomain, message, role = "user") {
   console.log(`Backend - Preparing to Send Message: \n${message}`);
   try {
     let messages = [],
       openaiResponse,
       pineconeResponse,
-      newConversation;
+      newConversation,
+      userConversationHistory = "";
 
     pineconeResponse = await pineconeAPI.getConversationFromPinecone(
       userName,
-      userType,
+      userDomain,
       message,
       process.env.PINECONE_TOPK
     );
     // If a conversation is found in Pinecone, retrieve the conversation history from MongoDB
     if (pineconeResponse?.length > 0) {
-      let userConversationHistory = await getUserConversationHistory(
+      userConversationHistory = await getUserConversationHistory(
         pineconeResponse
       );
-      // Summarize the conversation history using Langchain - Currently includes random text and causes issues.
+    }
+    if (process.env.LANGCHAIN_ENABLED === "true") {
+      //  Summarize the conversation history using Langchain
       userConversationHistory = await langChainAPI.summarizeConversation(
         message,
         userConversationHistory,
-        userType
+        userDomain
       );
-      // Add the summarized history to the messages array
+      // Adjust the AI response
       messages.push({
         role: "system",
-        content: userConversationHistory,
+        content: templates.generic.response,
       });
     }
+
+    // Add the summarized history to the messages array.
     messages.push({
       role: "system",
-      content:
-        process.env.EXTERNAL_TEMPLATE_RESPOND || templates.generic.response,
+      content: userConversationHistory,
     });
 
+    // Add the user message to the messages array.
     messages.push({
       role: role,
       content: message,
     });
 
+    // Generate a response from OpenAI
     openaiResponse = await openaiAPI.generateResponseFromOpenAI(
       messages,
       userName
     );
-    // Save the conversation to MongoDB
-    const id = uuidv4();
-    newConversation = new Conversation({
-      id: id,
-      username: userName,
-      usertype: userType,
-      message: `${userName} prompt: ${message}`,
-      response: `AI response: ${openaiResponse}`,
-      date: `Date: ${new Date()}`,
-    });
-    await newConversation.save();
-    console.log("Backend - Saved conversation to MongoDB");
-    // Store the conversation to Pinecone
-    await pineconeAPI.storeConversationToPinecone(newConversation);
 
+    /*
+     * If the memory type is dynamic, save the conversation to MongoDB and Pinecone (More suitable for conversation).
+     * If the memory type is static, only store the conversation to Pinecone (More suitable for Q&A).
+     */
+    if (process.env.MEMORY_TYPE === "dynamic") {
+      // Save the conversation to MongoDB
+      const id = uuidv4();
+      newConversation = new Conversation({
+        id: id,
+        username: userName,
+        userdomain: userDomain,
+        message: `${userName} prompt: ${message}`,
+        response: `AI response: ${openaiResponse}`,
+        date: `Date: ${new Date()}`,
+      });
+      await newConversation.save();
+      console.log("Backend - Saved conversation to MongoDB");
+      // Store the conversation to Pinecone
+      await pineconeAPI.storeConversationToPinecone(newConversation);
+    }
     return openaiResponse;
   } catch (err) {
     console.log(`Backend - Error with Request: ${err}`);
@@ -111,10 +123,10 @@ router.get("/", (req, res) => {
 router.post("/", async (req, res) => {
   let role = "user",
     userName = req.body.username,
-    userType = req.body.usertype,
+    userDomain = req.body.userdomain,
     message = req.body.message;
 
-  const response = await sendMessage(userName, userType, message, role);
+  const response = await sendMessage(userName, userDomain, message, role);
   res.json({ message: response });
 });
 

@@ -14,7 +14,7 @@ const router = express.Router();
 
 async function ProcessDocument(
   userName,
-  userType,
+  userDomain,
   section,
   parentSectionTitle = "",
   level = 1
@@ -22,10 +22,10 @@ async function ProcessDocument(
   let newObject = {
     id: uuidv4(),
     username: userName,
-    usertype: userType,
-    message: `${userName} Data Entry: ${
-      level === 0 ? "Document" : "Section"
-    }: ${section.id}. Title: ${section.title}`,
+    userdomain: userDomain,
+    message: `${level === 0 ? "Document" : "Section"}: ${
+      section.id
+    }. Title: ${section.title}`,
     response: `Description: ${section.description}`,
     date: `Date: ${new Date()}.`,
   };
@@ -45,9 +45,9 @@ async function ProcessDocument(
       if (i < section.subsections.length - 1) {
         newObject.response += ", ";
       }
-      processSection(
+      ProcessDocument(
         userName,
-        userType,
+        userDomain,
         section.subsections[i],
         section.title,
         level + 1
@@ -63,9 +63,9 @@ async function ProcessDocument(
       if (i < section.sections.length - 1) {
         newObject.response += ", ";
       }
-      processSection(
+      ProcessDocument(
         userName,
-        userType,
+        userDomain,
         section.sections[i],
         section.title,
         level + 1
@@ -107,12 +107,12 @@ async function sendConversationsToBackEndAPI(conversationList) {
 router.post("/", async (req, res) => {
   try {
     const userName = req.body.username;
-    const userType = req.body.usertype;
+    const userDomain = req.body.userdomain;
     let document = JSON.parse(req.files.document.data.toString());
 
     conversationList = [];
     console.log("Data-Injest - Generating Conversation List from Document...");
-    await ProcessDocument(userName, userType, document);
+    await ProcessDocument(userName, userDomain, document);
 
     console.log(
       "Data-Injest - Conversation List Generated Successfully",

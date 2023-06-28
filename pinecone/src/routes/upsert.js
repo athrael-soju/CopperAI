@@ -11,7 +11,7 @@ const upsertRoute = async (pinecone) => {
     const { newConversation } = req.body;
     try {
       let newConversationEmbedding = await createEmbedding(
-        `${newConversation.message}\n${newConversation.response}\n${newConversation.date}\n`
+        `${newConversation.message}. ${newConversation.response}. ${newConversation.date}.`
       );
       console.log(`Pinecone - Upserting summarizedHistory...`);
       const upsertSummaryResponse = await index.upsert({
@@ -23,7 +23,7 @@ const upsertRoute = async (pinecone) => {
               metadata: {
                 id: newConversation.id,
                 userName: newConversation.username,
-                userType: newConversation.userType,
+                userDomain: newConversation.userDomain,
               },
             },
           ],
