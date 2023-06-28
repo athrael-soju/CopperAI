@@ -24,7 +24,7 @@ const queryRoute = async (pinecone) => {
               { userName: { $eq: userName } },
               { userDomain: { $eq: userDomain } },
             ],
-            $and: [{ score: { $gte: process.env.PINECONE_SIMILARITY_CUTOFF } }],
+            //$and: [{score: {$gte: parseInt(process.env.PINECONE_SIMILARITY_CUTOFF),},},],
           },
         },
       });

@@ -34,7 +34,11 @@ const injestRoute = async (pinecone) => {
       });
       console.log(`Pinecone - Conversation List Injested Successfully`);
       res.status(200).json({
-        message: `Pinecone - Conversation List Injest Successful for ${vectorList.length} Conversations:. Response: ${upsertConversationResponse}`,
+        message: `Pinecone - Conversation List Injest Successful for ${
+          vectorList.length
+        } Conversations. Response: ${JSON.stringify(
+          upsertConversationResponse
+        )}`,
       });
     } catch (error) {
       console.error(
