@@ -27,7 +27,7 @@
 
 ## 🧐 About <a name = "about"></a>
 
-WhisperChat is an advanced voice assistant for efficient communication, personalized context-aware interaction, persistent memory, and tailored data interpretation.". Features include:
+WhisperChat is an advanced voice assistant for efficient communication, personalized context-aware interaction, persistent memory, and tailored data interpretation. Features include:
 - Fully voiced, hands free interaction, using the OpenAI whisper API for speech to text, as well as the Google cloud API text to speech.
 - Persistent, multi user memory, with the ability to injest and interact with custom documents.
 - The ability to adjust its persona and response type based on user profile and professional aptitude.
