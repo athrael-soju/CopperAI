@@ -7,7 +7,7 @@ const router = express.Router();
 
 const queryRoute = async (pinecone) => {
   router.post("/", async (req, res) => {
-    const { userName, userType, message, topK } = req.body;
+    const { userName, userDomain, message, topK } = req.body;
     console.log(`Pinecone - Querying Message: \n${message}`);
     try {
       let index = await getIndex(pinecone);
@@ -22,7 +22,7 @@ const queryRoute = async (pinecone) => {
           filter: {
             $or: [
               { userName: { $eq: userName } },
-              { userType: { $eq: userType } },
+              { userDomain: { $eq: userDomain } },
             ],
             $and: [{ score: { $gte: process.env.PINECONE_SIMILARITY_CUTOFF } }],
           },

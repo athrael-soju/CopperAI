@@ -23,7 +23,7 @@ const upsertRoute = async (pinecone) => {
               metadata: {
                 id: newConversation.id,
                 userName: newConversation.username,
-                userType: newConversation.userType,
+                userDomain: newConversation.userDomain,
               },
             },
           ],

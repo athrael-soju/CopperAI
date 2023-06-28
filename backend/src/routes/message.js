@@ -35,7 +35,7 @@ async function getUserConversationHistory(pineconeResponse) {
   return conversationHistory;
 }
 
-async function sendMessage(userName, userType, message, role = "user") {
+async function sendMessage(userName, userDomain, message, role = "user") {
   console.log(`Backend - Preparing to Send Message: \n${message}`);
   try {
     let messages = [],
@@ -46,7 +46,7 @@ async function sendMessage(userName, userType, message, role = "user") {
 
     pineconeResponse = await pineconeAPI.getConversationFromPinecone(
       userName,
-      userType,
+      userDomain,
       message,
       process.env.PINECONE_TOPK
     );
@@ -61,7 +61,7 @@ async function sendMessage(userName, userType, message, role = "user") {
       userConversationHistory = await langChainAPI.summarizeConversation(
         message,
         userConversationHistory,
-        userType
+        userDomain
       );
       // Adjust the AI response
       messages.push({
@@ -89,7 +89,7 @@ async function sendMessage(userName, userType, message, role = "user") {
     );
 
     /*
-     * If the memory type is dynamic, save the conversation to MongoDB and store the conversation to Pinecone (More suitable for conversation).
+     * If the memory type is dynamic, save the conversation to MongoDB and Pinecone (More suitable for conversation).
      * If the memory type is static, only store the conversation to Pinecone (More suitable for Q&A).
      */
     if (process.env.MEMORY_TYPE === "dynamic") {
@@ -98,7 +98,7 @@ async function sendMessage(userName, userType, message, role = "user") {
       newConversation = new Conversation({
         id: id,
         username: userName,
-        usertype: userType,
+        userdomain: userDomain,
         message: `${userName} prompt: ${message}`,
         response: `AI response: ${openaiResponse}`,
         date: `Date: ${new Date()}`,
@@ -123,10 +123,10 @@ router.get("/", (req, res) => {
 router.post("/", async (req, res) => {
   let role = "user",
     userName = req.body.username,
-    userType = req.body.usertype,
+    userDomain = req.body.userdomain,
     message = req.body.message;
 
-  const response = await sendMessage(userName, userType, message, role);
+  const response = await sendMessage(userName, userDomain, message, role);
   res.json({ message: response });
 });
 

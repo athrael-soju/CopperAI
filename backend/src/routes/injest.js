@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
       const newConversation = new Conversation({
         id: conversation.id,
         username: conversation.username,
-        usertype: conversation.usertype,
+        userdomain: conversation.userdomain,
         message: conversation.message,
         response: conversation.response,
         date: conversation.date,
