@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card } from "react-bootstrap";
+import { Button, Card } from "antd";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,7 +8,7 @@ import {
   faStop,
 } from "@fortawesome/fontawesome-free-solid";
 
-const VoicePromptCard = ({
+const VoicePrompt = ({
   startRecording,
   pauseRecording,
   stopRecording,
@@ -71,4 +71,4 @@ const VoicePromptCard = ({
   );
 };
 
-export default React.memo(VoicePromptCard);
+export default VoicePrompt;
