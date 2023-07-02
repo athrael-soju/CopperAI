@@ -6,14 +6,14 @@ import useAudioSensitivity from './useAudioSensitivity';
 const GRACE_PERIOD_DURATION = 3000;
 
 const useRecordAudio = (
-  sendMessage,
-  playResponse,
-  stopOngoingAudio,
-  activeButton,
+  sendMessage: any,
+  playResponse: any,
+  stopOngoingAudio: any,
+  activeButton: any,
 ) => {
   const [recording, setRecording] = useState(false);
   const isMicActive = useAudioSensitivity();
-  const gracePeriodTimeout = useRef(null);
+  const gracePeriodTimeout = useRef<any>(null);
 
   const {
     transcribing,
@@ -22,7 +22,7 @@ const useRecordAudio = (
     transcript,
     stopRecording,
   } = useWhisper({
-    apiKey: env.OPENAI_API_KEY,
+    apiKey: process.env.OPENAI_API_KEY,
   });
 
   useEffect(() => {

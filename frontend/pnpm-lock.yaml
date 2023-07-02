@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@ant-design/colors': ^7.0.0
+  '@ant-design/icons': ^5.1.4
   '@auth/mongodb-adapter': ^1.0.0
   '@chengsokdara/use-whisper': ^0.2.0
   '@headlessui/react': ^1.7.14
@@ -51,6 +52,7 @@ specifiers:
 
 dependencies:
   '@ant-design/colors': 7.0.0
+  '@ant-design/icons': 5.1.4_biqbaboplfbrettd7655fr4n2y
   '@auth/mongodb-adapter': 1.0.0_mongodb@5.6.0
   '@chengsokdara/use-whisper': 0.2.0_react@18.2.0
   '@headlessui/react': 1.7.15_biqbaboplfbrettd7655fr4n2y

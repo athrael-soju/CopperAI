@@ -1,12 +1,6 @@
 import React from 'react';
-import { Button } from 'antd';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faMicrophone,
-  faPause,
-  faStop,
-} from '@fortawesome/fontawesome-free-solid';
+import { Button, Card } from 'antd';
+import { AudioOutlined, PauseOutlined, StopOutlined } from '@ant-design/icons';
 
 const VoicePrompt = ({
   startRecording,
@@ -18,7 +12,7 @@ const VoicePrompt = ({
   setIsPaused,
   activeButton,
   setActiveButton,
-}) => {
+}: any) => {
   const handleStartRecording = () => {
     setActiveButton('start');
     stopOngoingAudio();
@@ -44,15 +38,9 @@ const VoicePrompt = ({
 
   return (
     <Card>
-      <Button onClick={handleStartRecording}>
-        <FontAwesomeIcon icon={faMicrophone} />
-      </Button>
-      <Button onClick={handlePauseRecording}>
-        <FontAwesomeIcon icon={faPause} />
-      </Button>
-      <Button onClick={handleStopRecording}>
-        <FontAwesomeIcon icon={faStop} />
-      </Button>
+      <Button onClick={handleStartRecording} icon={<AudioOutlined />} />
+      <Button onClick={handlePauseRecording} icon={<PauseOutlined />} />
+      <Button onClick={handleStopRecording} icon={<StopOutlined />} />
     </Card>
   );
 };
