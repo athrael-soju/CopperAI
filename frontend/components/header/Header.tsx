@@ -35,22 +35,20 @@ export default function Header() {
             style={{
               display: 'flex',
               gap: 20,
+              listStyle: 'none',
+              margin: 0,
             }}
           >
-            <li className={styles.navItem}>
-              <Link href="/">Home</Link>
-            </li>
-            <li className={styles.navItem}>
-              <Link href="/client">Client</Link>
-            </li>
-            <li className={styles.navItem}>
-              <Link href="/server">Server</Link>
-            </li>
-            <li className={styles.navItem}>
-              <Link href="/admin">Admin</Link>
-            </li>
-            <li className={styles.navItem}>
-              <Link href="/me">Me</Link>
+            <li>
+              <Button
+                type="link"
+                href="https://github.com/athrael-soju/whisperChat"
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: '#fff' }}
+              >
+                whisperChat
+              </Button>
             </li>
           </ul>
         </nav>

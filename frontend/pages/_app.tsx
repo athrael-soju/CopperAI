@@ -22,6 +22,8 @@ const inter = Inter({
 const { Content } = Layout;
 
 const contentStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
   textAlign: 'center',
   minHeight: 'calc(100vh - 64px)',
   lineHeight: '120px',

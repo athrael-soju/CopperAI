@@ -18,8 +18,6 @@ const useRecordAudio = (
   const { publicRuntimeConfig } = getConfig();
   const apiKey = publicRuntimeConfig.OPENAI_API_KEY ?? '';
 
-  console.log({ apiKey });
-
   const {
     transcribing,
     pauseRecording,
