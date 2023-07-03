@@ -131,4 +131,7 @@ frontend/public/env.js
 .VSCodeCounter/
 backend/credentials/google.api.json
 
+# Retiring services
+frontend.old/
+
 **/.DS_Store

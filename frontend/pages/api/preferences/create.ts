@@ -14,8 +14,8 @@ export default async function handler(
 
     try {
       const newPreference = await Preference.findOneAndUpdate(
-        { userEmail },
-        { activity },
+        { userEmail: { $eq: userEmail as string } },
+        { activity: { $eq: activity as string } },
         { upsert: true, new: true },
       );
 

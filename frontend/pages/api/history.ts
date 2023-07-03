@@ -17,7 +17,10 @@ export default async function handler(
     const chatId = req.query.chatId as string;
     const userEmail = req.query.userEmail as string;
 
-    const messages = await Message.find({ chatId, userEmail }).sort({
+    const messages = await Message.find({
+      chatId: chatId as string,
+      userEmail: userEmail as string,
+    }).sort({
       createdAt: 1,
     });
 
