@@ -131,4 +131,4 @@ frontend/public/env.js
 .VSCodeCounter/
 backend/credentials/google.api.json
 
-*./DS_Store
+**/.DS_Store
