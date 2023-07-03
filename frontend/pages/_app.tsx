@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Layout } from 'antd';
+import { gray } from '@ant-design/colors';
 import AppHeader from '@/components/header/Header';
 
 import '@/styles/base.css';
@@ -18,20 +19,14 @@ const inter = Inter({
   subsets: ['latin'],
 });
 
-const { Footer, Content } = Layout;
+const { Content } = Layout;
 
 const contentStyle: React.CSSProperties = {
   textAlign: 'center',
-  minHeight: 'calc(100vh - 64px - 64px)',
+  minHeight: 'calc(100vh - 64px)',
   lineHeight: '120px',
   color: '#fff',
-  backgroundColor: '#108ee9',
-};
-
-const footerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  color: '#fff',
-  backgroundColor: '#7dbcea',
+  background: gray[7],
 };
 
 function App({ Component, pageProps, session }: AppProps) {
@@ -45,7 +40,6 @@ function App({ Component, pageProps, session }: AppProps) {
             <Content style={contentStyle}>
               <Component {...pageProps} />
             </Content>
-            <Footer style={footerStyle}>Footer</Footer>
           </Layout>
         </main>
       </QueryClientProvider>

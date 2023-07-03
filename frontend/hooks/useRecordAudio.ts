@@ -1,3 +1,4 @@
+import getConfig from 'next/config';
 import { useState, useEffect, useRef } from 'react';
 import { useWhisper } from '@chengsokdara/use-whisper';
 
@@ -14,6 +15,10 @@ const useRecordAudio = (
   const [recording, setRecording] = useState(false);
   const isMicActive = useAudioSensitivity();
   const gracePeriodTimeout = useRef<any>(null);
+  const { publicRuntimeConfig } = getConfig();
+  const apiKey = publicRuntimeConfig.OPENAI_API_KEY ?? '';
+
+  console.log({ apiKey });
 
   const {
     transcribing,
@@ -22,7 +27,7 @@ const useRecordAudio = (
     transcript,
     stopRecording,
   } = useWhisper({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey,
   });
 
   useEffect(() => {

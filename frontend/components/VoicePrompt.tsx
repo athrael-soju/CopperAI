@@ -1,12 +1,20 @@
 import React from 'react';
-import { Button, Card } from 'antd';
-import { AudioOutlined, PauseOutlined, StopOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 
-const VoicePrompt = ({
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faMicrophone,
+  faPause,
+  faStop,
+  faPlay,
+} from '@fortawesome/fontawesome-free-solid';
+
+const VoicePromptCard = ({
   startRecording,
   pauseRecording,
   stopRecording,
   stopOngoingAudio,
+  isPaused,
   isRecording,
   setIsRecording,
   setIsPaused,
@@ -16,6 +24,13 @@ const VoicePrompt = ({
   const handleStartRecording = () => {
     setActiveButton('start');
     stopOngoingAudio();
+    setIsRecording(true);
+    startRecording();
+  };
+
+  const handleResumeRecording = () => {
+    setActiveButton('start');
+    setIsPaused(false);
     setIsRecording(true);
     startRecording();
   };
@@ -36,13 +51,86 @@ const VoicePrompt = ({
     stopOngoingAudio();
   };
 
+  const stopBtn = (
+    <Button
+      danger
+      type="primary"
+      shape="circle"
+      size="large"
+      style={{
+        fontSize: '2rem',
+        width: '100px',
+        height: '100px',
+        margin: '20px',
+      }}
+      onClick={handleStopRecording}
+      icon={<FontAwesomeIcon icon={faStop} />}
+    ></Button>
+  );
+
+  const renderButtons = () => {
+    if (isPaused) {
+      return (
+        <div>
+          <Button
+            onClick={handleResumeRecording}
+            type="primary"
+            shape="circle"
+            size="large"
+            style={{ fontSize: '2rem', width: '100px', height: '100px' }}
+          >
+            <FontAwesomeIcon icon={faPlay} />
+          </Button>
+          {stopBtn}
+        </div>
+      );
+    }
+
+    if (!isRecording) {
+      return (
+        <Button
+          type="primary"
+          shape="circle"
+          size="large"
+          style={{
+            fontSize: '2rem',
+            width: '100px',
+            height: '100px',
+            margin: '20px',
+          }}
+          onClick={handleStartRecording}
+          icon={<FontAwesomeIcon icon={faMicrophone} />}
+        ></Button>
+      );
+    }
+
+    return (
+      <div>
+        <Button
+          type="primary"
+          shape="circle"
+          size="large"
+          style={{ fontSize: '2rem', width: '100px', height: '100px' }}
+          onClick={handlePauseRecording}
+          icon={<FontAwesomeIcon icon={faPause} />}
+        ></Button>
+        {stopBtn}
+      </div>
+    );
+  };
+
   return (
-    <Card>
-      <Button onClick={handleStartRecording} icon={<AudioOutlined />} />
-      <Button onClick={handlePauseRecording} icon={<PauseOutlined />} />
-      <Button onClick={handleStopRecording} icon={<StopOutlined />} />
-    </Card>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        width: '100%',
+      }}
+    >
+      {renderButtons()}
+    </div>
   );
 };
 
-export default VoicePrompt;
+export default VoicePromptCard;
