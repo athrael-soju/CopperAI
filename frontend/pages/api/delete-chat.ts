@@ -23,8 +23,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     await connectDB();
 
-    await Message.deleteMany({ chatId, namespace, userEmail });
-    await ChatModelTyped.deleteOne({ chatId, namespace, userEmail });
+    await Message.deleteMany({
+      chatId: { $eq: chatId },
+      namespace: { $eq: namespace as string },
+      userEmail: { $eq: userEmail as string },
+    });
+    await ChatModelTyped.deleteOne({
+      chatId: { $eq: chatId },
+      namespace: { $eq: namespace as string },
+      userEmail: { $eq: userEmail as string },
+    });
 
     res.status(200).send('Chat and its messages deleted successfully');
   } catch (error) {

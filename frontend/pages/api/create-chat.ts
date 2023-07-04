@@ -17,9 +17,9 @@ export default async function handler(
       const { chatId, namespace, userEmail } = req.body;
 
       const newChat = await ChatModelTyped.create({
-        chatId,
-        namespace,
-        userEmail,
+        chatId: { $eq: chatId as string},
+        namespace: { $eq: namespace as string},
+        userEmail: { $eq: userEmail as string},
       });
 
       res.status(201).json(newChat);

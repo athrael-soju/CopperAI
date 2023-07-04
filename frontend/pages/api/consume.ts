@@ -25,13 +25,13 @@ export default async function handler(
     await connectDB();
 
     const existingNamespace = await Namespace.findOne({
-      name: namespaceName as string,
+      name: { $eq: namespaceName as string },
     });
 
     if (!existingNamespace) {
       const newNamespace = new Namespace({
-        userEmail: userEmail as string,
-        name: namespaceName as string,
+        userEmail: { $eq: userEmail as string },
+        name: { $eq: namespaceName as string },
       });
       await newNamespace.save();
     }
