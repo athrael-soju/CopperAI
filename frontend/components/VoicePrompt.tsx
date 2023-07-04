@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from 'antd';
-import { VoiceRecorder } from 'react-voice-recorder-player';
+// import { VoiceRecorder } from 'react-voice-recorder-player';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -155,12 +155,12 @@ const VoicePromptCard = ({
         width: '100%',
       }}
     >
-      <VoiceRecorder
+      {/* <VoiceRecorder
         mainContainerStyle={styles.mainContainerStyle}
         controllerContainerStyle={styles.controllerContainerStyle}
         controllerStyle={styles.controllerStyle}
         waveContainerStyle={styles.waveContainerStyle}
-      />
+      /> */}
       {renderButtons()}
     </div>
   );

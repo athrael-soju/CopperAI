@@ -1,7 +1,6 @@
 import getConfig from 'next/config';
 import { useState, useEffect, useRef } from 'react';
 import { useWhisper } from '@chengsokdara/use-whisper';
-import { useIsMounted } from 'usehooks-ts';
 
 import useAudioSensitivity from './useAudioSensitivity';
 
@@ -18,7 +17,6 @@ const useRecordAudio = (
   const gracePeriodTimeout = useRef<any>(null);
   const { publicRuntimeConfig } = getConfig();
   const apiKey = publicRuntimeConfig.OPENAI_API_KEY ?? '';
-  const isMounted = useIsMounted();
 
   const {
     transcribing,
@@ -31,27 +29,25 @@ const useRecordAudio = (
   });
 
   useEffect(() => {
-    if (isMounted()) {
-      if (activeButton === 'start') {
-        if (isMicActive && !recording) {
-          stopOngoingAudio();
-          startRecording();
-          setRecording(true);
-        } else if (!isMicActive && recording) {
-          if (gracePeriodTimeout.current) {
-            clearTimeout(gracePeriodTimeout.current);
-          }
-          gracePeriodTimeout.current = setTimeout(() => {
-            stopRecording();
-            setRecording(false);
-          }, GRACE_PERIOD_DURATION);
+    if (activeButton === 'start') {
+      if (isMicActive && !recording) {
+        stopOngoingAudio();
+        startRecording();
+        setRecording(true);
+      } else if (!isMicActive && recording) {
+        if (gracePeriodTimeout.current) {
+          clearTimeout(gracePeriodTimeout.current);
         }
-        return () => {
-          if (gracePeriodTimeout.current) {
-            clearTimeout(gracePeriodTimeout.current);
-          }
-        };
+        gracePeriodTimeout.current = setTimeout(() => {
+          stopRecording();
+          setRecording(false);
+        }, GRACE_PERIOD_DURATION);
       }
+      return () => {
+        if (gracePeriodTimeout.current) {
+          clearTimeout(gracePeriodTimeout.current);
+        }
+      };
     }
   }, [
     isMicActive,
@@ -60,20 +56,17 @@ const useRecordAudio = (
     stopRecording,
     stopOngoingAudio,
     activeButton,
-    isMounted,
   ]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (activeButton === 'start') {
-        if (!recording && transcript.text && !transcribing) {
-          let message = transcript.text;
-          transcript.text = '';
-          (async () => {
-            const response = await sendMessage(message);
-            playResponse(response);
-          })();
-        }
+    if (activeButton === 'start') {
+      if (!recording && transcript.text && !transcribing) {
+        let message = transcript.text;
+        transcript.text = '';
+        (async () => {
+          const response = await sendMessage(message);
+          playResponse(response);
+        })();
       }
     }
   }, [

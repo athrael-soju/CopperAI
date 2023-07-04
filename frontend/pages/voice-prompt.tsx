@@ -1,3 +1,5 @@
+'use client';
+
 import { useSession } from 'next-auth/react';
 import VoicePromptCard from '../components/VoicePrompt';
 import LoadingAlerts from '../components/LoadingAlerts';
