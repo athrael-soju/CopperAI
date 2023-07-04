@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import getConfig from 'next/config';
+import { useIsMounted } from 'usehooks-ts';
 
 type AudioContextType = AudioContext | undefined;
 type AnalyserType = AnalyserNode | undefined;
@@ -8,16 +9,19 @@ type AudioStreamSourceType = MediaStreamAudioSourceNode | undefined;
 const useAudioSensitivity = (): boolean => {
   const { publicRuntimeConfig } = getConfig();
   const [isMicActive, setIsMicActive] = useState<boolean>(false);
+  const isMounted = useIsMounted();
 
   useEffect(() => {
-    let audioContext: AudioContextType;
-    let analyser: AnalyserType;
-    let audioStreamSource: AudioStreamSourceType;
+    if (isMounted()) {
+      let audioContext: AudioContextType;
+      let analyser: AnalyserType;
+      let audioStreamSource: AudioStreamSourceType;
 
-    const checkAudioLevel = async (): Promise<void> => {
-      try {
-        const minDecibels = parseInt(publicRuntimeConfig.AUDIO_DB_SENSITIVITY);
-        if (typeof window !== 'undefined') {
+      const checkAudioLevel = async (): Promise<void> => {
+        try {
+          const minDecibels = parseInt(
+            publicRuntimeConfig.AUDIO_DB_SENSITIVITY,
+          );
           const stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
           });
@@ -47,22 +51,22 @@ const useAudioSensitivity = (): boolean => {
           };
 
           detectSound();
+        } catch (error) {
+          console.error('Error accessing microphone:', error);
         }
-      } catch (error) {
-        console.error('Error accessing microphone:', error);
-      }
-    };
+      };
 
-    checkAudioLevel();
+      checkAudioLevel();
 
-    return () => {
-      if (audioStreamSource) {
-        audioStreamSource.disconnect();
-      }
-      if (audioContext) {
-        audioContext.close();
-      }
-    };
+      return () => {
+        if (audioStreamSource) {
+          audioStreamSource.disconnect();
+        }
+        if (audioContext) {
+          audioContext.close();
+        }
+      };
+    }
   }, []);
 
   return isMicActive;

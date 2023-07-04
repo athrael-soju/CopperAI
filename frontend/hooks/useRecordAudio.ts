@@ -1,6 +1,7 @@
 import getConfig from 'next/config';
 import { useState, useEffect, useRef } from 'react';
 import { useWhisper } from '@chengsokdara/use-whisper';
+import { useIsMounted } from 'usehooks-ts';
 
 import useAudioSensitivity from './useAudioSensitivity';
 
@@ -17,6 +18,7 @@ const useRecordAudio = (
   const gracePeriodTimeout = useRef<any>(null);
   const { publicRuntimeConfig } = getConfig();
   const apiKey = publicRuntimeConfig.OPENAI_API_KEY ?? '';
+  const isMounted = useIsMounted();
 
   const {
     transcribing,
@@ -29,7 +31,7 @@ const useRecordAudio = (
   });
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isMounted()) {
       if (activeButton === 'start') {
         if (isMicActive && !recording) {
           stopOngoingAudio();
@@ -58,6 +60,7 @@ const useRecordAudio = (
     stopRecording,
     stopOngoingAudio,
     activeButton,
+    isMounted,
   ]);
 
   useEffect(() => {

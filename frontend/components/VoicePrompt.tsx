@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from 'antd';
+import { VoiceRecorder } from 'react-voice-recorder-player';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -8,6 +9,32 @@ import {
   faStop,
   faPlay,
 } from '@fortawesome/fontawesome-free-solid';
+
+const styles = {
+  mainContainerStyle: {
+    backgroundColor: 'gray',
+    border: '1px solid black',
+    borderRadius: '5px',
+    padding: '10px',
+  },
+  controllerContainerStyle: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: '10px',
+  },
+  controllerStyle: {
+    backgroundColor: 'white',
+    border: '1px solid black',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    padding: '5px',
+  },
+  waveContainerStyle: {
+    height: '100px',
+    marginTop: '10px',
+    width: '100%',
+  },
+};
 
 const VoicePromptCard = ({
   startRecording,
@@ -128,6 +155,12 @@ const VoicePromptCard = ({
         width: '100%',
       }}
     >
+      <VoiceRecorder
+        mainContainerStyle={styles.mainContainerStyle}
+        controllerContainerStyle={styles.controllerContainerStyle}
+        controllerStyle={styles.controllerStyle}
+        waveContainerStyle={styles.waveContainerStyle}
+      />
       {renderButtons()}
     </div>
   );
