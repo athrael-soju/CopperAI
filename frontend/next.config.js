@@ -16,6 +16,7 @@ const nextConfig = {
   },
   publicRuntimeConfig: {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    AUDIO_DB_SENSITIVITY: process.env.AUDIO_DB_SENSITIVITY,
   },
 };
 

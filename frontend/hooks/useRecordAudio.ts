@@ -29,25 +29,27 @@ const useRecordAudio = (
   });
 
   useEffect(() => {
-    if (activeButton === 'start') {
-      if (isMicActive && !recording) {
-        stopOngoingAudio();
-        startRecording();
-        setRecording(true);
-      } else if (!isMicActive && recording) {
-        if (gracePeriodTimeout.current) {
-          clearTimeout(gracePeriodTimeout.current);
+    if (typeof window !== 'undefined') {
+      if (activeButton === 'start') {
+        if (isMicActive && !recording) {
+          stopOngoingAudio();
+          startRecording();
+          setRecording(true);
+        } else if (!isMicActive && recording) {
+          if (gracePeriodTimeout.current) {
+            clearTimeout(gracePeriodTimeout.current);
+          }
+          gracePeriodTimeout.current = setTimeout(() => {
+            stopRecording();
+            setRecording(false);
+          }, GRACE_PERIOD_DURATION);
         }
-        gracePeriodTimeout.current = setTimeout(() => {
-          stopRecording();
-          setRecording(false);
-        }, GRACE_PERIOD_DURATION);
+        return () => {
+          if (gracePeriodTimeout.current) {
+            clearTimeout(gracePeriodTimeout.current);
+          }
+        };
       }
-      return () => {
-        if (gracePeriodTimeout.current) {
-          clearTimeout(gracePeriodTimeout.current);
-        }
-      };
     }
   }, [
     isMicActive,
@@ -59,14 +61,16 @@ const useRecordAudio = (
   ]);
 
   useEffect(() => {
-    if (activeButton === 'start') {
-      if (!recording && transcript.text && !transcribing) {
-        let message = transcript.text;
-        transcript.text = '';
-        (async () => {
-          const response = await sendMessage(message);
-          playResponse(response);
-        })();
+    if (typeof window !== 'undefined') {
+      if (activeButton === 'start') {
+        if (!recording && transcript.text && !transcribing) {
+          let message = transcript.text;
+          transcript.text = '';
+          (async () => {
+            const response = await sendMessage(message);
+            playResponse(response);
+          })();
+        }
       }
     }
   }, [

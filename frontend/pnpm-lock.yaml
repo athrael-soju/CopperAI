@@ -23,8 +23,10 @@ specifiers:
   '@types/node': ^18.14.6
   '@types/react': ^18.0.28
   '@types/react-dom': ^18.0.11
+  '@types/react-mic': ^12.4.3
   '@typescript-eslint/parser': ^5.54.0
   antd: ^5.6.3
+  audio-react-recorder: ^1.0.5
   axios: ^1.4.0
   clsx: ^1.2.1
   dotenv: ^16.0.3
@@ -47,6 +49,7 @@ specifiers:
   react-dom: 18.2.0
   react-dropzone: ^14.2.3
   react-markdown: ^8.0.5
+  react-mic: ^12.4.6
   remark-gfm: ^3.0.1
   tsx: ^3.12.3
   typescript: ^4.9.5
@@ -69,7 +72,9 @@ dependencies:
   '@pinecone-database/pinecone': 0.0.14
   '@radix-ui/react-accordion': 1.1.2_hrrtw4it2dqo6rzcqzvl36ff7i
   '@tanstack/react-query': 4.29.19_biqbaboplfbrettd7655fr4n2y
+  '@types/react-mic': 12.4.3
   antd: 5.6.3_biqbaboplfbrettd7655fr4n2y
+  audio-react-recorder: 1.0.5_react@18.2.0
   axios: 1.4.0
   clsx: 1.2.1
   dotenv: 16.3.1
@@ -89,6 +94,7 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   react-dropzone: 14.2.3_react@18.2.0
   react-markdown: 8.0.7_i73ekzlbntu7jol6ph2fvy4mga
+  react-mic: 12.4.6_react@18.2.0
   remark-gfm: 3.0.1
   uuid: 9.0.0
   uuidv4: 6.2.13
@@ -1453,6 +1459,12 @@ packages:
     dependencies:
       '@types/react': 18.2.14
 
+  /@types/react-mic/12.4.3:
+    resolution: {integrity: sha512-PCp+Phe0WcFRPhDQjOfiONz2OJSef+ds+8g7vN/xqRntcfGKPCyr4ZaiICaNJ+8uZcoUaw7F1E15AEUOjRW4IQ==}
+    dependencies:
+      '@types/react': 18.2.14
+    dev: false
+
   /@types/react/18.2.14:
     resolution: {integrity: sha512-A0zjq+QN/O0Kpe30hA1GidzyFjatVvrpIvWLxD+xv67Vt91TWWgco9IvrJBkeyHm1trGaFS/FSGqPlhyeZRm0g==}
     dependencies:
@@ -1762,6 +1774,16 @@ packages:
   /attr-accept/2.2.2:
     resolution: {integrity: sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==}
     engines: {node: '>=4'}
+    dev: false
+
+  /audio-react-recorder/1.0.5_react@18.2.0:
+    resolution: {integrity: sha512-pvzb0rnSDmzd5IjZNSbl3TQ2X/ZQ9vnVHfdtUCYaafrFm4jcdIzSqqM64qqqt+LXbQGVr3nMale1GH6z/yCRww==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^16.0.0
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
     dev: false
 
   /available-typed-arrays/1.0.5:
@@ -5087,6 +5109,16 @@ packages:
       react: 18.2.0
     dev: false
 
+  /react-ga/2.7.0_sh5qlbywuemxd2y3xkrw2y2kr4:
+    resolution: {integrity: sha512-AjC7UOZMvygrWTc2hKxTDvlMXEtbmA0IgJjmkhgmQQ3RkXrWR11xEagLGFGaNyaPnmg24oaIiaNPnEoftUhfXA==}
+    peerDependencies:
+      prop-types: ^15.6.0
+      react: ^15.6.2 || ^16.0
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+    dev: false
+
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -5119,6 +5151,16 @@ packages:
       vfile: 5.3.7
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /react-mic/12.4.6_react@18.2.0:
+    resolution: {integrity: sha512-2/DZoz7thR2nJyekF10zBvs/7a8HhUQ4L8MV6BpC+Q/T8G1MvpRHGSHjSlVtnbzaCMDJ3R1MdThoLu15WuVh/g==}
+    peerDependencies:
+      react: 16.x
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-ga: 2.7.0_sh5qlbywuemxd2y3xkrw2y2kr4
     dev: false
 
   /react/18.2.0:
