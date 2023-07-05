@@ -14,7 +14,8 @@ const useAudioHandler = () => {
 
     try {
       const response = await fetch(
-        `${process.env.SERVER_ADDRESS}:${process.env.SERVER_PORT}${process.env.SERVER_SPEAK_ENDPOINT}`,
+        `http://localhost:5000/speak`,
+        // ${process.env.SERVER_ADDRESS}:${process.env.SERVER_PORT}${process.env.SERVER_SPEAK_ENDPOINT}
         requestOptions,
       );
       const blob = await response.blob();

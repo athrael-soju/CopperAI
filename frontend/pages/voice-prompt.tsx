@@ -15,7 +15,7 @@ export default function VoicePrompt() {
 
   const { sendMessage, loading: messageLoading } = useMessageHandler({
     username: user?.name ?? '',
-    userdomain: '', // TODO: will be changed
+    userdomain: 'IT', // TODO: will be changed
   });
 
   const { playResponse, stopOngoingAudio } = useAudioHandler();
