@@ -20,7 +20,7 @@ services:
     env_file:
       - ./backend/.env
     ports:
-      - "5001:5001"
+      - "5000:5000"
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
     networks:

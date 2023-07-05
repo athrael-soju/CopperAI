@@ -15,7 +15,7 @@ export default function VoicePrompt() {
 
   const { sendMessage, loading: messageLoading } = useMessageHandler({
     username: user?.name ?? '',
-    userdomain: '', // TODO: will be changed
+    userdomain: 'IT', // TODO: will be changed
   });
 
   const { playResponse, stopOngoingAudio } = useAudioHandler();
@@ -69,8 +69,10 @@ export default function VoicePrompt() {
     if (transcript.text && !transcribing) {
       let message = transcript.text;
       transcript.text = '';
+      console.log('message', message);
       (async () => {
         const response = await sendMessage(message);
+        console.log('response', response);
         playResponse(response);
       })();
     }
