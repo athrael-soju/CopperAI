@@ -15,8 +15,9 @@ const nextConfig = {
     domains: ['lh3.googleusercontent.com'],
   },
   publicRuntimeConfig: {
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     AUDIO_DB_SENSITIVITY: process.env.AUDIO_DB_SENSITIVITY,
+    MONGODB_URI: process.env.MONGODB_URI,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     SERVER_ADDRESS: process.env.SERVER_ADDRESS,
     SERVER_PORT: process.env.SERVER_PORT,
     SERVER_MESSAGE_ENDPOINT: process.env.SERVER_MESSAGE_ENDPOINT,

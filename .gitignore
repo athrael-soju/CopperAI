@@ -135,3 +135,5 @@ backend/credentials/google.api.json
 frontend.old/
 
 **/.DS_Store
+
+frontend-old/
