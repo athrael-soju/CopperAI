@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import axios from 'axios';
+import { useMutation } from '@tanstack/react-query';
+import getConfig from 'next/config';
 
 const useMessageHandler = ({
   username,
@@ -7,9 +10,16 @@ const useMessageHandler = ({
   username: string;
   userdomain: string;
 }) => {
-  // eslint-disable-next-line
-  const [response, setResponse] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { publicRuntimeConfig } = getConfig();
+  const URL = `${publicRuntimeConfig.SERVER_ADDRESS}:${publicRuntimeConfig.SERVER_PORT}${publicRuntimeConfig.SERVER_MESSAGE_ENDPOINT}`;
+
+  const mutation: any = useMutation({
+    mutationFn: (data) => {
+      return axios.post(URL, data, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    },
+  });
 
   const sendMessage = async (message: string) => {
     console.log(
@@ -20,25 +30,17 @@ const useMessageHandler = ({
         '. Message: ' +
         message,
     );
-    setLoading(true);
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, userdomain, message }),
-    };
-    const response = await fetch(
-      `${process.env.SERVER_ADDRESS}:${process.env.SERVER_PORT}${process.env.SERVER_MESSAGE_ENDPOINT}`,
-      requestOptions,
-    );
-    const data = await response.json();
-    console.log('Response: ' + data.message);
-    setResponse(data.message);
-    setLoading(false);
 
-    return data.message;
+    const res = await mutation.mutateAsync({
+      username,
+      userdomain,
+      message,
+    });
+
+    return res?.data?.message;
   };
 
-  return { sendMessage, loading };
+  return { sendMessage, loading: mutation.isLoading };
 };
 
 export default useMessageHandler;

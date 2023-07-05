@@ -14,7 +14,7 @@ const useAudioHandler = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/speak`,
+        `http://localhost:5001/speak`,
         // ${process.env.SERVER_ADDRESS}:${process.env.SERVER_PORT}${process.env.SERVER_SPEAK_ENDPOINT}
         requestOptions,
       );
