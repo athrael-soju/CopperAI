@@ -24,12 +24,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     await connectDB();
 
     await Message.deleteMany({
-      chatId: { $eq: chatId },
+      chatId: { $eq: chatId as string },
       namespace: { $eq: namespace as string },
       userEmail: { $eq: userEmail as string },
     });
     await ChatModelTyped.deleteOne({
-      chatId: { $eq: chatId },
+      chatId: { $eq: chatId as string },
       namespace: { $eq: namespace as string },
       userEmail: { $eq: userEmail as string },
     });
