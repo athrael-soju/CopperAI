@@ -20,19 +20,9 @@ services:
     env_file:
       - ./backend/.env
     ports:
-      - "5000:5000"
+      - "5001:5001"
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
-    networks:
-      - whisper-network
-
-  frontend:
-    container_name: fontend-ui
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
     networks:
       - whisper-network
 

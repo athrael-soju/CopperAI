@@ -1,5 +1,5 @@
 'use client';
-
+import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import VoicePromptCard from '../components/VoicePrompt';
 import LoadingAlerts from '../components/LoadingAlerts';
@@ -27,8 +27,13 @@ export default function VoicePrompt() {
     setActiveButton,
   } = useButtonStates();
 
-  const { transcribing, pauseRecording, startRecording, stopRecording } =
-    useRecordAudio(sendMessage, playResponse, stopOngoingAudio, activeButton);
+  const {
+    transcribing,
+    transcript,
+    pauseRecording,
+    startRecording,
+    stopRecording,
+  } = useRecordAudio(playResponse, stopOngoingAudio, activeButton);
 
   const getAlert = () => {
     if (!isRecording) {
@@ -58,6 +63,18 @@ export default function VoicePrompt() {
 
     return null;
   };
+
+  useEffect(() => {
+    console.log({ activeButton });
+    if (transcript.text && !transcribing) {
+      let message = transcript.text;
+      transcript.text = '';
+      (async () => {
+        const response = await sendMessage(message);
+        playResponse(response);
+      })();
+    }
+  }, [transcript, sendMessage, playResponse, activeButton, transcribing]);
 
   return (
     <div
