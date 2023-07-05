@@ -1,5 +1,5 @@
-import getConfig from 'next/config';
 import { useState, useEffect, useRef } from 'react';
+import getConfig from 'next/config';
 import { useWhisper } from '@chengsokdara/use-whisper';
 
 import useAudioSensitivity from './useAudioSensitivity';
@@ -7,7 +7,6 @@ import useAudioSensitivity from './useAudioSensitivity';
 const GRACE_PERIOD_DURATION = 3000;
 
 const useRecordAudio = (
-  sendMessage: any,
   playResponse: any,
   stopOngoingAudio: any,
   activeButton: any,
@@ -58,28 +57,9 @@ const useRecordAudio = (
     activeButton,
   ]);
 
-  useEffect(() => {
-    if (activeButton === 'start') {
-      if (!recording && transcript.text && !transcribing) {
-        let message = transcript.text;
-        transcript.text = '';
-        (async () => {
-          const response = await sendMessage(message);
-          playResponse(response);
-        })();
-      }
-    }
-  }, [
-    recording,
-    transcript,
-    sendMessage,
-    playResponse,
-    activeButton,
-    transcribing,
-  ]);
-
   return {
     transcribing,
+    transcript,
     pauseRecording,
     startRecording,
     stopRecording,
