@@ -132,3 +132,5 @@ frontend/public/env.js
 backend/credentials/google.api.json
 
 **/.DS_Store
+
+frontend-end
