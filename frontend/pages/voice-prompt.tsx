@@ -69,10 +69,8 @@ export default function VoicePrompt() {
     if (transcript.text && !transcribing) {
       let message = transcript.text;
       transcript.text = '';
-      console.log('message', message);
       (async () => {
         const response = await sendMessage(message);
-        console.log('response', response);
         playResponse(response);
       })();
     }
