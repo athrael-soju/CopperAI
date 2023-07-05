@@ -1,13 +1,17 @@
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { useMutation } from '@tanstack/react-query';
 import getConfig from 'next/config';
 
-const useMessageHandler = (username?: string, userdomain?: string) => {
+const useMessageHandler = ({
+  username,
+  userdomain,
+}: {
+  username: string;
+  userdomain: string;
+}) => {
   const { publicRuntimeConfig } = getConfig();
   const URL = `${publicRuntimeConfig.SERVER_ADDRESS}:${publicRuntimeConfig.SERVER_PORT}${publicRuntimeConfig.SERVER_MESSAGE_ENDPOINT}`;
-
-  console.log('URL: ' + URL);
 
   const mutation: any = useMutation({
     mutationFn: (data) => {
@@ -26,8 +30,6 @@ const useMessageHandler = (username?: string, userdomain?: string) => {
         '. Message: ' +
         message,
     );
-
-    // body: JSON.stringify({ username, userdomain, message }),
 
     const res = await mutation.mutateAsync(
       {

@@ -13,10 +13,10 @@ export default function VoicePrompt() {
   const { data } = useSession();
   const user = data?.user;
 
-  const { sendMessage, loading: messageLoading } = useMessageHandler(
-    user?.name ?? '',
-    // user.userdomain ?? '', TODO: check if we need this
-  );
+  const { sendMessage, loading: messageLoading } = useMessageHandler({
+    username: user?.name ?? '',
+    userdomain: '', // TODO: will be changed
+  });
 
   const { playResponse, stopOngoingAudio } = useAudioHandler();
   const {
@@ -65,7 +65,7 @@ export default function VoicePrompt() {
   };
 
   useEffect(() => {
-    console.log({ activeButton });
+    // TODO: send message every 3 seconds + other checks
     if (transcript.text && !transcribing) {
       let message = transcript.text;
       transcript.text = '';

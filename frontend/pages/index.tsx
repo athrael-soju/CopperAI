@@ -16,7 +16,6 @@ import useNamespaces from '@/hooks/useNamespaces';
 import { useChats } from '@/hooks/useChats';
 import MessageList from '@/components/main/MessageList';
 import ChatForm from '@/components/main/ChatForm';
-import SidebarList from '@/components/sidebar/SidebarList';
 import EmptyState from '@/components/main/EmptyState';
 import ActivitySelection from '@/components/main/ActivitySelection';
 
@@ -277,27 +276,6 @@ export default function Home() {
                       </button>
                     </div>
                   </Transition.Child>
-                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
-                    <div className="flex h-16 shrink-0 items-center"></div>
-                    <SidebarList
-                      selectedNamespace={selectedNamespace}
-                      setSelectedNamespace={setSelectedNamespace}
-                      namespaces={namespaces}
-                      chatList={chatList}
-                      selectedChatId={selectedChatId}
-                      setChatId={setChatId}
-                      setSelectedChatId={setSelectedChatId}
-                      chatNames={chatNames}
-                      updateChatName={updateChatName}
-                      deleteChat={deleteChat}
-                      returnSourceDocuments={returnSourceDocuments}
-                      setReturnSourceDocuments={setReturnSourceDocuments}
-                      modelTemperature={modelTemperature}
-                      setModelTemperature={setModelTemperature}
-                      createChat={createChat}
-                      nameSpaceHasChats={nameSpaceHasChats}
-                    />
-                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
