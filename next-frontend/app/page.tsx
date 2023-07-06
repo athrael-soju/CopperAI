@@ -1,12 +1,53 @@
 import Image from "next/image";
 import Navbar from "../components/Navbar"; // Add this line
+import clientPromise from "../lib/mongodb";
+import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 
-export default function Home() {
+type ConnectionStatus = {
+  isConnected: boolean;
+};
+
+export const getServerSideProps: GetServerSideProps<
+  ConnectionStatus
+> = async () => {
+  try {
+    await clientPromise;
+    // `await clientPromise` will use the default database passed in the MONGODB_URI
+    // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
+    //
+    // `const client = await clientPromise`
+    // `const db = client.db("myDatabase")`
+    //
+    // Then you can execute queries against your database like so:
+    // db.find({}) or any of the MongoDB Node Driver commands
+
+    return {
+      props: { isConnected: true },
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      props: { isConnected: false },
+    };
+  }
+};
+
+export default function Home({
+  isConnected,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
       <Navbar /> {/* Add this line */}
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+          {isConnected ? (
+            <h2 className="subtitle">You are connected to MongoDB</h2>
+          ) : (
+            <h2 className="subtitle">
+              You are NOT connected to MongoDB. Check the <code>README.md</code>{" "}
+              for instructions.
+            </h2>
+          )}
           <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
             Get started by editing&nbsp;
             <code className="font-mono font-bold">app/page.tsx</code>
