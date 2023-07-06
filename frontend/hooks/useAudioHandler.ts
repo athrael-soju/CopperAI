@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-
+import getConfig from 'next/config';
 type AudioRefType = HTMLAudioElement | null;
 
 const useAudioHandler = () => {
@@ -13,11 +13,10 @@ const useAudioHandler = () => {
     };
 
     try {
-      const response = await fetch(
-        `http://localhost:5001/speak`,
-        // ${process.env.SERVER_ADDRESS}:${process.env.SERVER_PORT}${process.env.SERVER_SPEAK_ENDPOINT}
-        requestOptions,
-      );
+      const { publicRuntimeConfig } = getConfig();
+      const serverSpeakURL = `${publicRuntimeConfig.SERVER_ADDRESS}:${publicRuntimeConfig.SERVER_PORT}${publicRuntimeConfig.SERVER_SPEAK_ENDPOINT}`;
+
+      const response = await fetch(serverSpeakURL, requestOptions);
       const blob = await response.blob();
       const audioUrl = URL.createObjectURL(blob);
       audioRef.current = new Audio(audioUrl);
