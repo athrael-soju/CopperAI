@@ -1,23 +1,17 @@
-/* eslint-disable @next/next/no-html-link-for-pages */
-const Navbar = () => {
-  return (
-    <nav className="flex items-center justify-between p-6 bg-blue-500 text-white">
-      <a href="/" className="text-lg font-bold">
-        Logo
-      </a>
-      <div>
-        <a href="/" className="p-2">
-          Home
-        </a>
-        <a href="/about" className="p-2">
-          About
-        </a>
-        <a href="/contact" className="p-2">
-          Contact
-        </a>
-      </div>
-    </nav>
-  );
-};
+const { Layout, Menu } = require("antd");
+const { Header } = Layout;
 
-export default Navbar;
+export default function Navbar() {
+  return (
+    <Header
+      style={{ position: "fixed", zIndex: 1, width: "100%", overflow: "auto" }}
+    >
+      <div className="logo" />
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
+        <Menu.Item key="1">Home</Menu.Item>
+        <Menu.Item key="2">About</Menu.Item>
+        <Menu.Item key="3">Contact</Menu.Item>
+      </Menu>
+    </Header> 
+  );
+}
