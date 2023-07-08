@@ -8,10 +8,11 @@ export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise) as NextAuthOptions["adapter"],
 
   providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
+    // Disable until issue with mongodb storing the email is fixed
+    // GithubProvider({
+    //   clientId: process.env.GITHUB_ID,
+    //   clientSecret: process.env.GITHUB_SECRET,
+    // }),
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
