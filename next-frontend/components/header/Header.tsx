@@ -1,16 +1,15 @@
-import { Button, Layout } from "antd";
-import { gray } from "@ant-design/colors";
-import { signIn, signOut, useSession } from "next-auth/react";
-import styles from "./header.module.css";
-
+import { gray } from '@ant-design/colors';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import styles from './header.module.css';
+const { Button, Layout } = require('antd');
 const { Header: AntdHeader } = Layout;
 
 const headerStyle: React.CSSProperties = {
-  textAlign: "center",
-  color: "#fff",
+  textAlign: 'center',
+  color: '#fff',
   height: 64,
   paddingInline: 50,
-  lineHeight: "64px",
+  lineHeight: '64px',
   backgroundColor: gray[3],
 };
 
@@ -22,16 +21,16 @@ export default function Header() {
     <AntdHeader style={headerStyle}>
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-between",
+          display: 'flex',
+          justifyContent: 'space-between',
         }}
       >
         <nav>
           <ul
             style={{
-              display: "flex",
+              display: 'flex',
               gap: 20,
-              listStyle: "none",
+              listStyle: 'none',
               margin: 0,
             }}
           >
@@ -41,7 +40,7 @@ export default function Header() {
                 href="https://github.com/athrael-soju/whisperChat"
                 target="_blank"
                 rel="noreferrer"
-                style={{ color: "#fff" }}
+                style={{ color: '#fff' }}
               >
                 whisperChat
               </Button>
@@ -51,9 +50,9 @@ export default function Header() {
         {!session && (
           <div
             style={{
-              display: "flex",
+              display: 'flex',
               gap: 20,
-              alignItems: "center",
+              alignItems: 'center',
             }}
           >
             <span>You are not signed in</span>
@@ -72,8 +71,8 @@ export default function Header() {
         {session?.user && (
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
+              display: 'flex',
+              alignItems: 'center',
               gap: 10,
             }}
           >
