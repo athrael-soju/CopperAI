@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import {
@@ -7,6 +7,7 @@ import {
   faStop,
   faPlay,
 } from '@fortawesome/free-solid-svg-icons';
+import useAudioSensitivity from '../hooks/useAudioSensitivity';
 
 const Recorder = () => {
   const {
@@ -20,12 +21,23 @@ const Recorder = () => {
     mediaRecorder,
   } = useAudioRecorder();
 
+  const silenceTimer = useRef<NodeJS.Timeout | null>(null);
+  const isMicActive = useAudioSensitivity();
+
   useEffect(() => {
     if (!recordingBlob) return;
     const url = URL.createObjectURL(recordingBlob);
     const audio = new Audio(url);
     audio.play();
   }, [recordingBlob]);
+
+  useEffect(() => {
+    if (isMicActive) {
+      clearTimeout(silenceTimer.current as NodeJS.Timeout);
+    } else if (isRecording && !isPaused) {
+      silenceTimer.current = setTimeout(stopRecording, 3000);
+    }
+  }, [isMicActive, isRecording, isPaused, stopRecording]);
 
   return (
     <div>
