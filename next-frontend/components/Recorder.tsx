@@ -9,6 +9,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import useAudioSensitivity from '../hooks/useAudioSensitivity';
 
+const targetUrl = `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}:${process.env.NEXT_PUBLIC_SERVER_PORT}${process.env.NEXT_PUBLIC_SERVER_TRANSCRIBE_ENDPOINT}`;
+
 const Recorder = () => {
   const {
     startRecording,
@@ -24,16 +26,43 @@ const Recorder = () => {
   const silenceTimer = useRef<NodeJS.Timeout | null>(null);
   const isMicActive = useAudioSensitivity();
 
+  // Refactor to use Next.js routes to send audio to backend
+  // return fetch('/api/transcribe', {
+  //   method: 'POST',
+  //   body: recordingBlob,
+  // });
+  const sendAudio = async (recordingBlob: Blob) => {
+    if (!recordingBlob) {
+      console.warn('No audio file provided');
+      return;
+    }
+    const formData = new FormData();
+
+    formData.append('file', recordingBlob, 'audio.mp3');
+    fetch(targetUrl, {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.info('Success: ', data.transcription);
+      })
+      .catch((error) => {
+        console.error('Error: ', error);
+      });
+  };
+  
   useEffect(() => {
-    if (!recordingBlob) return;
-    const url = URL.createObjectURL(recordingBlob);
-    const audio = new Audio(url);
-    audio.play();
+    if (!recordingBlob) {
+      return;
+    }
+
+    sendAudio(recordingBlob);
   }, [recordingBlob]);
 
   useEffect(() => {
     if (isMicActive) {
-      clearTimeout(silenceTimer.current as NodeJS.Timeout);
+      if (silenceTimer.current) clearTimeout(silenceTimer.current);
     } else if (isRecording && !isPaused) {
       silenceTimer.current = setTimeout(stopRecording, 3000);
     }
