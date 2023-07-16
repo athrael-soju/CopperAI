@@ -31,7 +31,7 @@ const Recorder = () => {
   //   method: 'POST',
   //   body: recordingBlob,
   // });
-  const sendAudio = async (recordingBlob: Blob) => {
+  const sendAudioForTranscription = (recordingBlob: Blob) => {
     if (!recordingBlob) {
       console.warn('No audio file provided');
       return;
@@ -46,18 +46,26 @@ const Recorder = () => {
       .then((response) => response.json())
       .then((data) => {
         console.info('Success: ', data.transcription);
+        return data.transcription;
       })
       .catch((error) => {
         console.error('Error: ', error);
+        return 'Error: ' + error;
       });
   };
-  
+
   useEffect(() => {
     if (!recordingBlob) {
       return;
     }
 
-    sendAudio(recordingBlob);
+    let transcript = sendAudioForTranscription(recordingBlob);
+    console.log(transcript);
+    // Allow continuous recording
+    // Implement AI speech interruption handling
+    // No need to return transcript here, but just status OK. Backend can send transcript to openAI directly, since it already has it.
+    // Implement existing hooks/functionality to bring app to current main state + replace frontend
+    // 
   }, [recordingBlob]);
 
   useEffect(() => {
