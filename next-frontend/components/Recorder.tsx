@@ -10,11 +10,9 @@ import useAudioSensitivity from '../hooks/useAudioSensitivity';
 import { useSession } from 'next-auth/react';
 import useTranscription from '../hooks/useTranscription';
 import useSendMessage from '../hooks/useSendMessage';
+import { set } from 'mongoose';
 
-const RecordButton: React.FC<{ isRecording: boolean; onClick: () => void }> = ({
-  isRecording,
-  onClick,
-}) => (
+const RecordButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   <button onClick={onClick} className="text-5xl p-2 mx-2">
     <FontAwesomeIcon icon={faMicrophone} style={{ color: '#505050' }} />
   </button>
@@ -53,29 +51,40 @@ const Recorder: React.FC = () => {
   const silenceTimer = useRef<NodeJS.Timeout | null>(null);
   const isMicActive = useAudioSensitivity();
 
-  const [transcript, setTranscript] = useState<string | null>(null);
-  const [transcribing, setTranscribing] = useState<boolean>(false);
+  const [status, setStatus] = useState<
+    'idle' | 'transcribing' | 'sending' | 'sent'
+  >('idle');
 
   const sendAudioForTranscription = useTranscription();
   const sendTranscriptForProcessing = useSendMessage(session);
 
   useEffect(() => {
     const processRecording = async () => {
-      if (!recordingBlob) {
-        return;
-      }
+      try {
+        if (recordingBlob && status === 'idle') {
+          setStatus('transcribing');
+          const transcript = await sendAudioForTranscription(recordingBlob);
 
-      const transcript = await sendAudioForTranscription(recordingBlob);
-      setTranscript(transcript);
-      if (transcript) {
-        await sendTranscriptForProcessing(transcript);
-        setTranscript(null);
+          if (transcript) {
+            setStatus('sending');
+            await sendTranscriptForProcessing(transcript);
+            setStatus('sent');
+          }
+        }
+
+        if (status === 'sent') {
+          setStatus('idle');
+        }
+      } catch (error) {
+        console.error('Error processing recording:', error);
+        setStatus('idle');
       }
     };
 
     processRecording();
   }, [
     recordingBlob,
+    status,
     sendAudioForTranscription,
     sendTranscriptForProcessing,
     session,
@@ -91,8 +100,8 @@ const Recorder: React.FC = () => {
 
   return (
     <div>
-      {!isRecording && (
-        <RecordButton onClick={startRecording} isRecording={false} />
+      {status === 'idle' && !isRecording && (
+        <RecordButton onClick={startRecording} />
       )}
       {isRecording && (
         <PauseResumeButton isPaused={isPaused} onClick={togglePauseResume} />
