@@ -22,7 +22,10 @@ const Recorder = () => {
     recordingTime,
     mediaRecorder,
   } = useAudioRecorder();
+
   const [transcript, setTranscript] = useState<string | null>(null);
+  const [transcribing, setTranscribing] = useState<boolean>(false);
+
   const { data: session } = useSession();
 
   const silenceTimer = useRef<NodeJS.Timeout | null>(null);
@@ -33,6 +36,12 @@ const Recorder = () => {
       console.warn('No audio file provided');
       return;
     }
+
+    // if (session) {
+    //   console.log(session.user); // Logs the user object to the console
+    // }
+
+    setTranscribing(true);
     const formData = new FormData();
     formData.append('file', recordingBlob, 'audio.webm');
 
@@ -44,6 +53,7 @@ const Recorder = () => {
       .then((data) => {
         console.log('Transcription response:', data.message);
         setTranscript(data.message);
+        setTranscribing(false);
       })
       .catch((error) => {
         console.error('Transcription error:', error);
@@ -54,15 +64,19 @@ const Recorder = () => {
     if (!recordingBlob) {
       return;
     }
-    // if (session) {
-    //   console.log(session.user); // Logs the user object to the console
-    // }
-    sendAudioForTranscription(recordingBlob);
 
-    if (transcript) {
-      // Add logic for V2V speech.
+    if (!transcript) {
+      sendAudioForTranscription(recordingBlob);
     }
-  }, [recordingBlob, transcript]);
+
+    if (transcript && !transcribing) {
+      // Add logic for V2V speech.
+      // fetch('/api/sendMessage', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
+    }
+  }, [recordingBlob, transcript, transcribing, session]);
 
   useEffect(() => {
     if (isMicActive) {

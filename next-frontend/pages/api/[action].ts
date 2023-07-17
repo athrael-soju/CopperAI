@@ -1,12 +1,13 @@
 // src/api/[action].ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import transcribeHandler from './handlers/transcribe';
+import sendMessageHandler from './handlers/sendMessage';
 
 export const config = {
   api: {
     bodyParser: false,
   },
-}
+};
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -20,8 +21,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (action === 'transcribe') {
     return transcribeHandler(req, res);
+  } else if (action === 'sendMessage') {
+    return sendMessageHandler(req, res);
   }
-  
   // Handle unrecognized actions
   res.status(404).end(`Action ${action} not found`);
 }
