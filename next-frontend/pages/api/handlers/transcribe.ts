@@ -1,31 +1,54 @@
-// src/api/handlers/transcribe.ts
 import { NextApiRequest, NextApiResponse } from 'next';
+import multer from 'multer';
+import { Configuration, OpenAIApi } from 'openai';
+import Winston from 'winston';
 
-export default async function transcribeHandler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  let targetUrl = `${process.env.SERVER_ADDRESS}:${process.env.SERVER_PORT}${process.env.SERVER_WHISPER_ENDPOINT}`;
+const configuration = new Configuration({
+  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
-  let blob = req.body;
-  //const audioBuffer = Buffer.from(blob, 'base64');
-  
+const logger = Winston.createLogger({
+  level: 'info',
+  format: Winston.format.json(),
+  defaultMeta: { service: 'transcription-service' },
+  transports: [
+    new Winston.transports.Console(),
+    new Winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new Winston.transports.File({ filename: 'combined.log' }),
+  ],
+});
 
-  //console.log('type of blob', typeof blob);
-  const formData = new FormData();
-  formData.append('file', blob, 'audio.wav');
-  await fetch(targetUrl, {
-    method: 'POST',
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('Frontend - Received transcription from OpenAI Whisper API:');
-      console.log(data);
-      return data;
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      return error;
+const upload = multer({ storage: multer.memoryStorage() });
+
+const transcribeHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+  return new Promise<void>((resolve, reject) => {
+    upload.single('file')(req, {}, async function (err) {
+      if (err) {
+        logger.error('Upload failed', { error: err });
+        res.status(500).json({ error: 'Upload failed' });
+        return resolve();
+      }
+      const fileStream = req.file.buffer;
+      fileStream.path = 'audio.webm';
+      await openai
+        .createTranscription(fileStream, 'whisper-1')
+        .then((response) => {
+          logger.info('Transcription successful', {
+            transcript: response.data.text,
+          });
+          res
+            .status(200)
+            .json({ successful: true, message: response.data.text });
+          return resolve();
+        })
+        .catch((error) => {
+          logger.error('Transcription failed', { error: error });
+          res.status(500).json({ successful: false, message: error });
+          return resolve();
+        });
     });
-}
+  });
+};
+
+export default transcribeHandler;

@@ -9,8 +9,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import useAudioSensitivity from '../hooks/useAudioSensitivity';
 
-const targetUrl = `${process.env.NEXT_PUBLIC_SERVER_ADDRESS}:${process.env.NEXT_PUBLIC_SERVER_PORT}${process.env.NEXT_PUBLIC_SERVER_TRANSCRIBE_ENDPOINT}`;
-
 const Recorder = () => {
   const {
     startRecording,
@@ -26,32 +24,18 @@ const Recorder = () => {
   const silenceTimer = useRef<NodeJS.Timeout | null>(null);
   const isMicActive = useAudioSensitivity();
 
-  // Refactor to use Next.js routes to send audio to backend
-  // return fetch('/api/transcribe', {
-  //   method: 'POST',
-  //   body: recordingBlob,
-  // });
-  const sendAudioForTranscription = (recordingBlob: Blob) => {
+  const sendAudioForTranscription = async (recordingBlob: Blob) => {
     if (!recordingBlob) {
       console.warn('No audio file provided');
       return;
     }
     const formData = new FormData();
+    formData.append('file', recordingBlob, 'audio.webm');
 
-    formData.append('file', recordingBlob, 'audio.mp3');
-    fetch(targetUrl, {
+    return fetch('/api/transcribe', {
       method: 'POST',
       body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.info('Success: ', data.transcription);
-        return data.transcription;
-      })
-      .catch((error) => {
-        console.error('Error: ', error);
-        return 'Error: ' + error;
-      });
+    });
   };
 
   useEffect(() => {
@@ -59,13 +43,19 @@ const Recorder = () => {
       return;
     }
 
-    let transcript = sendAudioForTranscription(recordingBlob);
-    console.log(transcript);
+    sendAudioForTranscription(recordingBlob)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Transcription response:', data.message);
+      })
+      .catch((error) => {
+        console.error('Transcription error:', error);
+      });
+
     // Allow continuous recording
     // Implement AI speech interruption handling
-    // No need to return transcript here, but just status OK. Backend can send transcript to openAI directly, since it already has it.
     // Implement existing hooks/functionality to bring app to current main state + replace frontend
-    // 
+    //
   }, [recordingBlob]);
 
   useEffect(() => {

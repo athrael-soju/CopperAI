@@ -2,6 +2,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import transcribeHandler from './handlers/transcribe';
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     // Only allow POST
