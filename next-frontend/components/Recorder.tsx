@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import {
@@ -20,6 +21,7 @@ const Recorder = () => {
     recordingTime,
     mediaRecorder,
   } = useAudioRecorder();
+  const [transcript, setTranscript] = useState<string | null>(null);
 
   const silenceTimer = useRef<NodeJS.Timeout | null>(null);
   const isMicActive = useAudioSensitivity();
@@ -32,31 +34,30 @@ const Recorder = () => {
     const formData = new FormData();
     formData.append('file', recordingBlob, 'audio.webm');
 
-    return fetch('/api/transcribe', {
+    fetch('/api/transcribe', {
       method: 'POST',
       body: formData,
-    });
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Transcription response:', data.message);
+        setTranscript(data.message);
+      })
+      .catch((error) => {
+        console.error('Transcription error:', error);
+      });
   };
 
   useEffect(() => {
     if (!recordingBlob) {
       return;
     }
+    sendAudioForTranscription(recordingBlob);
 
-    sendAudioForTranscription(recordingBlob)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Transcription response:', data.message);
-      })
-      .catch((error) => {
-        console.error('Transcription error:', error);
-      });
-
-    // Allow continuous recording
-    // Implement AI speech interruption handling
-    // Implement existing hooks/functionality to bring app to current main state + replace frontend
-    //
-  }, [recordingBlob]);
+    if (transcript) {
+      // Add logic for V2V speech.
+    }
+  }, [recordingBlob, transcript]);
 
   useEffect(() => {
     if (isMicActive) {
