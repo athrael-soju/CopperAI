@@ -9,6 +9,7 @@ import {
   faPlay,
 } from '@fortawesome/free-solid-svg-icons';
 import useAudioSensitivity from '../hooks/useAudioSensitivity';
+import { useSession } from 'next-auth/react';
 
 const Recorder = () => {
   const {
@@ -22,6 +23,7 @@ const Recorder = () => {
     mediaRecorder,
   } = useAudioRecorder();
   const [transcript, setTranscript] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   const silenceTimer = useRef<NodeJS.Timeout | null>(null);
   const isMicActive = useAudioSensitivity();
@@ -52,6 +54,9 @@ const Recorder = () => {
     if (!recordingBlob) {
       return;
     }
+    // if (session) {
+    //   console.log(session.user); // Logs the user object to the console
+    // }
     sendAudioForTranscription(recordingBlob);
 
     if (transcript) {
