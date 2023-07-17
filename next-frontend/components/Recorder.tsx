@@ -1,17 +1,44 @@
-import React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import {
   faMicrophone,
   faPause,
   faStop,
-  faPlay,
 } from '@fortawesome/free-solid-svg-icons';
 import useAudioSensitivity from '../hooks/useAudioSensitivity';
 import { useSession } from 'next-auth/react';
+import useTranscription from '../hooks/useTranscription';
+import useSendMessage from '../hooks/useSendMessage';
 
-const Recorder = () => {
+const RecordButton: React.FC<{ isRecording: boolean; onClick: () => void }> = ({
+  isRecording,
+  onClick,
+}) => (
+  <button onClick={onClick} className="text-5xl p-2 mx-2">
+    <FontAwesomeIcon icon={faMicrophone} style={{ color: '#505050' }} />
+  </button>
+);
+
+const PauseResumeButton: React.FC<{
+  isPaused: boolean;
+  onClick: () => void;
+}> = ({ isPaused, onClick }) => (
+  <button onClick={onClick} className="text-5xl p-2 mx-2">
+    <FontAwesomeIcon
+      icon={isPaused ? faMicrophone : faPause}
+      style={{ color: '#505050' }}
+    />
+  </button>
+);
+
+const StopButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+  <button onClick={onClick} className="text-5xl p-2 mx-2">
+    <FontAwesomeIcon icon={faStop} style={{ color: '#505050' }} />
+  </button>
+);
+
+const Recorder: React.FC = () => {
   const {
     startRecording,
     stopRecording,
@@ -19,64 +46,40 @@ const Recorder = () => {
     recordingBlob,
     isRecording,
     isPaused,
-    recordingTime,
-    mediaRecorder,
   } = useAudioRecorder();
-
-  const [transcript, setTranscript] = useState<string | null>(null);
-  const [transcribing, setTranscribing] = useState<boolean>(false);
 
   const { data: session } = useSession();
 
   const silenceTimer = useRef<NodeJS.Timeout | null>(null);
   const isMicActive = useAudioSensitivity();
 
-  const sendAudioForTranscription = async (recordingBlob: Blob) => {
-    if (!recordingBlob) {
-      console.warn('No audio file provided');
-      return;
-    }
+  const [transcript, setTranscript] = useState<string | null>(null);
+  const [transcribing, setTranscribing] = useState<boolean>(false);
 
-    // if (session) {
-    //   console.log(session.user); // Logs the user object to the console
-    // }
-
-    setTranscribing(true);
-    const formData = new FormData();
-    formData.append('file', recordingBlob, 'audio.webm');
-
-    fetch('/api/transcribe', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Transcription response:', data.message);
-        setTranscript(data.message);
-        setTranscribing(false);
-      })
-      .catch((error) => {
-        console.error('Transcription error:', error);
-      });
-  };
+  const sendAudioForTranscription = useTranscription();
+  const sendTranscriptForProcessing = useSendMessage(session);
 
   useEffect(() => {
-    if (!recordingBlob) {
-      return;
-    }
+    const processRecording = async () => {
+      if (!recordingBlob) {
+        return;
+      }
 
-    if (!transcript) {
-      sendAudioForTranscription(recordingBlob);
-    }
+      const transcript = await sendAudioForTranscription(recordingBlob);
+      setTranscript(transcript);
+      if (transcript) {
+        await sendTranscriptForProcessing(transcript);
+        setTranscript(null);
+      }
+    };
 
-    if (transcript && !transcribing) {
-      // Add logic for V2V speech.
-      // fetch('/api/sendMessage', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
-    }
-  }, [recordingBlob, transcript, transcribing, session]);
+    processRecording();
+  }, [
+    recordingBlob,
+    sendAudioForTranscription,
+    sendTranscriptForProcessing,
+    session,
+  ]);
 
   useEffect(() => {
     if (isMicActive) {
@@ -89,23 +92,12 @@ const Recorder = () => {
   return (
     <div>
       {!isRecording && (
-        <button onClick={startRecording} className="text-5xl p-2 mx-2">
-          <FontAwesomeIcon icon={faMicrophone} style={{ color: '#505050' }} />
-        </button>
+        <RecordButton onClick={startRecording} isRecording={false} />
       )}
       {isRecording && (
-        <button onClick={togglePauseResume} className="text-5xl p-2 mx-2">
-          <FontAwesomeIcon
-            icon={isPaused ? faMicrophone : faPause}
-            style={{ color: '#505050' }}
-          />
-        </button>
+        <PauseResumeButton isPaused={isPaused} onClick={togglePauseResume} />
       )}
-      {isRecording && (
-        <button onClick={stopRecording} className="text-5xl p-2 mx-2">
-          <FontAwesomeIcon icon={faStop} style={{ color: '#505050' }} />
-        </button>
-      )}
+      {isRecording && <StopButton onClick={stopRecording} />}
     </div>
   );
 };
