@@ -16,7 +16,7 @@ const useSendMessage = (session: Session | null) => {
       });
       const data = await response.json();
       console.log('Send Message Response:', data.message);
-      return data.message;
+      return data;
     },
     [session]
   );

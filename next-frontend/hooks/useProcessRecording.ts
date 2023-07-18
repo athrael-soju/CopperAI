@@ -54,6 +54,8 @@ export const useProcessRecording = (
         if (transcript && status === 'transcribed') {
           setStatus('sending');
           sendTranscriptForProcessing(transcript).then((message) => {
+            // Use it to add an entry to Pinecone.
+            //console.log('message:', message.insertedId);
             setStatus('sent');
             setRecordingProcessed(true);
             setTranscript(null);

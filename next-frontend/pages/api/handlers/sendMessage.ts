@@ -52,13 +52,23 @@ const sendMessageHandler = async (
           model: OPENAI_API_MODEL as string,
           user: req.body.user as string,
         })
-        .then((response) => {
+        .then(async (response) => {
           const responseContent = response?.data?.choices[0]?.message?.content;
           logger.info('Chat Completion Request Successful!', {
             response: responseContent,
           });
-          insertConversationToDB(username, email, transcript, responseContent);
-          res.status(200).json({ successful: true, message: responseContent });
+          const insertedId = await insertConversationToDB(
+            username,
+            email,
+            transcript,
+            responseContent
+          );
+
+          res.status(200).json({
+            successful: true,
+            message: responseContent,
+            insertedId: insertedId,
+          });
           return resolve();
         })
         .catch((err) => {
@@ -92,13 +102,14 @@ const sendMessageHandler = async (
         response: `AI response: ${response}`,
         date: `Date: ${new Date()}`,
       };
-      await db.collection('Conversation').insertOne(newConversation);
-      const conversation = await db
+      const insertResult = await db
         .collection('Conversation')
-        .findOne({ id: id });
+        .insertOne(newConversation);
+      const insertedId = insertResult.insertedId;
       logger.info('Conversation saved to MongoDB', {
-        insertedId: conversation,
+        insertedId: insertedId,
       });
+      return insertedId;
     }
   }
 };
