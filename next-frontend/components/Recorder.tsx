@@ -45,18 +45,23 @@ const Recorder: React.FC = () => {
   } = useAudioRecorder();
 
   const { data: session } = useSession();
-
   const silenceTimer = useRef<NodeJS.Timeout | null>(null);
   const isMicActive = useAudioSensitivity();
 
   const { status, setStatus, setRecordingProcessed } = useProcessRecording(
     recordingBlob,
-    session?.user
+    session
   );
 
   const startRecordingAndReset = () => {
+    setStatus('recording');
     setRecordingProcessed(false);
     startRecording();
+  };
+
+  const stopRecordingAndReset = () => {
+    stopRecording();
+    setStatus('idle'); // Set status to 'idle' when recording stops
   };
 
   useEffect(() => {
@@ -75,7 +80,7 @@ const Recorder: React.FC = () => {
       {isRecording && (
         <PauseResumeButton isPaused={isPaused} onClick={togglePauseResume} />
       )}
-      {isRecording && <StopButton onClick={stopRecording} />}
+      {isRecording && <StopButton onClick={stopRecordingAndReset} />}
     </div>
   );
 };

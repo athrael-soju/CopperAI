@@ -9,44 +9,63 @@ export const useProcessRecording = (
   session: Session | null
 ) => {
   const [status, setStatus] = useState<
-    'idle' | 'transcribing' | 'transcribed' | 'sending' | 'sent'
+    | 'idle'
+    | 'transcribing'
+    | 'transcribed'
+    | 'sending'
+    | 'sent'
+    | 'error'
+    | 'recording'
   >('idle');
   const [transcript, setTranscript] = useState<string | null>(null);
   const [recordingProcessed, setRecordingProcessed] = useState(false);
+  const [lastProcessedBlob, setLastProcessedBlob] = useState<Blob | null>(null); // New state
 
   const sendAudioForTranscription = useTranscription();
   const sendTranscriptForProcessing = useSendMessage(session);
 
   useEffect(() => {
-    //console.log('state:', status, 'recordingProcessed:', recordingProcessed);
+    console.log(
+      'state:',
+      status,
+      'recordingProcessed:',
+      recordingProcessed,
+      'transcript:',
+      transcript
+    );
     const processRecording = async () => {
       try {
         if (
           recordingBlob &&
+          recordingBlob !== lastProcessedBlob && // Add this condition
           status === 'idle' &&
           transcript === null &&
           !recordingProcessed
         ) {
           setStatus('transcribing');
-          const newTranscript = await sendAudioForTranscription(recordingBlob);
-          setTranscript(newTranscript);
-          setStatus('transcribed');
+          sendAudioForTranscription(recordingBlob).then((newTranscript) => {
+            console.log('transcript:', transcript);
+            setTranscript(newTranscript);
+            setStatus('transcribed');
+            setLastProcessedBlob(recordingBlob); // Update lastProcessedBlob
+          });
         }
 
         if (transcript && status === 'transcribed') {
           setStatus('sending');
-          await sendTranscriptForProcessing(transcript);
-          setStatus('sent');
-          setRecordingProcessed(true);
-          setTranscript(null);
+          sendTranscriptForProcessing(transcript).then((message) => {
+            setStatus('sent');
+            setRecordingProcessed(true);
+            setTranscript(null);
+          });
         }
 
-        if (status === 'sent' && recordingProcessed) {
+        if (status === 'sent' && recordingProcessed && transcript === null) {
           setStatus('idle');
         }
       } catch (error) {
         console.error('Error processing recording:', error);
-        setStatus('idle');
+        setStatus('error');
       }
     };
 
@@ -59,6 +78,7 @@ export const useProcessRecording = (
     transcript,
     session,
     recordingProcessed,
+    lastProcessedBlob,
   ]);
 
   return { status, setStatus, setRecordingProcessed };

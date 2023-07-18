@@ -6,7 +6,8 @@ const useSendMessage = (session: Session | null) => {
     async (transcript: string) => {
       const formData = new FormData();
       formData.append('transcript', transcript);
-      formData.append('user', session?.user?.email as string);
+      formData.append('username', session?.user?.name as string);
+      formData.append('email', session?.user?.email as string);
       formData.append('Content-Type', 'application/json');
 
       const response = await fetch('/api/sendMessage', {
