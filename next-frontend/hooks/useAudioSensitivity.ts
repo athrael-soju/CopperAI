@@ -14,7 +14,6 @@ const useAudioSensitivity = (): boolean => {
       audioStreamSource = audioContext.createMediaStreamSource(stream);
       analyser = audioContext.createAnalyser();
 
-      // set to env var AUDIO_DB_SENSITIVITY
       const sensitivity = parseInt(
         process.env.NEXT_PUBLIC_AUDIO_DB_SENSITIVITY || '-55'
       );

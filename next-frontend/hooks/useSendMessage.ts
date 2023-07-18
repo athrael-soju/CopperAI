@@ -13,7 +13,9 @@ const useSendMessage = (session: Session | null) => {
         method: 'POST',
         body: formData,
       });
-      console.log('Send Message Response:', response);
+      const data = await response.json();
+      console.log('Send Message Response:', data.message);
+      return data.message;
     },
     [session]
   );
