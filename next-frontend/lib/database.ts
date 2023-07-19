@@ -21,6 +21,31 @@ export const insertConversationToMongoDB = async (
   }
 };
 
+export const getUserConversationHistory = async (pineconeResponse: any) => {
+  const client = (await clientPromise) as any;
+  const db = client.db('myapp');
+  console.log('Retrieving User Message History...');
+  let conversationHistory = '';
+  // Retrieve Conversation History from MongoDB, from Pinecone response
+  try {
+    await Promise.all(
+      pineconeResponse.map(async (conversation: { id: string }) => {
+        const conversationTurn = await db
+          .collection('Conversation')
+          .findOne({
+            id: conversation.id,
+          });
+        conversationHistory += `${conversationTurn.message}. ${conversationTurn.response}. ${conversationTurn.date}\n`;
+      })
+    );
+
+    console.log(`User Message History Retrieved: \n${conversationHistory}`);
+  } catch (err) {
+    console.error(`Failed to Retrieve User Message History: \n${err?.message}`);
+  }
+  return conversationHistory;
+};
+
 export const createConversationObject = (
   username: string,
   email: string,

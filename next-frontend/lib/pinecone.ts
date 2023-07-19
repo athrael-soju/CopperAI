@@ -16,7 +16,7 @@ export const upsertConversationToPinecone = async (
   let newConversationEmbedding = (await createEmbedding(
     `${newConversation.message}. ${newConversation.response}. ${newConversation.date}.`
   )) as number[];
-  logger.info(`Pinecone - Upserting...`);
+  logger.info(`Upserting...`);
   const response = await index.upsert({
     upsertRequest: {
       vectors: [
@@ -25,7 +25,7 @@ export const upsertConversationToPinecone = async (
           values: newConversationEmbedding,
           metadata: {
             id: newConversation.id,
-            userName: newConversation.username,
+            username: newConversation.username,
           },
         },
       ],
@@ -33,15 +33,18 @@ export const upsertConversationToPinecone = async (
       namespace: `default`,
     },
   });
-  logger.info(`Pinecone - Upserted Successfully: `, response);
+  logger.info('Upserted Successfully:', {
+    response: response,
+  });
   return response;
 };
 
-export const queryMessageInPinecone = async (newConversation: Conversation) => {
+export const queryMessageInPinecone = async (
+  username: string,
+  transcript: string
+) => {
   let index = await getIndex();
-  let userPromptEmbedding = (await createEmbedding(
-    newConversation.message
-  )) as number[];
+  let userPromptEmbedding = (await createEmbedding(transcript)) as number[];
 
   const queryResponse = await index.query({
     queryRequest: {
@@ -50,11 +53,8 @@ export const queryMessageInPinecone = async (newConversation: Conversation) => {
       includeMetadata: true,
       vector: userPromptEmbedding,
       filter: {
-        $or: [
-          { userName: { $eq: newConversation.username } },
-          //{ userDomain: { $eq: userDomain } },
-        ],
-        //$and: [{score: {$gte: parseInt(PINECONE_SIMILARITY_CUTOFF),},},],
+        username: { $eq: username },
+        //$and: [{ score: { $gte: parseInt(PINECONE_SIMILARITY_CUTOFF) } }],
       },
     },
   });
@@ -62,27 +62,32 @@ export const queryMessageInPinecone = async (newConversation: Conversation) => {
   const queryLength = queryResponse?.matches?.length as number;
   if (queryLength > 0) {
     logger.info(
-      `Pinecone: Top ${PINECONE_TOPK} Conversation Matches:`,
-      queryResponse.matches
+      `Top ${PINECONE_TOPK} Conversation Matches:`,
+      // @ts-ignore 'queryResponse.matches' is possibly 'undefined'.ts(18048)
+      queryResponse?.matches
         .map(
-          (match) => `
-              metadata: ${match.metadata.id}
-              score: ${match.score}`
+          (match) =>
+            // @ts-ignore Property 'id' does not exist on type 'object'.ts(2339)
+            `metadata: ${match?.metadata?.id}. score: ${match.score}`
         )
         .join('\n')
     );
+    logger.info('Conversation Matches:', {
+      response: queryResponse.matches,
+    });
     return queryResponse.matches;
   } else {
-    logger.info(`Pinecone: No Conversation Matches.`);
+    logger.info('No Conversation Matches', {
+      response: queryResponse,
+    });
+    return null;
   }
 };
 
 const getIndex = async () => {
-  let index = await pineconeClient.Index(PINECONE_INDEX);
+  let index = pineconeClient.Index(PINECONE_INDEX);
   if (!index) {
-    logger.info(
-      `Pinecone - index ${PINECONE_INDEX} does not exist, creating...`
-    );
+    logger.info(`index ${PINECONE_INDEX} does not exist, creating...`);
     await pineconeClient.createIndex({
       createRequest: {
         name: PINECONE_INDEX,
@@ -91,10 +96,10 @@ const getIndex = async () => {
         podType: 'Starter',
       },
     });
-    logger.info(`Pinecone - index ${PINECONE_INDEX} created.`);
+    logger.info(`index ${PINECONE_INDEX} created.`);
   } else {
     index = pineconeClient.Index(PINECONE_INDEX);
-    logger.info(`Pinecone - index ${PINECONE_INDEX} exists.`);
+    logger.info(`index ${PINECONE_INDEX} exists.`);
   }
   return index;
 };

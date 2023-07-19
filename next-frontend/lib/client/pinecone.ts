@@ -15,7 +15,7 @@ const startPinecone = async () => {
     logger.info('Connected to Pinecone');
     return pinecone;
   } catch (err) {
-    logger.info('Error connecting to Pinecone', err);
+    logger.error('Error connecting to Pinecone', err);
     process.exit();
   }
 };

@@ -7,7 +7,6 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 const OPENAI_API_MODEL = process.env.NEXT_PUBLIC_OPENAI_API_MODEL;
-
 export const createChatCompletion = async (
   messages: ChatCompletionRequestMessage[],
   user: string
@@ -20,7 +19,7 @@ export const createChatCompletion = async (
 };
 
 export const createEmbedding = async (message: string) => {
-  logger.info(`OpenAI - Creating Embedding for Message: \n${message}`);
+  logger.info(`Creating Embedding for Message: \n${message}`);
   const response = await openai.createEmbedding({
     input: message,
     model: 'text-embedding-ada-002',

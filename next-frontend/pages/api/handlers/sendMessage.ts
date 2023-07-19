@@ -6,10 +6,16 @@ import { createChatCompletion } from '../../../lib/openAI';
 import {
   createConversationObject,
   insertConversationToMongoDB,
+  getUserConversationHistory,
 } from '../../../lib/database';
 import { Conversation } from '../../../types/Conversation';
-import { upsertConversationToPinecone } from '@/lib/pinecone';
+import {
+  upsertConversationToPinecone,
+  queryMessageInPinecone,
+} from '@/lib/pinecone';
 
+import { summarizeConversation } from '@/lib/langchain';
+import { templates } from '@/lib/templates';
 // Initialize multer
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -35,17 +41,43 @@ const sendMessageHandler = async (
       }
       let messages: ChatCompletionRequestMessage[] = [];
       const { username, email, transcript } = req.body;
+      const pineconeQueryResponse = await queryMessageInPinecone(
+        username,
+        transcript
+      );
+      // If a conversation is found in Pinecone, retrieve the conversation history from MongoDB
+      if (pineconeQueryResponse) {
+        let userConversationHistory = await getUserConversationHistory(
+          pineconeQueryResponse
+        );
+        // FIX IT
+        if (process.env.NEXT_PUBLIC_LANGCHAIN_ENABLED === 'true') {
+          // Summarize the conversation history using Langchain
+          userConversationHistory = await summarizeConversation(
+            transcript,
+            userConversationHistory
+          );
+          console.log('userConversationHistory', userConversationHistory, typeof userConversationHistory);
+        }
+
+        // Add the conversation history to the messages array.
+        messages.push({
+          role: 'system',
+          content: userConversationHistory,
+        });
+      }
+
+      // Add the generic response to the messages array.
+      messages.push({
+        role: 'system',
+        content: templates.generic.response,
+      });
+
       // Add the user message to the messages array.
       messages.push({
         role: 'user',
         content: transcript,
       });
-
-      //TODO: Query Pinecone for similar conversations
-      // - Summarize the conversation history using Langchain
-      // - Adjust the AI response
-      // - Add the summarized history to the messages array.
-
       // Generate a response from OpenAI that contains the AI response
       createChatCompletion(messages, username)
         .then(async (response) => {
@@ -66,10 +98,10 @@ const sendMessageHandler = async (
           //console.log('insertedId', insertedId);
 
           // Save the conversation to Pinecone
-          const pineconeResponse = await upsertConversationToPinecone(
+          const pineconeUpsertResponse = await upsertConversationToPinecone(
             newConversation
           );
-          //console.log('pineconeResponse', pineconeResponse);
+          //console.log('pineconeUpsertResponse', pineconeUpsertResponse);
 
           res.status(200).json({
             successful: true,

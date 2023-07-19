@@ -1,6 +1,6 @@
 // src/api/[action].ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import transcribeHandler from './handlers/transcribe';
+import transcribeHandler from './handlers/transcribeInput';
 import sendMessageHandler from './handlers/sendMessage';
 
 export const config = {
