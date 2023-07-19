@@ -1,4 +1,5 @@
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from 'openai';
+import logger from '../lib/winstonConfig';
 
 const configuration = new Configuration({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
@@ -19,7 +20,7 @@ export const createChatCompletion = async (
 };
 
 export const createEmbedding = async (message: string) => {
-  console.log(`OpenAI - Creating Embedding for Message: \n${message}`);
+  logger.info(`OpenAI - Creating Embedding for Message: \n${message}`);
   const response = await openai.createEmbedding({
     input: message,
     model: 'text-embedding-ada-002',
@@ -30,9 +31,9 @@ export const createEmbedding = async (message: string) => {
     response.data.data.length === 0 ||
     !response.data.data[0].embedding
   ) {
-    console.log(`OpenAI - No Embedding Found`);
+    logger.info(`OpenAI - No Embedding Found`);
     return null;
   }
-  console.log(`OpenAI - Embedded Message`);
+  logger.info(`OpenAI - Embedded Message`);
   return response.data.data[0].embedding;
 };

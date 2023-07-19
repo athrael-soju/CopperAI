@@ -34,16 +34,18 @@ const sendMessageHandler = async (
         return resolve();
       }
       let messages: ChatCompletionRequestMessage[] = [];
-      // TODO:
-      // - Summarize the conversation history using Langchain
-      // - Adjust the AI response
-      // - Add the summarized history to the messages array.
       const { username, email, transcript } = req.body;
       // Add the user message to the messages array.
       messages.push({
         role: 'user',
         content: transcript,
       });
+
+      //TODO: Query Pinecone for similar conversations
+      // - Summarize the conversation history using Langchain
+      // - Adjust the AI response
+      // - Add the summarized history to the messages array.
+
       // Generate a response from OpenAI that contains the AI response
       createChatCompletion(messages, username)
         .then(async (response) => {
@@ -59,20 +61,16 @@ const sendMessageHandler = async (
             transcript,
             responseContent
           );
+          // Save the conversation to MongoDB
+          const insertedId = await insertConversationToMongoDB(newConversation);
+          //console.log('insertedId', insertedId);
 
-          if (process.env.NEXT_PUBLIC_MEMORY_TYPE === 'dynamic') {
-            // Save the conversation to MongoDB
-            const insertedId = await insertConversationToMongoDB(
-              newConversation
-            );
-//            console.log('insertedId', insertedId);
+          // Save the conversation to Pinecone
+          const pineconeResponse = await upsertConversationToPinecone(
+            newConversation
+          );
+          //console.log('pineconeResponse', pineconeResponse);
 
-            const pineconeResponse = await upsertConversationToPinecone(
-              newConversation
-            );
-
-            console.log('pineconeResponse', pineconeResponse);
-          }
           res.status(200).json({
             successful: true,
             conversation: newConversation,

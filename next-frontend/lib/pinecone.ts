@@ -16,7 +16,7 @@ export const upsertConversationToPinecone = async (
   let newConversationEmbedding = (await createEmbedding(
     `${newConversation.message}. ${newConversation.response}. ${newConversation.date}.`
   )) as number[];
-  console.log(`Pinecone - Upserting...`);
+  logger.info(`Pinecone - Upserting...`);
   const response = await index.upsert({
     upsertRequest: {
       vectors: [
@@ -33,7 +33,7 @@ export const upsertConversationToPinecone = async (
       namespace: `default`,
     },
   });
-  console.log(`Pinecone - Upserted Successfully: `, response);
+  logger.info(`Pinecone - Upserted Successfully: `, response);
   return response;
 };
 

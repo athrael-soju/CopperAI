@@ -1,5 +1,5 @@
-// pineconeClient.js
 import { PineconeClient } from '@pinecone-database/pinecone';
+import logger from '../../lib/winstonConfig';
 
 const API_KEY = process.env.NEXT_PUBLIC_PINECONE_API_KEY as string;
 const PINECONE_ENVIRONMENT = process.env
@@ -12,10 +12,10 @@ const startPinecone = async () => {
       environment: PINECONE_ENVIRONMENT,
       apiKey: API_KEY,
     });
-    console.log('Connected to Pinecone');
+    logger.info('Connected to Pinecone');
     return pinecone;
   } catch (err) {
-    console.log('Error connecting to Pinecone', err);
+    logger.info('Error connecting to Pinecone', err);
     process.exit();
   }
 };
