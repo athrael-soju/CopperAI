@@ -7,8 +7,8 @@ import {
   faStop,
 } from '@fortawesome/free-solid-svg-icons';
 import useAudioSensitivity from '../hooks/useAudioSensitivity';
-import { useSession } from 'next-auth/react';
 import useProcessRecording from '../hooks/useProcessRecording';
+import { useSession } from 'next-auth/react';
 
 const RecordButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   <button onClick={onClick} className="text-5xl p-2 mx-2">

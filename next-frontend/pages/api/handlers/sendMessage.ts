@@ -1,15 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import multer from 'multer';
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from 'openai';
-import { v4 as uuidv4 } from 'uuid';
+import { ChatCompletionRequestMessage } from 'openai';
 import logger from '../../../lib/winstonConfig';
-import clientPromise from '../../../lib/mongodb/client';
-const configuration = new Configuration({
-  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-});
+import { createChatCompletion } from '../../../lib/openAI';
+import {
+  createConversationObject,
+  insertConversationToMongoDB,
+} from '../../../lib/database';
+import { Conversation } from '../../../types/Conversation';
+import { upsertConversationToPinecone } from '@/lib/pinecone';
 
-const openai = new OpenAIApi(configuration);
-const OPENAI_API_MODEL = process.env.NEXT_PUBLIC_OPENAI_API_MODEL;
 // Initialize multer
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -39,35 +39,43 @@ const sendMessageHandler = async (
       // - Adjust the AI response
       // - Add the summarized history to the messages array.
       const { username, email, transcript } = req.body;
-
       // Add the user message to the messages array.
       messages.push({
         role: 'user',
         content: transcript,
       });
       // Generate a response from OpenAI that contains the AI response
-      openai
-        .createChatCompletion({
-          messages,
-          model: OPENAI_API_MODEL as string,
-          user: req.body.user as string,
-        })
+      createChatCompletion(messages, username)
         .then(async (response) => {
-          const responseContent = response?.data?.choices[0]?.message?.content;
+          const responseContent = response?.data?.choices[0]?.message
+            ?.content as string;
           logger.info('Chat Completion Request Successful!', {
             response: responseContent,
           });
-          const insertedId = await insertConversationToDB(
+          // Add the response to a new conversation object
+          const newConversation: Conversation = createConversationObject(
             username,
             email,
             transcript,
             responseContent
           );
 
+          if (process.env.NEXT_PUBLIC_MEMORY_TYPE === 'dynamic') {
+            // Save the conversation to MongoDB
+            const insertedId = await insertConversationToMongoDB(
+              newConversation
+            );
+//            console.log('insertedId', insertedId);
+
+            const pineconeResponse = await upsertConversationToPinecone(
+              newConversation
+            );
+
+            console.log('pineconeResponse', pineconeResponse);
+          }
           res.status(200).json({
             successful: true,
-            message: responseContent,
-            insertedId: insertedId,
+            conversation: newConversation,
           });
           return resolve();
         })
@@ -77,41 +85,6 @@ const sendMessageHandler = async (
         });
     });
   });
-
-  /*
-   * If the memory type is dynamic, save the conversation to MongoDB and Pinecone (More suitable for conversation).
-   * If the memory type is static, only store the conversation to Pinecone (More suitable for Q&A).
-   */
-  async function insertConversationToDB(
-    username: string,
-    email: string,
-    message: string,
-    response: string | undefined
-  ) {
-    const client = (await clientPromise) as any;
-    const db = client.db('myapp');
-
-    // Save the conversation to MongoDB
-    if (process.env.NEXT_PUBLIC_MEMORY_TYPE === 'dynamic') {
-      const id = uuidv4();
-      const newConversation = {
-        id: id,
-        username: username,
-        email: email,
-        message: `${username} prompt: ${message}`,
-        response: `AI response: ${response}`,
-        date: `Date: ${new Date()}`,
-      };
-      const insertResult = await db
-        .collection('Conversation')
-        .insertOne(newConversation);
-      const insertedId = insertResult.insertedId;
-      logger.info('Conversation saved to MongoDB', {
-        insertedId: insertedId,
-      });
-      return insertedId;
-    }
-  }
 };
 
 export default sendMessageHandler;

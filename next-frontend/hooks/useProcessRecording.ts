@@ -25,14 +25,14 @@ export const useProcessRecording = (
   const sendTranscriptForProcessing = useSendMessage(session);
 
   useEffect(() => {
-    console.log(
-      'state:',
-      status,
-      'recordingProcessed:',
-      recordingProcessed,
-      'transcript:',
-      transcript
-    );
+    // console.log(
+    //   'state:',
+    //   status,
+    //   'recordingProcessed:',
+    //   recordingProcessed,
+    //   'transcript:',
+    //   transcript
+    // );
     const processRecording = async () => {
       try {
         if (
@@ -44,7 +44,6 @@ export const useProcessRecording = (
         ) {
           setStatus('transcribing');
           sendAudioForTranscription(recordingBlob).then((newTranscript) => {
-            console.log('transcript:', transcript);
             setTranscript(newTranscript);
             setStatus('transcribed');
             setLastProcessedBlob(recordingBlob); // Update lastProcessedBlob
@@ -54,8 +53,7 @@ export const useProcessRecording = (
         if (transcript && status === 'transcribed') {
           setStatus('sending');
           sendTranscriptForProcessing(transcript).then((message) => {
-            // Use it to add an entry to Pinecone.
-            //console.log('message:', message.insertedId);
+            //console.log('message:', message);
             setStatus('sent');
             setRecordingProcessed(true);
             setTranscript(null);
