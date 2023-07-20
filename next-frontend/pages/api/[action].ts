@@ -2,7 +2,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import transcribeHandler from './handlers/transcribeInput';
 import sendMessageHandler from './handlers/sendMessage';
-import testLangchain from '@/lib/client/langchain';
 
 export const config = {
   api: {
@@ -24,7 +23,5 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     return transcribeHandler(req, res);
   } else if (action === 'sendMessage') {
     return sendMessageHandler(req, res);
-  } else if (action === 'testLangchain') {
-    return testLangchain();
   }
 }
