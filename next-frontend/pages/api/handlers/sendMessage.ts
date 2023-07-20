@@ -96,6 +96,7 @@ const sendMessageHandler = async (
 
           res.status(200).json({
             successful: true,
+            response: responseContent,
             conversation: newConversation,
           });
           return resolve();

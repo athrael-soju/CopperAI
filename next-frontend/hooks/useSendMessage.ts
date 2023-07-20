@@ -15,8 +15,8 @@ const useSendMessage = (session: Session | null) => {
         body: formData,
       });
       const data = await response.json();
-      console.log('Send Message Response:', data.conversation.response);
-      return data;
+      console.log('Send Message Response:', data.response);
+      return data.response;
     },
     [session]
   );

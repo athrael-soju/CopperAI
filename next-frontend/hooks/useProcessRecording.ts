@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Session } from 'next-auth'; // If you have types for next-auth
 import useTranscription from './useTranscription';
 import useSendMessage from './useSendMessage';
+import useTextToSpeech from './useTextToSpeech';
 
 export const useProcessRecording = (
   recordingBlob: Blob | null,
@@ -23,6 +24,7 @@ export const useProcessRecording = (
 
   const sendAudioForTranscription = useTranscription();
   const sendTranscriptForProcessing = useSendMessage(session);
+  const sendResponseAndGetAudio = useTextToSpeech();
 
   useEffect(() => {
     // console.log(
@@ -53,7 +55,11 @@ export const useProcessRecording = (
         if (transcript && status === 'transcribed') {
           setStatus('sending');
           sendTranscriptForProcessing(transcript).then((message) => {
-            //console.log('message:', message);
+            // Send the message to Google Cloud TTS
+            sendResponseAndGetAudio(message).then((audio) => {
+              audio.play();
+            });
+
             setStatus('sent');
             setRecordingProcessed(true);
             setTranscript(null);
@@ -79,6 +85,7 @@ export const useProcessRecording = (
     session,
     recordingProcessed,
     lastProcessedBlob,
+    sendResponseAndGetAudio,
   ]);
 
   return { status, setStatus, setRecordingProcessed };
