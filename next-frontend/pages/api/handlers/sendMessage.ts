@@ -13,7 +13,7 @@ import {
   upsertConversationToPinecone,
   queryMessageInPinecone,
 } from '@/lib/pinecone';
-
+import templates from '@/lib/templates';
 import { summarizeConversation } from '@/lib/langchain';
 
 // Initialize multer
@@ -57,6 +57,12 @@ const sendMessageHandler = async (
             transcript,
             userConversationHistory
           );
+        } else {
+          // Add the simple template to the messages array.
+          messages.push({
+            role: 'system',
+            content: templates.simple.friendly,
+          });
         }
         // Add the conversation history to the messages array.
         messages.push({
