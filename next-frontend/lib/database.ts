@@ -26,23 +26,21 @@ export const getUserConversationHistory = async (pineconeResponse: any) => {
   const db = client.db('myapp');
   console.log('Retrieving User Message History...');
   let conversationHistory = '';
+  let recordsRetrieved = 0;
   // Retrieve Conversation History from MongoDB, from Pinecone response
-  try {
-    await Promise.all(
-      pineconeResponse.map(async (conversation: { id: string }) => {
-        const conversationTurn = await db
-          .collection('Conversation')
-          .findOne({
-            id: conversation.id,
-          });
+  await Promise.all(
+    pineconeResponse.map(async (conversation: { id: string }) => {
+      const conversationTurn = await db.collection('Conversation').findOne({
+        id: conversation.id,
+      });
+      if (conversationTurn) {
         conversationHistory += `${conversationTurn.message}. ${conversationTurn.response}. ${conversationTurn.date}\n`;
-      })
-    );
+        recordsRetrieved++;
+      }
+    })
+  );
+  console.log(`User Message History Records Retrieved: ${recordsRetrieved}`);
 
-    console.log(`User Message History Retrieved: \n${conversationHistory}`);
-  } catch (err) {
-    console.error(`Failed to Retrieve User Message History: \n${err?.message}`);
-  }
   return conversationHistory;
 };
 
@@ -56,8 +54,8 @@ export const createConversationObject = (
     id: uuidv4(),
     username: username,
     email: email,
-    message: `${username} prompt: ${message}`,
-    response: `AI response: ${response}`,
-    date: `Date: ${new Date()}`,
+    message: `${username}: ${message}`,
+    response: `AI: ${response}`,
+    date: `Date: ${new Date().toLocaleDateString}`,
   };
 };

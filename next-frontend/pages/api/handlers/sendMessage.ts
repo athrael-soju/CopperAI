@@ -59,10 +59,10 @@ const sendMessageHandler = async (
           );
         } else {
           // Add the simple template to the messages array.
-          messages.push({
-            role: 'system',
-            content: templates.simple.friendly,
-          });
+          // messages.push({
+          //   role: 'system',
+          //   content: templates.simple.friendly,
+          // });
         }
         // Add the conversation history to the messages array.
         messages.push({

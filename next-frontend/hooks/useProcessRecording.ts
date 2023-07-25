@@ -19,24 +19,26 @@ export const useProcessRecording = (
     | 'recording'
   >('idle');
   const [transcript, setTranscript] = useState<string | null>(null);
+  const [response, setResponse] = useState<string | null>(null);
   const [recordingProcessed, setRecordingProcessed] = useState(false);
-  const [lastProcessedBlob, setLastProcessedBlob] = useState<Blob | null>(null); // New state
+  const [lastProcessedBlob, setLastProcessedBlob] = useState<Blob | null>(null);
 
   const sendAudioForTranscription = useTranscription();
   const sendTranscriptForProcessing = useSendMessage(session);
-  const sendResponseAndGetAudio = useTextToSpeech();
+  const { startOngoingAudio, stopOngoingAudio } = useTextToSpeech();
 
   useEffect(() => {
-    // console.log(
-    //   'state:',
-    //   status,
-    //   'recordingProcessed:',
-    //   recordingProcessed,
-    //   'transcript:',
-    //   transcript
-    // );
+    console.log(
+      'state:',
+      status,
+      'recordingProcessed:',
+      recordingProcessed,
+      'transcript:',
+      transcript
+    );
     const processRecording = async () => {
       try {
+        // If we have a recording and we haven't sent it yet, send it.
         if (
           recordingBlob &&
           recordingBlob !== lastProcessedBlob && // Add this condition
@@ -51,23 +53,27 @@ export const useProcessRecording = (
             setLastProcessedBlob(recordingBlob); // Update lastProcessedBlob
           });
         }
-
+        // If the transcript is ready and we haven't sent it yet, send it.
         if (transcript && status === 'transcribed') {
           setStatus('sending');
-          sendTranscriptForProcessing(transcript).then((message) => {
-            // Send the message to Google Cloud TTS
-            sendResponseAndGetAudio(message).then((audio) => {
-              audio.play();
-            });
-
+          sendTranscriptForProcessing(transcript).then((newResponse) => {
+            setResponse(newResponse);
             setStatus('sent');
             setRecordingProcessed(true);
             setTranscript(null);
           });
         }
-
+        // If the response is ready and we haven't played it yet, play it.
         if (status === 'sent' && recordingProcessed && transcript === null) {
           setStatus('idle');
+          if (response) {
+            stopOngoingAudio();
+            startOngoingAudio(response);
+          } else {
+            startOngoingAudio(
+              'Sorry, I did not understand that. Please try again.'
+            );
+          }
         }
       } catch (error) {
         console.error('Error processing recording:', error);
@@ -85,10 +91,21 @@ export const useProcessRecording = (
     session,
     recordingProcessed,
     lastProcessedBlob,
-    sendResponseAndGetAudio,
+    stopOngoingAudio,
+    startOngoingAudio,
+    response,
   ]);
 
-  return { status, setStatus, setRecordingProcessed };
+  return {
+    transcript,
+    response,
+    status,
+    setStatus,
+    recordingProcessed,
+    setRecordingProcessed,
+    startOngoingAudio,
+    stopOngoingAudio,
+  };
 };
 
 export default useProcessRecording;

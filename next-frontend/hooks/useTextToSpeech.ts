@@ -1,11 +1,13 @@
-import { useCallback } from 'react';
+import { useRef } from 'react';
 
 const useTextToSpeech = () => {
-  return useCallback(async (transcript: string) => {
+  const audioRef = useRef(null);
+
+  const startOngoingAudio = async (transcript: string | Blob) => {
     console.log('Sending message to text to speech', transcript);
     const formData = new FormData();
     formData.append('transcript', transcript);
-    return fetch('/api/textToSpeech', {
+    fetch('/api/textToSpeech', {
       method: 'POST',
       body: formData,
     })
@@ -15,11 +17,20 @@ const useTextToSpeech = () => {
         // You can convert it to a Blob and create an object URL to play it.
         const blob = new Blob([data], { type: 'audio/mpeg' });
         const url = URL.createObjectURL(blob);
-        console.log('Sending audio', { audio: url });
-        return new Audio(url);
+        console.log('Sending audio: ', url);
+        audioRef.current = new Audio(url);
+        audioRef.current.play();
         // You can use the URL to set the src of an audio element, for example.
       });
-  }, []);
+  };
+  const stopOngoingAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
+
+  return { startOngoingAudio, stopOngoingAudio };
 };
 
 export default useTextToSpeech;

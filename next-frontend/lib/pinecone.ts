@@ -61,19 +61,8 @@ export const queryMessageInPinecone = async (
 
   const queryLength = queryResponse?.matches?.length as number;
   if (queryLength > 0) {
-    logger.info(
-      `Top ${PINECONE_TOPK} Conversation Matches:`,
-      // @ts-ignore 'queryResponse.matches' is possibly 'undefined'.ts(18048)
-      queryResponse?.matches
-        .map(
-          (match) =>
-            // @ts-ignore Property 'id' does not exist on type 'object'.ts(2339)
-            `metadata: ${match?.metadata?.id}. score: ${match.score}`
-        )
-        .join('\n')
-    );
     logger.info('Conversation Matches:', {
-      response: queryResponse.matches,
+      response: queryResponse.matches?.length,
     });
     return queryResponse.matches;
   } else {
