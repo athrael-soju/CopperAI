@@ -1,105 +1,87 @@
 import React from 'react';
-import { gray } from '@ant-design/colors';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import styles from './header.module.css';
-const { Button, Layout } = require('antd');
-const { Header: AntdHeader } = Layout;
-
-const headerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  color: '#fff',
-  height: 64,
-  paddingInline: 50,
-  lineHeight: '64px',
-  backgroundColor: gray[3],
-};
+import { useContext } from 'react';
+import ChatTypeContext from '../../lib/Context/ChatType'; // update the import path as needed
 
 export default function Header() {
   const { data: session, status } = useSession();
-  //const loading = status === "loading";
+  const chatTypeContext = useContext(ChatTypeContext);
+
+  if (!chatTypeContext) {
+    throw new Error('Header must be used within a ChatTypeContextProvider');
+  }
+
+  const { chatType } = chatTypeContext;
+
+  const handleFileUpload = (event: { target: { files: any[] } }) => {
+    const file = event.target.files[0];
+    console.log(file); // Handle the file as needed
+  };
 
   return (
-    <AntdHeader style={headerStyle}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-        }}
-      >
+    <header className="fixed top-0 left-0 right-0 text-center text-white bg-copper-200 h-16 flex items-center justify-center px-20 shadow-md">
+      <div className="flex justify-between w-full items-center">
         <nav>
-          <ul
-            style={{
-              display: 'flex',
-              gap: 20,
-              listStyle: 'none',
-              margin: 0,
-            }}
-          >
+          <ul className="flex gap-5 list-none m-0">
             <li>
-              <Button
-                type="link"
+              <a
+                className="text-white underline hover:text-gray-300"
                 href="https://github.com/athrael-soju/whisperChat"
                 target="_blank"
                 rel="noreferrer"
-                style={{ color: '#fff' }}
               >
                 whisperChat
-              </Button>
+              </a>
+            </li>
+            <li>
+              {chatType === 'documentChat' && (
+                <button
+                  className="text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105 hover:bg-palette419_3 border border-palette419_5"
+                  onClick={handleFileUpload}
+                >
+                  Upload File
+                </button>
+              )}
             </li>
           </ul>
         </nav>
         {!session && (
-          <div
-            style={{
-              display: 'flex',
-              gap: 20,
-              alignItems: 'center',
-            }}
-          >
+          <div className="flex gap-5 items-center">
             <span>You are not signed in</span>
-            <Button
-              type="primary"
-              href={`/api/auth/signin`}
-              onClick={(e: { preventDefault: () => void }) => {
+            <button
+              className="text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105 hover:bg-palette419_3 border border-palette419_5"
+              onClick={(e) => {
                 e.preventDefault();
                 signIn();
               }}
             >
               Sign in
-            </Button>
+            </button>
           </div>
         )}
         {session?.user && (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-            }}
-          >
+          <div className="flex items-center gap-2">
             {session.user.image && (
               <span
+                className="w-10 h-10 bg-cover rounded-full"
                 style={{ backgroundImage: `url('${session.user.image}')` }}
-                className={styles.avatar}
               />
             )}
-            <span>
+            <span className="mr-2 text-gray-800">
               <strong>{session.user.email ?? session.user.name}</strong>
             </span>
-            <Button
-              danger
-              type="primary"
-              href={`/api/auth/signout`}
-              onClick={(e: { preventDefault: () => void }) => {
+            <button
+              className="text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105 hover:bg-palette419_3 border border-palette419_5"
+              onClick={(e) => {
                 e.preventDefault();
                 signOut();
               }}
             >
               Sign out
-            </Button>
+            </button>
           </div>
         )}
       </div>
-    </AntdHeader>
+    </header>
   );
 }

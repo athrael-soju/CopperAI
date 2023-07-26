@@ -4,8 +4,12 @@ import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { useSession } from 'next-auth/react';
 import useAudioSensitivity from '../hooks/useAudioSensitivity';
 import useProcessRecording from '../hooks/useProcessRecording';
-import { RecordButton, PauseResumeButton, StopButton } from './Buttons'; // Assuming you refactored your buttons
+import { RecordButton, PauseResumeButton, StopButton } from './Buttons';
 import { useCallback } from 'react';
+
+type RecorderProps = {
+  className?: string;
+};
 
 const recorderMachine = createMachine({
   id: 'recorder',
@@ -23,7 +27,7 @@ const recorderMachine = createMachine({
   },
 });
 
-const Recorder = () => {
+const Recorder: React.FC<RecorderProps> = ({ className }) => {
   const [current, send] = useMachine(recorderMachine);
   const {
     startRecording,
@@ -76,7 +80,7 @@ const Recorder = () => {
   }, [togglePauseResume, current, send]);
 
   return (
-    <div>
+    <div className={className}>
       {current.matches('idle') && <RecordButton onClick={recordButtonEvent} />}
       {current.matches('recording') && (
         <PauseResumeButton isPaused={false} onClick={pauseButtonEvent} />
@@ -87,7 +91,6 @@ const Recorder = () => {
       {(current.matches('recording') || current.matches('paused')) && (
         <StopButton onClick={stopButtonEvent} />
       )}
-      {/* <Waveform url={audioUrl} /> */}
     </div>
   );
 };
