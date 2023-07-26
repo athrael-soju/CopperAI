@@ -36,3 +36,8 @@ next-env.d.ts
 
 # credentials
 /pages/api/auth/google.api.json
+
+# history
+.history/
+combined.log
+error.log

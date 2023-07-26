@@ -1,5 +1,5 @@
 import { useMachine } from '@xstate/react';
-import { Machine } from 'xstate';
+import { createMachine } from 'xstate';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { useSession } from 'next-auth/react';
 import useAudioSensitivity from '../hooks/useAudioSensitivity';
@@ -7,7 +7,7 @@ import useProcessRecording from '../hooks/useProcessRecording';
 import { RecordButton, PauseResumeButton, StopButton } from './Buttons'; // Assuming you refactored your buttons
 import { useCallback } from 'react';
 
-const recorderMachine = Machine({
+const recorderMachine = createMachine({
   id: 'recorder',
   initial: 'idle',
   states: {

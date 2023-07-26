@@ -3,7 +3,7 @@ version: "1.0.0"
 services:
   mongodb:
     image: mongo
-    container_name: mongo-login-db
+    container_name: mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: secret
@@ -12,52 +12,21 @@ services:
     volumes:
       - mongo-data:/data/db
     networks:
-      - whisper-network
+      - copper-network
 
-  backend:
-    build: ./backend
-    container_name: backend-core
-    env_file:
-      - ./backend/.env
-    ports:
-      - "5000:5000"
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=./credentials/google.api.json
-    networks:
-      - whisper-network
-
-  frontend:
-    container_name: fontend-ui
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    networks:
-      - whisper-network
-
-  pinecone:
-    build: ./pinecone
-    container_name: pinecone-vector-db
-    ports:
-      - "4000:4000"
-    networks:
-      - whisper-network
-
-  data-injest:
-    build: ./data-injest
-    container_name: data-injest
-    ports:
-      - "6000:6000"
-    depends_on:
-      - mongodb
-      - pinecone
-    networks:
-      - whisper-network
+  # copper-ai:
+  #   container_name: copper-ai
+  #   build: ./copper-ai
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - mongodb
+  #   networks:
+  #     - copper-network
 
 volumes:
   mongo-data:
 
 networks:
-  whisper-network:
+  copper-network:
     driver: bridge
