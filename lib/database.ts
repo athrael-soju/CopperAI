@@ -6,6 +6,7 @@ import { Conversation } from '../types/Conversation';
 export const insertConversationToMongoDB = async (
   newConversation: Conversation
 ) => {
+  logger.defaultMeta = { service: 'lib/database.ts' };
   const client = (await clientPromise) as any;
   const db = client.db('myapp');
   // Save the conversation to MongoDB
@@ -24,7 +25,7 @@ export const insertConversationToMongoDB = async (
 export const getUserConversationHistory = async (pineconeResponse: any) => {
   const client = (await clientPromise) as any;
   const db = client.db('myapp');
-  console.log('Retrieving User Message History...');
+  logger.info('Retrieving User Message History...');
   let conversationHistory = '';
   let recordsRetrieved = 0;
   // Retrieve Conversation History from MongoDB, from Pinecone response
@@ -39,7 +40,7 @@ export const getUserConversationHistory = async (pineconeResponse: any) => {
       }
     })
   );
-  console.log(`User Message History Records Retrieved: ${recordsRetrieved}`);
+  logger.info(`User Message History Records Retrieved: ${recordsRetrieved}`);
 
   return conversationHistory;
 };

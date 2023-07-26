@@ -5,7 +5,8 @@ import { PromptTemplate } from 'langchain/prompts';
 import { MemoryVectorStore } from 'langchain/vectorstores/memory';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { ConversationSummaryMemory } from 'langchain/memory';
-
+import logger from '../../lib/winstonConfig';
+logger.defaultMeta = { service: 'client/langchain.ts' };
 const model = new OpenAI({
   temperature: 0.9,
   modelName: process.env.NEXT_PUBLIC_OPENAI_API_MODEL,

@@ -1,6 +1,6 @@
 import textToSpeech from '@google-cloud/text-to-speech';
 import logger from '../../lib/winstonConfig';
-
+logger.defaultMeta = { service: 'client/googleTTS.ts' };
 const client = new textToSpeech.TextToSpeechClient();
 
 export async function getAudioFromTranscript(transcript: string) {
