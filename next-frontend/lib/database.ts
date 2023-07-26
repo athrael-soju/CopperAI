@@ -56,6 +56,6 @@ export const createConversationObject = (
     email: email,
     message: `${username}: ${message}`,
     response: `AI: ${response}`,
-    date: `Date: ${new Date().toLocaleDateString}`,
+    date: `Date: ${new Date().toLocaleDateString()}`,
   };
 };
