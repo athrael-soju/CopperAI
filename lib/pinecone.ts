@@ -1,6 +1,7 @@
 import pineconeClient from './client/pinecone';
 import { createEmbedding } from './openAI';
 import logger from '../lib/winstonConfig';
+
 import { Conversation } from '../types/Conversation';
 
 const PINECONE_INDEX = process.env.NEXT_PUBLIC_PINECONE_INDEX as string;

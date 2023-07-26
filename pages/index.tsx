@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import Recorder from '../components/Recorder';
 import { useContext } from 'react';
 import ChatTypeContext from '../lib/Context/ChatType'; // update the import path as needed
+
 export default function Home() {
   const router = useRouter();
   const { data: session, status } = useSession({
@@ -24,7 +25,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col min-h-screen justify-center items-center p-24">
+    <main className="flex flex-col min-h-screen justify-center items-center p-24 pb-8">
       {!chatType && session && (
         <div className="space-y-8 w-full">
           <button
@@ -43,7 +44,11 @@ export default function Home() {
           </button>
         </div>
       )}
-      {chatType && session && <Recorder className="mb-10" />}
+      {chatType && session && (
+        <div style={{ marginTop: 'auto' }}>
+          <Recorder className="mb-10" />
+        </div>
+      )}
     </main>
   );
 }

@@ -6,7 +6,6 @@ const PINECONE_ENVIRONMENT = process.env
   .NEXT_PUBLIC_PINECONE_ENVIRONMENT as string;
 
 const startPinecone = async () => {
-  logger.defaultMeta = { service: 'client/pinecone.ts' };
   try {
     const pinecone = new PineconeClient();
     await pinecone.init({

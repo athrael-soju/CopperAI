@@ -1,12 +1,13 @@
 import clientPromise from './client/mobgodb';
 import { v4 as uuidv4 } from 'uuid';
 import logger from '../lib/winstonConfig';
+// logger.defaultMeta = { service: 'lib/database.ts' };
+
 import { Conversation } from '../types/Conversation';
 
 export const insertConversationToMongoDB = async (
   newConversation: Conversation
 ) => {
-  logger.defaultMeta = { service: 'lib/database.ts' };
   const client = (await clientPromise) as any;
   const db = client.db('myapp');
   // Save the conversation to MongoDB

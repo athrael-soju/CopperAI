@@ -1,4 +1,6 @@
 import logger from '../lib/winstonConfig';
+//logger.defaultMeta = { service: 'lib/langchain.ts' };
+
 import templates from './templates';
 import { getPromptTemplate, getChain, getResult } from './client/langchain';
 

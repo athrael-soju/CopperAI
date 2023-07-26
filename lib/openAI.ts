@@ -1,5 +1,6 @@
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from 'openai';
 import logger from '../lib/winstonConfig';
+// logger.defaultMeta = { service: 'lib/openAI.ts' };
 
 const configuration = new Configuration({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
@@ -19,6 +20,7 @@ export const createChatCompletion = async (
 };
 
 export const createEmbedding = async (message: string) => {
+  
   logger.info(`Creating Embedding for Message: ${message}`);
   const response = await openai.createEmbedding({
     input: message,
