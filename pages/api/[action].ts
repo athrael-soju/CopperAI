@@ -4,13 +4,20 @@ import transcribeHandler from './handlers/transcribeInput';
 import sendMessageHandler from './handlers/sendMessage';
 import textToSpeechHandler from './handlers/textToSpeech';
 
+import { Request, Response } from 'express';
+type NextApiRequestWithExpress = NextApiRequest & Request;
+type NextApiResponseWithExpress = NextApiResponse & Response;
+
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(
+  req: NextApiRequestWithExpress,
+  res: NextApiResponseWithExpress
+) {
   if (req.method !== 'POST') {
     // Only allow POST
     res.setHeader('Allow', ['POST']);

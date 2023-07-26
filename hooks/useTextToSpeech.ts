@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 
 const useTextToSpeech = () => {
-  const audioRef = useRef(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const startOngoingAudio = async (transcript: string | Blob) => {
     console.log('Sending message to text to speech', transcript);

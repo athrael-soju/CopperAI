@@ -60,7 +60,7 @@ export default function Header() {
             <Button
               type="primary"
               href={`/api/auth/signin`}
-              onClick={(e) => {
+              onClick={(e: { preventDefault: () => void }) => {
                 e.preventDefault();
                 signIn();
               }}
@@ -90,7 +90,7 @@ export default function Header() {
               danger
               type="primary"
               href={`/api/auth/signout`}
-              onClick={(e) => {
+              onClick={(e: { preventDefault: () => void }) => {
                 e.preventDefault();
                 signOut();
               }}

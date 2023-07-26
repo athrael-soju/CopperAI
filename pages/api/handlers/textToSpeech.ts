@@ -4,9 +4,13 @@ import multer from 'multer';
 import logger from '../../../lib/winstonConfig';
 const upload = multer();
 
+import { Request, Response } from 'express';
+type NextApiRequestWithExpress = NextApiRequest & Request;
+type NextApiResponseWithExpress = NextApiResponse & Response;
+
 const textToSpeechHandler = async (
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: NextApiRequestWithExpress,
+  res: NextApiResponseWithExpress
 ) => {
   return new Promise<void>((resolve, reject) => {
     upload.any()(req, res, async (err) => {
