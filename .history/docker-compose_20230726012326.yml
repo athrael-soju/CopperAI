@@ -1,0 +1,32 @@
+version: "1.0.0"
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongo-login-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - copper-network
+
+  frontend:
+    container_name: copper-ai
+    build: ./copper-ai
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    networks:
+      - copper-network
+
+volumes:
+  mongo-data:
+
+networks:
+  whisper-network:
+    driver: bridge
