@@ -2,7 +2,11 @@ import React, { useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 
-const UploadButton = ({ chatType }) => {
+interface UploadButtonProps {
+  chatType: string | null;
+}
+
+const UploadButton: React.FC<UploadButtonProps> = ({ chatType }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleButtonClick = (event: { preventDefault: () => void }) => {
@@ -20,7 +24,7 @@ const UploadButton = ({ chatType }) => {
   };
 
   return (
-    chatType === 'documentChat' && (
+    chatType === 'documentChat' ? (
       <>
         <input
           type="file"
@@ -36,7 +40,7 @@ const UploadButton = ({ chatType }) => {
           <FontAwesomeIcon icon={faUpload} />
         </button>
       </>
-    )
+    ) : null
   );
 };
 
