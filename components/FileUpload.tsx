@@ -14,7 +14,7 @@ interface FileUploaderProps {
 }
 
 const FileUpload: React.FC<FileUploaderProps> = ({ username }) => {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState<any[]>([]);
 
   return (
     <div className="file-upload">

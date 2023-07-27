@@ -23,7 +23,8 @@ const processUploadHandler = async (
 
       // Files are available in req.files
       const files = req.files as Express.Multer.File[];
-
+      const userName = req.body.userName;
+      console.log(`User Name: ${userName}`);
       // Iterate over the files and print their filenames and contents
       files.forEach((file) => {
         console.log(`Filename: ${file.originalname}`);
