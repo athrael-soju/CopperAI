@@ -29,6 +29,13 @@ const processUploadHandler = async (
       files.forEach((file) => {
         console.log(`Filename: ${file.originalname}`);
         //console.log(`Content: ${file.buffer.toString()}`);
+
+        // langchain?
+        // Break each file down and structure is as JSON
+        // Create embeddings for each file
+        // Store entries in DB
+        // Store embeddings in Pinecone
+        // Create a new namespace in Pinecone
       });
 
       // Send a response to the client

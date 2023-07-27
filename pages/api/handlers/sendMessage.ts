@@ -91,12 +91,12 @@ const sendMessageHandler = async (
             responseContent
           );
           // Save the conversation to MongoDB
-          const insertedId = await insertConversationToMongoDB(newConversation);
-          //console.log('insertedId', insertedId);
+          const newId = await insertConversationToMongoDB(newConversation);
 
           // Save the conversation to Pinecone
           const pineconeUpsertResponse = await upsertConversationToPinecone(
-            newConversation
+            newConversation,
+            newId
           );
           //console.log('pineconeUpsertResponse', pineconeUpsertResponse);
 

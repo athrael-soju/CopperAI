@@ -11,21 +11,22 @@ const PINECONE_SIMILARITY_CUTOFF = process.env
   .NEXT_PUBLIC_PINECONE_SIMILARITY_CUTOFF as string;
 
 export const upsertConversationToPinecone = async (
-  newConversation: Conversation
+  newConversation: Conversation,
+  newId: string
 ) => {
   let index = await getIndex();
   let newConversationEmbedding = (await createEmbedding(
     `${newConversation.message}. ${newConversation.response}. ${newConversation.date}.`
   )) as number[];
-  logger.info(`Upserting...`);
+  logger.info(`Upserting New Embedding for id: ${newId}...`);
   const response = await index.upsert({
     upsertRequest: {
       vectors: [
         {
-          id: newConversation.id,
+          id: newId,
           values: newConversationEmbedding,
           metadata: {
-            id: newConversation.id,
+            id: newId,
             username: newConversation.username,
           },
         },

@@ -27,7 +27,10 @@ const transcribeHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       fileStream.path = 'audio.webm';
       // Generate a response from OpenAI, that contains the transcript
       await openai
-        .createTranscription(fileStream, 'whisper-1')
+        .createTranscription(
+          fileStream,
+          process.env.NEXT_PUBLIC_OPENAI_TRANSCRIPTION_MODEL || 'whisper-1'
+        )
         .then((response) => {
           logger.info('Create Transcription Request Successful!', {
             transcript: response.data.text,
