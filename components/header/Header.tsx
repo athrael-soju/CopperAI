@@ -41,22 +41,31 @@ export default function Header() {
             <SignedOutIcon />
           </div>
         )}
+
         {session?.user && (
-          <div>
-            <div
-              style={{
-                width: '15%',
-                scale: '.75',
-                position: 'absolute',
-                bottom: -20,
-                right: 160,
-              }}
-            >
-              {chatType === 'documentChat' && (
-                <FileUpload username={userName} />
-              )}
-            </div>
-            <div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '2fr 2fr 1fr',
+              alignItems: 'center',
+            }}
+          >
+            {chatType === 'documentChat' && (
+              <div style={{ gridColumn: 'span 2', position: 'relative' }}>
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: -40, // Adjust this value
+                    width: '100%', // Adjust this value
+                    transform: 'scale(0.8)',
+                  }}
+                  className="fileUpload"
+                >
+                  <FileUpload username={userName} />
+                </div>
+              </div>
+            )}
+            <div style={{ gridColumn: '3' }}>
               <User session={session} />
             </div>
           </div>

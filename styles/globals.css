@@ -14,14 +14,46 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      rgb(var(--background-start-rgb)),
-      rgb(var(--background-middle-rgb)),
-      rgb(var(--background-end-rgb)),
-      rgb(var(--background-bottom-rgb)),
-      rgb(var(--background-final-rgb))
-    );
+    to bottom,
+    rgb(var(--background-start-rgb)),
+    rgb(var(--background-middle-rgb)),
+    rgb(var(--background-end-rgb)),
+    rgb(var(--background-bottom-rgb)),
+    rgb(var(--background-final-rgb))
+  );
 }
 
+.fileUpload {
+  position: absolute;
+  top: 5%;  
+  width: 100%;
+  transform: scale(1);  
+  animation: fadeIn 2s; /* Adjust the time as needed */
+}
+
+
+.filepond--root .filepond--panel-root {
+  background-color: transparent !important;
+  border: 1px solid white; /* Add a white outline */
+}
+
+.filepond--label-idle {
+  display: flex;
+  align-items: center; /* Vertically align items in the middle */
+  justify-content: start; /* Align items to the start of the container */
+  font-size: 20px; /* Adjust as needed */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
 @import 'filepond/dist/filepond.min.css';
-@import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css"
+@import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';

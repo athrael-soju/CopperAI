@@ -1,6 +1,8 @@
 // FileUpload.js
 import React, { useState } from 'react';
 import { FilePond, registerPlugin } from 'react-filepond';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 //import 'filepond/dist/filepond.min.css'; // Imported in globals.css
 
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
@@ -17,7 +19,7 @@ const FileUpload: React.FC<FileUploaderProps> = ({ username }) => {
   const [files, setFiles] = useState<any[]>([]);
 
   return (
-    <div className="file-upload">
+    <div>
       <FilePond
         files={files}
         onupdatefiles={setFiles}
@@ -66,7 +68,7 @@ const FileUpload: React.FC<FileUploaderProps> = ({ username }) => {
           },
         }}
         name="files"
-        labelIdle="Drag & Drop your files or <span >Browse</span>"
+        labelIdle='<div class="filepond--label-idle"><i class="fas fa-cloud-upload-alt" style="font-size: 60px; color: white; margin-right: 20px;"></i><div >Drag & Drop your files or <span class="filepond--label-action">Browse</span></div></div>'
       />
     </div>
   );
