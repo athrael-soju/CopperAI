@@ -25,12 +25,11 @@ body {
 
 .fileUpload {
   position: absolute;
-  top: 5%;  
+  top: 5%;
   width: 100%;
-  transform: scale(1);  
+  transform: scale(1);
   animation: fadeIn 2s; /* Adjust the time as needed */
 }
-
 
 .filepond--root .filepond--panel-root {
   background-color: transparent !important;
@@ -40,8 +39,12 @@ body {
 .filepond--label-idle {
   display: flex;
   align-items: center; /* Vertically align items in the middle */
-  justify-content: start; /* Align items to the start of the container */
+  justify-content: flex-start; /* Align items to the start of the container */
   font-size: 20px; /* Adjust as needed */
+}
+
+.filepond--root.filepond--hopper {
+  height: 75px !important;
 }
 
 @keyframes fadeIn {
@@ -53,7 +56,6 @@ body {
     opacity: 1;
   }
 }
-
 
 @import 'filepond/dist/filepond.min.css';
 @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';

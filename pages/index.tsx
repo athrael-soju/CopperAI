@@ -33,14 +33,14 @@ export default function Home() {
             style={{ backgroundColor: '#b7b09b' }}
             onClick={() => chooseChatType('generalChat')}
           >
-            General Chat
+            Chat with Iris (Casual)
           </button>
           <button
             className="w-full py-4 px-8 text-white rounded font-bold text-2xl transition-transform duration-200 transform hover:scale-105"
             style={{ backgroundColor: '#e1bc9a' }}
             onClick={() => chooseChatType('documentChat')}
           >
-            Document Chat
+            Chat with Jude (Document)
           </button>
         </div>
       )}
