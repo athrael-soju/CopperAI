@@ -3,11 +3,10 @@ import { useContext } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 
 import ChatTypeContext from '../../lib/Context/ChatType'; // update the import path as needed
-import UploadButton from './buttons/UploadButton';
 import User from './buttons/User';
 import SignInButton from './buttons/SignInButton';
 import SignedOutIcon from './buttons/SignedOutIcon';
-
+import FileUpload from '../FileUpload';
 export default function Header() {
   const { data: session, status } = useSession();
   const chatTypeContext = useContext(ChatTypeContext);
@@ -15,7 +14,8 @@ export default function Header() {
   if (!chatTypeContext) {
     throw new Error('Header must be used within a ChatTypeContextProvider');
   }
-
+  const user = session?.user ?? {};
+  let userName = user?.name || '';
   const { chatType } = chatTypeContext;
 
   return (
@@ -26,7 +26,7 @@ export default function Header() {
             <li className="mr-auto">
               <a
                 className="text-shadow-default text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-palette2564_1 via-palette2564_3 to-palette2564_5"
-                href="https://github.com/athrael-soju/whisperChat"
+                href="https://github.com/athrael-soju/copperAI"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -42,9 +42,23 @@ export default function Header() {
           </div>
         )}
         {session?.user && (
-          <div className="flex items-center gap-2">
-            <UploadButton chatType={chatType} />
-            <User session={session} />
+          <div>
+            <div
+              style={{
+                width: '15%',
+                scale: '.75',
+                position: 'absolute',
+                bottom: -20,
+                right: 160,
+              }}
+            >
+              {chatType === 'documentChat' && (
+                <FileUpload username={userName} />
+              )}
+            </div>
+            <div>
+              <User session={session} />
+            </div>
           </div>
         )}
       </div>

@@ -42,7 +42,7 @@ const transcribeHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             error: error,
           });
           res.status(500).json({ successful: false, message: error });
-          return resolve();
+          return reject();
         });
     });
   });

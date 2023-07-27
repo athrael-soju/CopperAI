@@ -1,10 +1,12 @@
 // src/api/[action].ts
 import { NextApiRequest, NextApiResponse } from 'next';
+import { Request, Response } from 'express';
+
 import transcribeHandler from './handlers/transcribeInput';
 import sendMessageHandler from './handlers/sendMessage';
 import textToSpeechHandler from './handlers/textToSpeech';
+import processUploadHandler from './handlers/processUpload';
 
-import { Request, Response } from 'express';
 type NextApiRequestWithExpress = NextApiRequest & Request;
 type NextApiResponseWithExpress = NextApiResponse & Response;
 
@@ -33,5 +35,7 @@ export default function handler(
     return sendMessageHandler(req, res);
   } else if (action === 'textToSpeech') {
     return textToSpeechHandler(req, res);
+  } else if (action === 'processUpload') {
+    return processUploadHandler(req, res);
   }
 }

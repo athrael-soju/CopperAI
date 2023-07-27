@@ -13,12 +13,12 @@ const textToSpeechHandler = async (
   res: NextApiResponseWithExpress
 ) => {
   return new Promise<void>((resolve, reject) => {
+    logger.defaultMeta = { service: 'textToSpeech.ts' };
     upload.any()(req, res, async (err) => {
       if (err) {
         return reject(err);
       }
 
-      logger.defaultMeta = { service: 'textToSpeech.ts' };
       const transcript = req.body.transcript;
       logger.info('Processing speech', { message: transcript });
       let audioContent = getAudioFromTranscript(transcript);
@@ -31,6 +31,11 @@ const textToSpeechHandler = async (
         return resolve();
       });
     });
+    res.status(500).json({
+      successful: false,
+      message: 'Something went wrong',
+    });
+    return reject();
   });
 };
 

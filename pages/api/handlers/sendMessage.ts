@@ -110,6 +110,7 @@ const sendMessageHandler = async (
         .catch((err) => {
           logger.error('Chat Completion Request Unsuccessful', { error: err });
           res.status(500).json({ successful: false, message: err });
+          return reject();
         });
     });
   });
