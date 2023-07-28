@@ -67,7 +67,7 @@ const sendMessageHandler = async (
         // Add the conversation history to the messages array.
         messages.push({
           role: 'system',
-          content: userConversationHistory,
+          content: templates.generic.use_history + userConversationHistory,
         });
       }
       // Add the user message to the messages array.
