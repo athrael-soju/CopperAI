@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router';
-
 import { useSession } from 'next-auth/react';
 import Recorder from '../components/Recorder';
-import { useContext } from 'react';
-import ChatTypeContext from '../lib/Context/ChatType'; // update the import path as needed
+import { useContext, useState } from 'react';
+import ChatTypeContext from '../lib/Context/ChatType';
 
 export default function Home() {
   const router = useRouter();
@@ -19,25 +18,38 @@ export default function Home() {
   }
 
   const { chatType, setChatType } = chatTypeContext;
+  const [selectionMade, setSelectionMade] = useState(false);
 
   const chooseChatType = (type: string) => {
     setChatType(type);
+    setSelectionMade(true);
   };
 
   return (
-    <main className="flex flex-col min-h-screen justify-center items-center p-24 pb-8">
+    <main className="flex flex-col h-screen justify-center items-center p-24 pb-8">
+      {!session && (
+        <a className="text-shadow-default text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-palette2564_1 via-palette2564_3 to-palette2564_5 mb-10">
+          Welcome to Copper AI
+        </a>
+      )}
       {!chatType && session && (
-        <div className="space-y-8 w-full">
+        <div className="h-4/5 w-full flex flex-col">
           <button
-            className="w-full py-4 px-8 text-white rounded font-bold text-2xl transition-transform duration-200 transform hover:scale-105"
-            style={{ backgroundColor: '#b7b09b' }}
+            className="w-full h-1/2 py-4 px-8 text-white rounded font-bold text-2xl transition-all duration-500 ease-in-out flex items-center justify-center transform hover:scale-105 hover:bg-opacity-70"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, transparent, #b7b09b, transparent)',
+            }}
             onClick={() => chooseChatType('generalChat')}
           >
             Chat with Iris (Casual)
           </button>
           <button
-            className="w-full py-4 px-8 text-white rounded font-bold text-2xl transition-transform duration-200 transform hover:scale-105"
-            style={{ backgroundColor: '#e1bc9a' }}
+            className="w-full h-1/2 py-4 px-8 text-white rounded font-bold text-2xl transition-all duration-500 ease-in-out flex items-center justify-center transform hover:scale-105 hover:bg-opacity-70"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, transparent, #e1bc9a, transparent)',
+            }}
             onClick={() => chooseChatType('documentChat')}
           >
             Chat with Jude (Document)
