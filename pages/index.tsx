@@ -32,9 +32,10 @@ export default function Home() {
     <main className="flex flex-col h-screen justify-center items-center p-24 pb-8">
       {session && isLoading && <Spinner />}
       {!session && (
-        <a className="text-shadow-default text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-palette2564_1 via-palette2564_3 to-palette2564_5 mb-10">
+        <h1 className="text-shadow-default text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-palette2564_1 via-palette2564_3 to-palette2564_5 mb-10">
           Welcome to Copper AI
-        </a>
+          <span style={{ fontSize: 15 }}>Please login to continue</span>
+        </h1>
       )}
       {!chatType && session && (
         <div className="h-4/5 w-full flex flex-col">
