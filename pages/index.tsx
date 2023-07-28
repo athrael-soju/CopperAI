@@ -2,7 +2,8 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import Recorder from '../components/Recorder';
 import { useContext, useState } from 'react';
-import ChatTypeContext from '../lib/Context/ChatType';
+import ChatTypeContext from '../lib/context/ChatType';
+import Spinner from '../components/Spinner';
 
 export default function Home() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function Home() {
 
   const { chatType, setChatType } = chatTypeContext;
   const [selectionMade, setSelectionMade] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const chooseChatType = (type: string) => {
     setChatType(type);
@@ -27,6 +29,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col h-screen justify-center items-center p-24 pb-8">
+      {session && isLoading && <Spinner />}
       {!session && (
         <a className="text-shadow-default text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-palette2564_1 via-palette2564_3 to-palette2564_5 mb-10">
           Welcome to Copper AI
@@ -58,7 +61,7 @@ export default function Home() {
       )}
       {chatType && session && (
         <div style={{ marginTop: 'auto' }}>
-          <Recorder className="mb-10" />
+          <Recorder className="mb-10" setIsLoading={setIsLoading} />
         </div>
       )}
     </main>

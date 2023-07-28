@@ -12,10 +12,6 @@ module.exports = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
-    },
-  },
-  theme: {
-    extend: {
       colors: {
         // Color Palette 419: A beautiful combination of dark and light shades of green, off-white, and deep brown colors.
         palette419_1: '#130c0e',

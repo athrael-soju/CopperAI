@@ -1,3 +1,4 @@
+/* Default TailWind Style */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -22,7 +23,7 @@ body {
     rgb(var(--background-final-rgb))
   );
 }
-
+/* FilePind styling to stop container from moving vertically */
 .fileUpload {
   position: absolute;
   top: 5%;
@@ -47,15 +48,23 @@ body {
   height: 75px !important;
 }
 
-@keyframes fadeIn {
-  from {
+/* Spinner Styling */
+.spinner-container {
+  animation: fadeInOut 2s infinite;
+}
+
+@keyframes fadeInOut {
+  0% {
     opacity: 0;
   }
-
-  to {
+  50% {
     opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
+/* FilePind styling must be added at the end */
 @import 'filepond/dist/filepond.min.css';
 @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';

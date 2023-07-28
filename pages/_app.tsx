@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AppHeader from '@/components/header/Header';
 import '@/styles/globals.css';
 import { useState } from 'react';
-import ChatTypeContext from '../lib/Context/ChatType'; // update the import path as needed
+import ChatTypeContext from '../lib/context/ChatType';
 
 type AppProps = NextAppProps & {
   session: Session;

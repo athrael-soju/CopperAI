@@ -38,6 +38,7 @@
     "react-audio-voice-recorder": "^2.1.0",
     "react-dom": "18.2.0",
     "react-filepond": "^7.1.2",
+    "react-loader-spinner": "^5.3.4",
     "readme-md-generator": "^1.0.0",
     "standardized-audio-context": "^25.3.54",
     "tailwindcss": "3.3.2",

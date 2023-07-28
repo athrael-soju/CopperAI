@@ -1,13 +1,13 @@
-// hooks/useProcessRecording.ts
 import { useEffect, useState } from 'react';
-import { Session } from 'next-auth'; // If you have types for next-auth
+import { Session } from 'next-auth'; 
 import useTranscription from './useTranscription';
 import useSendMessage from './useSendMessage';
 import useTextToSpeech from './useTextToSpeech';
 
 export const useProcessRecording = (
   recordingBlob: Blob | null,
-  session: Session | null
+  session: Session | null,
+  setIsLoading: (loading: boolean) => void
 ) => {
   const [status, setStatus] = useState<
     | 'idle'
@@ -46,6 +46,7 @@ export const useProcessRecording = (
           transcript === null &&
           !recordingProcessed
         ) {
+          setIsLoading(true); // Set loading state to true when recording starts processing
           setStatus('transcribing');
           sendAudioForTranscription(recordingBlob).then((newTranscript) => {
             setTranscript(newTranscript);
@@ -65,6 +66,7 @@ export const useProcessRecording = (
         }
         // If the response is ready and we haven't played it yet, play it.
         if (status === 'sent' && recordingProcessed && transcript === null) {
+          setIsLoading(false); // Set loading state to false when processing has finished
           setStatus('idle');
           if (response) {
             stopOngoingAudio();
@@ -78,6 +80,7 @@ export const useProcessRecording = (
       } catch (error) {
         console.error('Error processing recording:', error);
         setStatus('error');
+        setIsLoading(false); // Also set loading state to false in case of an error
       }
     };
 
@@ -94,6 +97,7 @@ export const useProcessRecording = (
     stopOngoingAudio,
     startOngoingAudio,
     response,
+    setIsLoading, // Add setIsLoading to the dependencies array
   ]);
 
   return {

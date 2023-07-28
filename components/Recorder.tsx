@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 
 type RecorderProps = {
   className?: string;
+  setIsLoading: (loading: boolean) => void; // Add setIsLoading prop here
 };
 
 const recorderMachine = createMachine({
@@ -27,7 +28,7 @@ const recorderMachine = createMachine({
   },
 });
 
-const Recorder: React.FC<RecorderProps> = ({ className }) => {
+const Recorder: React.FC<RecorderProps> = ({ className, setIsLoading }) => {
   const [current, send] = useMachine(recorderMachine);
   const {
     startRecording,
@@ -47,7 +48,7 @@ const Recorder: React.FC<RecorderProps> = ({ className }) => {
     setRecordingProcessed,
     startOngoingAudio,
     stopOngoingAudio,
-  } = useProcessRecording(recordingBlob || null, session);
+  } = useProcessRecording(recordingBlob || null, session, setIsLoading); // Pass setIsLoading to useProcessRecording
   const isMicActive = useAudioSensitivity();
 
   const recordButtonEvent = useCallback(() => {
