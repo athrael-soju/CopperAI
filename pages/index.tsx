@@ -4,6 +4,7 @@ import Recorder from '../components/Recorder';
 import { useContext, useState } from 'react';
 import ChatTypeContext from '../lib/context/ChatType';
 import Spinner from '../components/Spinner';
+import SyncButton from '../components/SyncButton';
 
 export default function Home() {
   const router = useRouter();
@@ -63,6 +64,14 @@ export default function Home() {
         <div style={{ marginTop: 'auto' }}>
           <Recorder className="mb-10" setIsLoading={setIsLoading} />
         </div>
+      )}
+      {chatType && session && (
+        <SyncButton
+          resetSelection={() => {
+            setChatType(null);
+            setSelectionMade(false);
+          }}
+        />
       )}
     </main>
   );

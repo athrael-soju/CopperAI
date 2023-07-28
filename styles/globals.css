@@ -65,6 +65,14 @@ body {
   }
 }
 
+.sync-button.fade-in {
+  animation: fadeIn 1s forwards;
+}
+
+.sync-button.fade-out {
+  animation: fadeOut 1s forwards;
+}
+
 /* FilePind styling must be added at the end */
 @import 'filepond/dist/filepond.min.css';
 @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
