@@ -22,6 +22,7 @@ export default function Home() {
   const { chatType, setChatType } = chatTypeContext;
   const [selectionMade, setSelectionMade] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [namespace, setNamespace] = useState<string | null>(null);
 
   const chooseChatType = (type: string) => {
     setChatType(type);
@@ -45,7 +46,10 @@ export default function Home() {
               backgroundImage:
                 'linear-gradient(to right, transparent, #b7b09b, transparent)',
             }}
-            onClick={() => chooseChatType('generalChat')}
+            onClick={() => {
+              chooseChatType('generalChat');
+              setNamespace('general');
+            }}
           >
             Chat with Iris (Casual)
           </button>
@@ -55,7 +59,10 @@ export default function Home() {
               backgroundImage:
                 'linear-gradient(to right, transparent, #e1bc9a, transparent)',
             }}
-            onClick={() => chooseChatType('documentChat')}
+            onClick={() => {
+              chooseChatType('documentChat');
+              setNamespace('document');
+            }}
           >
             Chat with Jude (Document)
           </button>
@@ -63,7 +70,11 @@ export default function Home() {
       )}
       {chatType && session && (
         <div style={{ marginTop: 'auto' }}>
-          <Recorder className="mb-10" setIsLoading={setIsLoading} />
+          <Recorder
+            className="mb-10"
+            setIsLoading={setIsLoading}
+            namespace={namespace}
+          />
         </div>
       )}
       {chatType && session && (
@@ -71,6 +82,7 @@ export default function Home() {
           resetSelection={() => {
             setChatType(null);
             setSelectionMade(false);
+            setNamespace(null);
           }}
         />
       )}

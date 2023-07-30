@@ -19,13 +19,6 @@ import { summarizeConversation } from '@/lib/langchain';
 // Initialize multer
 const upload = multer({ storage: multer.memoryStorage() });
 
-export const config = {
-  // This tells Next.js to not automatically parse the request body, so we can do it ourselves with multer
-  api: {
-    bodyParser: false,
-  },
-};
-
 const sendMessageHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -40,10 +33,11 @@ const sendMessageHandler = async (
         return resolve();
       }
       let messages: ChatCompletionRequestMessage[] = [];
-      const { username, email, transcript } = req.body;
+      const { username, email, transcript, namespace } = req.body;
       const pineconeQueryResponse = await queryMessageInPinecone(
         username,
-        transcript
+        transcript,
+        namespace
       );
       let userConversationHistory = '';
       // If a conversation is found in Pinecone, retrieve the conversation history from MongoDB
@@ -96,7 +90,8 @@ const sendMessageHandler = async (
           // Save the conversation to Pinecone
           const pineconeUpsertResponse = await upsertConversationToPinecone(
             newConversation,
-            newId
+            newId,
+            namespace
           );
           //console.log('pineconeUpsertResponse', pineconeUpsertResponse);
 

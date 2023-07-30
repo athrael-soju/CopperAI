@@ -17,6 +17,7 @@ interface FileUploaderProps {
 
 const FileUpload: React.FC<FileUploaderProps> = ({ username }) => {
   const [files, setFiles] = useState<any[]>([]);
+  const [ingesting, setIngesting] = useState(false);
 
   return (
     <div>
@@ -35,9 +36,9 @@ const FileUpload: React.FC<FileUploaderProps> = ({ username }) => {
             progress,
             abort
           ) => {
-            const formData = new FormData();
+            let formData = new FormData();
             formData.append(fieldName, file, file.name);
-            formData.append('userName', username);
+            //formData.append('userName', username);
 
             const request = new XMLHttpRequest();
             request.open('POST', '/api/processUpload');
@@ -51,13 +52,36 @@ const FileUpload: React.FC<FileUploaderProps> = ({ username }) => {
             request.onload = function () {
               if (request.status >= 200 && request.status < 300) {
                 load(request.responseText);
+                // After successful upload, call another API.
+                formData = new FormData();
+                formData.append('username', username);
+                const anotherRequest = new XMLHttpRequest();
+                anotherRequest.open('POST', '/api/processIngest', true);
+                setIngesting(true); // Start the Ingesting state
+                // Add any necessary headers and/or data.
+                // anotherRequest.setRequestHeader(
+                //   'Content-Type',
+                //   'application/json'
+                // );
+
+                anotherRequest.send(formData);
+
+                anotherRequest.onload = function () {
+                  if (
+                    anotherRequest.status >= 200 &&
+                    anotherRequest.status < 300
+                  ) {
+                    setIngesting(false); // End the Ingesting state
+                    console.log('Data Ingest API Call Successful');
+                  } else {
+                    console.log('Data Ingest API Call Failed');
+                  }
+                };
               } else {
-                error('Failed to upload file');
+                error('Failed to Upload File');
               }
             };
-
             request.send(formData);
-
             // Return an abort method to stop the request
             return {
               abort: () => {
@@ -68,7 +92,11 @@ const FileUpload: React.FC<FileUploaderProps> = ({ username }) => {
           },
         }}
         name="files"
-        labelIdle='<div class="filepond--label-idle"><i class="fas fa-cloud-upload-alt" style="font-size: 60px; color: white; margin-right: 20px;"></i><div >Drag & Drop your files or <span class="filepond--label-action">Browse</span></div></div>'
+        labelIdle={`<div class="filepond--label-idle"><i class="fas fa-cloud-upload-alt" style="font-size: 60px; color: white; margin-right: 20px;"></i><div >${
+          ingesting
+            ? '<span>Ingesting<span className="dot">.</span><span className="dot">.</span><span className="dot">.</span></span>'
+            : 'Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+        }</div></div>`}
       />
     </div>
   );

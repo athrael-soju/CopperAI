@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Session } from 'next-auth'; 
+import { Session } from 'next-auth';
 import useTranscription from './useTranscription';
 import useSendMessage from './useSendMessage';
 import useTextToSpeech from './useTextToSpeech';
@@ -7,7 +7,8 @@ import useTextToSpeech from './useTextToSpeech';
 export const useProcessRecording = (
   recordingBlob: Blob | null,
   session: Session | null,
-  setIsLoading: (loading: boolean) => void
+  setIsLoading: (loading: boolean) => void,
+  namespace: string | null
 ) => {
   const [status, setStatus] = useState<
     | 'idle'
@@ -24,7 +25,7 @@ export const useProcessRecording = (
   const [lastProcessedBlob, setLastProcessedBlob] = useState<Blob | null>(null);
 
   const sendAudioForTranscription = useTranscription();
-  const sendTranscriptForProcessing = useSendMessage(session);
+  const sendTranscriptForProcessing = useSendMessage(session, namespace);
   const { startOngoingAudio, stopOngoingAudio } = useTextToSpeech();
 
   useEffect(() => {

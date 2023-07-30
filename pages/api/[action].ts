@@ -6,6 +6,7 @@ import transcribeHandler from './handlers/transcribeInput';
 import sendMessageHandler from './handlers/sendMessage';
 import textToSpeechHandler from './handlers/textToSpeech';
 import processUploadHandler from './handlers/processUpload';
+import processIngestHandler from './handlers/processIngest';
 
 type NextApiRequestWithExpress = NextApiRequest & Request;
 type NextApiResponseWithExpress = NextApiResponse & Response;
@@ -37,5 +38,7 @@ export default function handler(
     return textToSpeechHandler(req, res);
   } else if (action === 'processUpload') {
     return processUploadHandler(req, res);
+  } else if (action === 'processIngest') {
+    return processIngestHandler(req, res);
   }
 }
