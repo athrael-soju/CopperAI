@@ -3,10 +3,18 @@ import { useRef } from 'react';
 const useTextToSpeech = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const startOngoingAudio = async (transcript: string | Blob) => {
+  const startOngoingAudio = async (
+    transcript: string | Blob,
+    namespace: string | null
+  ) => {
+    if (!transcript || !namespace) {
+      console.warn('No transcript or namespace provided');
+      return;
+    }
     console.log('Sending message to text to speech', transcript);
     const formData = new FormData();
     formData.append('transcript', transcript);
+    formData.append('namespace', namespace);
     fetch('/api/textToSpeech', {
       method: 'POST',
       body: formData,

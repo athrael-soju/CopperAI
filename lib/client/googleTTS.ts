@@ -2,16 +2,26 @@ import textToSpeech from '@google-cloud/text-to-speech';
 import logger from '../../lib/winstonConfig';
 const client = new textToSpeech.TextToSpeechClient();
 
-export async function getAudioFromTranscript(transcript: string) {
-  const request = {
+export async function getAudioFromTranscript(
+  transcript: string,
+  namespace: string
+) {
+  const languageCode = namespace === 'document' ? 'en-GB' : 'en-US';
+  const voiceName =
+    namespace === 'document' ? 'en-GB-News-L' : 'en-US-Wavenet-F';
+  const gender = namespace === 'document' ? 'MALE' : 'FEMALE';
+  const audioEncoding =
+    process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_ENCODING || 'MP3';
+  
+    const request = {
     input: { text: transcript },
     voice: {
-      languageCode: process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_LANGUAGE,
-      name: process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_NAME,
-      ssmlGender: process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_GENDER,
+      languageCode: languageCode,
+      name: voiceName,
+      ssmlGender: gender,
     },
     audioConfig: {
-      audioEncoding: process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_ENCODING,
+      audioEncoding: audioEncoding,
     },
   };
 

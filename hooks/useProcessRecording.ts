@@ -71,10 +71,11 @@ export const useProcessRecording = (
           setStatus('idle');
           if (response) {
             stopOngoingAudio();
-            startOngoingAudio(response);
+            startOngoingAudio(response, namespace);
           } else {
             startOngoingAudio(
-              'Sorry, I did not understand that. Please try again.'
+              'Sorry, I did not understand that. Please try again.',
+              namespace
             );
           }
         }
@@ -98,7 +99,8 @@ export const useProcessRecording = (
     stopOngoingAudio,
     startOngoingAudio,
     response,
-    setIsLoading, // Add setIsLoading to the dependencies array
+    setIsLoading,
+    namespace,
   ]);
 
   return {
