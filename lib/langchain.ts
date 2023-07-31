@@ -41,7 +41,7 @@ const getGeneralChain = (
 ) => {
   const memory = new VectorStoreRetrieverMemory({
     vectorStoreRetriever: vectorstore.asRetriever(topK),
-    memoryKey: 'history',
+    memoryKey: 'chat_history',
   });
   const prompt = PromptTemplate.fromTemplate(templates.general.general_prompt);
   const chain = new LLMChain({ llm: model, prompt, memory });
@@ -58,8 +58,8 @@ const getDocumentChain = (
     model,
     vectorstore.asRetriever(topK),
     {
-      qaTemplate: templates.document_qa.rephrase_prompt,
-      questionGeneratorTemplate: templates.document_qa.qa_prompt,
+      qaTemplate: templates.document_qa.qa_prompt,
+      questionGeneratorTemplate: templates.document_qa.rephrase_prompt,
       returnSourceDocuments,
     }
   );

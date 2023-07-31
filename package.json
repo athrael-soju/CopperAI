@@ -49,7 +49,7 @@
     "uuid": "^9.0.0",
     "uuidv4": "^6.2.13",
     "winston": "^3.10.0",
-    "xstate": "^4.38.1"
+    "xstate": "^4.38.2"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
