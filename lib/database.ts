@@ -1,17 +1,24 @@
 import clientPromise from './client/mobgodb';
-import { v4 as uuidv4 } from 'uuid';
 import logger from '../lib/winstonConfig';
 // logger.defaultMeta = { service: 'lib/database.ts' };
 
 import { Conversation } from '../types/Conversation';
-import { ObjectId } from 'mongodb';
 
-export const insertConversationToMongoDB = async (
-  newConversation: Conversation
+export const updateHistory = async (
+  username: string,
+  namespace: string,
+  prompt: string,
+  response: string
 ) => {
+  const newConversation: Conversation = createConversationObject(
+    username,
+    prompt,
+    response,
+    namespace,
+    new Date().toLocaleString()
+  );
   const client = (await clientPromise) as any;
   const db = client.db('myapp');
-  // Save the conversation to MongoDB
   const insertResult = await db
     .collection('Conversation')
     .insertOne(newConversation);
@@ -22,31 +29,19 @@ export const insertConversationToMongoDB = async (
   return insertedId;
 };
 
-export const getUserConversationHistory = async (pineconeResponse: any) => {
+export const getHistory = async (username: string, namespace: string) => {
   const client = (await clientPromise) as any;
   const db = client.db('myapp');
   logger.info('Retrieving User Message History...');
-  let conversationHistory = '';
-  let recordsRetrieved = 0;
-  // Retrieve Conversation History from MongoDB, from Pinecone response
-  await Promise.all(
-    pineconeResponse.map(async (conversation: { id: string }) => {
-      const conversationTurn = await db
-        .collection('Conversation')
-        .findOne({ _id: new ObjectId(conversation.id) });
-      if (conversationTurn) {
-        conversationHistory += `${conversationTurn.message}. ${conversationTurn.response}. ${conversationTurn.date}\n`;
-        recordsRetrieved++;
-      }
-    })
-  );
-  console.log('conversationTurn', conversationHistory);
-  logger.info(`User Message History Records Retrieved: ${recordsRetrieved}`);
-
-  return conversationHistory;
+  return await db
+    .collection('Conversation')
+    .find({ username: username, namespace: namespace })
+    .sort({ datetime: -1 })
+    .limit(10)
+    .toArray();
 };
 
-export const createConversationObject = (
+const createConversationObject = (
   username: string,
   message: string,
   response: string,

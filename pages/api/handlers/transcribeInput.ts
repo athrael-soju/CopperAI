@@ -32,7 +32,7 @@ const transcribeHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           process.env.NEXT_PUBLIC_OPENAI_TRANSCRIPTION_MODEL || 'whisper-1'
         )
         .then((response) => {
-          logger.info('Create Transcription Request Successful!', {
+          logger.info('Transcription Request Successful!', {
             transcript: response.data.text,
           });
           res
@@ -41,10 +41,11 @@ const transcribeHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           return resolve();
         })
         .catch((error) => {
-          logger.error('Create Transcription Request Unsuccessful', {
-            error: error,
+          logger.error('Transcription Request Unsuccessful', {
+            successful: false,
+            error: error.message,
           });
-          res.status(500).json({ successful: false, message: error });
+          res.status(500).json({ successful: false, message: error.message });
           return reject();
         });
     });

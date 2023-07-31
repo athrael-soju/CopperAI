@@ -31,11 +31,6 @@ const textToSpeechHandler = async (
         return resolve();
       });
     });
-    // res.status(500).json({
-    //   successful: false,
-    //   message: 'Something went wrong',
-    // });
-    // return reject();
   });
 };
 
