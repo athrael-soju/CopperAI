@@ -7,17 +7,27 @@ import User from './buttons/User';
 import SignInButton from './buttons/SignInButton';
 import SignedOutIcon from './buttons/SignedOutIcon';
 import FileUpload from '../FileUpload';
-export default function Header() {
-  const { data: session, status } = useSession();
+
+type HeaderProps = {
+  namespace: string | null;
+};
+
+const Header: React.FC<HeaderProps> = ({ namespace }) => {
+  const { data: session } = useSession();
   const chatTypeContext = useContext(ChatTypeContext);
 
   if (!chatTypeContext) {
     throw new Error('Header must be used within a ChatTypeContextProvider');
   }
   const user = session?.user ?? {};
-  let userName = user?.name || '';
+  const username = user?.name || '';
   const { chatType } = chatTypeContext;
-
+  namespace =
+    chatType === 'documentChat'
+      ? 'document'
+      : chatType === 'generalChat'
+      ? 'general'
+      : '';
   return (
     <header className="fixed top-0 left-0 right-0 text-center text-white bg-copper-200 h-16 flex items-center justify-center px-20 shadow-md">
       <div className="flex justify-between w-full items-center">
@@ -63,7 +73,7 @@ export default function Header() {
                   }}
                   className="fileUpload"
                 >
-                  <FileUpload username={userName} />
+                  <FileUpload username={username} namespace={namespace} />
                 </div>
               </div>
             )}
@@ -75,4 +85,6 @@ export default function Header() {
       </div>
     </header>
   );
-}
+};
+
+export default Header;

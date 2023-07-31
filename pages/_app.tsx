@@ -20,7 +20,7 @@ function App({ Component, pageProps, session }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <ChatTypeContext.Provider value={{ chatType, setChatType }}>
           <main>
-          <AppHeader />
+            <AppHeader namespace={null} />
             <Component {...pageProps} />
           </main>
         </ChatTypeContext.Provider>

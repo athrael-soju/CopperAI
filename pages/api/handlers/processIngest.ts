@@ -10,7 +10,6 @@ import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
 import { DirectoryLoader } from 'langchain/document_loaders/fs/directory';
 import { DocxLoader } from 'langchain/document_loaders/fs/docx';
 import { TextLoader } from 'langchain/document_loaders/fs/text';
-//import { upsertConversationToPinecone } from '@/lib/pinecone';
 import { getIndex } from '@/lib/pinecone';
 
 const chunkSize = process.env.NEXT_PUBLIC_LANGCHAIN_CHUNK_SIZE;
@@ -34,7 +33,8 @@ const processIngestHandler = async (
         return reject();
       }
       const { username } = req.body;
-      const nameSpace = `${username}-documents`;
+      const { namespace } = req.body;
+
       const directoryLoader = new DirectoryLoader(filePath, {
         '.pdf': (path) => new PDFLoader(path),
         '.docx': (path) => new DocxLoader(path),
@@ -46,20 +46,20 @@ const processIngestHandler = async (
       // Split the documents into smaller chunks
       const textSplitter = new RecursiveCharacterTextSplitter({
         chunkSize: Number(chunkSize),
-        chunkOverlap: Number(Number(chunkSize) * Number(overlapSize)),
+        chunkOverlap: Number(chunkSize) * Number(overlapSize),
       });
-
       const docs = await textSplitter.splitDocuments(rawDocs);
       // Embed the document chunks
       const embeddings = new OpenAIEmbeddings({
         openAIApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY as string,
       });
       let index = await getIndex();
-      await PineconeStore.fromDocuments(docs, embeddings, {
+      let response = await PineconeStore.fromDocuments(docs, embeddings, {
         pineconeIndex: index,
-        namespace: nameSpace as string,
-        textKey: 'text',
+        namespace: `${username}_${namespace}`,
+        textKey: 'pageContent',
       });
+      console.log('response', response);
       const filesToDelete = fs
         .readdirSync(filePath)
         .filter(

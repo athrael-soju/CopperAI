@@ -55,11 +55,11 @@ export const queryMessageInPinecone = async (
       topK: parseInt(PINECONE_TOPK),
       includeMetadata: true,
       vector: userPromptEmbedding,
-      filter: {
-        score: { $gte: parseInt(PINECONE_SIMILARITY_CUTOFF) },
-        //username: { $eq: username },
-        //$and: [{ score: { $gte: parseInt(PINECONE_SIMILARITY_CUTOFF) } }],
-      },
+      // filter: {
+      //   //score: { $gte: parseInt(PINECONE_SIMILARITY_CUTOFF) },
+      //   //username: { $eq: username },
+      //   //$and: [{ score: { $gte: parseInt(PINECONE_SIMILARITY_CUTOFF) } }],
+      // },
     },
   });
 

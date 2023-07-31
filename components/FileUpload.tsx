@@ -13,9 +13,10 @@ registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 interface FileUploaderProps {
   username: string;
+  namespace: string;
 }
 
-const FileUpload: React.FC<FileUploaderProps> = ({ username }) => {
+const FileUpload: React.FC<FileUploaderProps> = ({ username, namespace }) => {
   const [files, setFiles] = useState<any[]>([]);
   const [ingesting, setIngesting] = useState(false);
 
@@ -55,6 +56,7 @@ const FileUpload: React.FC<FileUploaderProps> = ({ username }) => {
                 // After successful upload, call another API.
                 formData = new FormData();
                 formData.append('username', username);
+                formData.append('namespace', namespace);
                 const anotherRequest = new XMLHttpRequest();
                 anotherRequest.open('POST', '/api/processIngest', true);
                 setIngesting(true); // Start the Ingesting state

@@ -12,16 +12,14 @@ export const insertConversationToMongoDB = async (
   const client = (await clientPromise) as any;
   const db = client.db('myapp');
   // Save the conversation to MongoDB
-  if (process.env.NEXT_PUBLIC_MEMORY_TYPE === 'dynamic') {
-    const insertResult = await db
-      .collection('Conversation')
-      .insertOne(newConversation);
-    const insertedId = insertResult.insertedId;
-    logger.info('Conversation saved to MongoDB', {
-      insertedId: insertedId,
-    });
-    return insertedId;
-  }
+  const insertResult = await db
+    .collection('Conversation')
+    .insertOne(newConversation);
+  const insertedId = insertResult.insertedId;
+  logger.info('Conversation saved to MongoDB', {
+    insertedId: insertedId,
+  });
+  return insertedId;
 };
 
 export const getUserConversationHistory = async (pineconeResponse: any) => {
@@ -50,15 +48,16 @@ export const getUserConversationHistory = async (pineconeResponse: any) => {
 
 export const createConversationObject = (
   username: string,
-  email: string,
   message: string,
-  response: string
+  response: string,
+  namespace: string,
+  date: string
 ) => {
   return {
     username: username,
-    email: email,
-    message: `${username}: ${message}`,
-    response: `AI: ${response}`,
-    date: `Date: ${new Date().toLocaleDateString()}`,
+    message: message,
+    response: response,
+    date: date,
+    namespace: namespace,
   };
 };
