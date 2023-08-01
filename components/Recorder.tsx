@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useMachine } from '@xstate/react';
 import { createMachine } from 'xstate';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
@@ -90,6 +91,14 @@ const Recorder: React.FC<RecorderProps> = ({
       send('RESUME');
     }
   }, [togglePauseResume, current, send]);
+
+  useEffect(() => {
+    console.log('status', status);
+    if (status === 'generated') {
+      startOngoingAudio();
+      setStatus('idle');
+    }
+  }, [status, startOngoingAudio, setStatus]);
 
   return (
     <div className={className}>

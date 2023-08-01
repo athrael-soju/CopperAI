@@ -3,8 +3,8 @@ import { useRef } from 'react';
 const useTextToSpeech = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const startOngoingAudio = async (
-    transcript: string | Blob,
+  const generateAudio = async (
+    transcript: string | null,
     namespace: string | null
   ) => {
     if (!transcript || !namespace) {
@@ -15,22 +15,21 @@ const useTextToSpeech = () => {
     const formData = new FormData();
     formData.append('transcript', transcript);
     formData.append('namespace', namespace);
-    fetch('/api/textToSpeech', {
+    const response = await fetch('/api/textToSpeech', {
       method: 'POST',
       body: formData,
-    })
-      .then((response) => response.arrayBuffer())
-      .then((data) => {
-        // The variable "data" now contains the binary audio data.
-        // You can convert it to a Blob and create an object URL to play it.
-        const blob = new Blob([data], { type: 'audio/mpeg' });
-        const url = URL.createObjectURL(blob);
-        console.log('Sending audio: ', url);
-        audioRef.current = new Audio(url);
-        audioRef.current.play();
-        // You can use the URL to set the src of an audio element, for example.
-      });
+    });
+    const data = await response.arrayBuffer();
+    const blob = new Blob([data], { type: 'audio/mpeg' });
+    const url = URL.createObjectURL(blob);
+    console.log('Generated audio: ', url);
+    audioRef.current = new Audio(url);
   };
+
+  const startOngoingAudio = () => {
+    audioRef.current && audioRef.current.play();
+  };
+
   const stopOngoingAudio = () => {
     if (audioRef.current) {
       audioRef.current.pause();
@@ -38,7 +37,7 @@ const useTextToSpeech = () => {
     }
   };
 
-  return { startOngoingAudio, stopOngoingAudio };
+  return { generateAudio, startOngoingAudio, stopOngoingAudio };
 };
 
 export default useTextToSpeech;
