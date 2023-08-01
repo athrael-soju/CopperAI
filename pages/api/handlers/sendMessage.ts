@@ -3,6 +3,7 @@ import multer from 'multer';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { getChain } from '@/lib/langchain';
+import { ChatMessage } from 'langchain/schema';
 import { getIndex } from '@/lib/pinecone';
 
 import logger from '../../../lib/winstonConfig';
@@ -55,19 +56,20 @@ const sendMessageHandler = async (
       const chain = getChain(
         vectorStore,
         returnSourceDocuments === true,
-        temperature, //  Anything other than 0 may cause issues right now.
+        temperature,
         namespace
       );
 
-      let history = [];
+      let history: ChatMessage[] = [];
       if (useHistory) {
         history = await getHistory(username, namespace);
       }
+      console.log(history);
       let response;
       if (namespace === 'document') {
         response = await chain?.call({
           question: sanitizedPrompt,
-          chat_history: history, // must be an array of strings
+          chat_history: history,
         });
       } else if (namespace === 'general') {
         response = await chain?.call({

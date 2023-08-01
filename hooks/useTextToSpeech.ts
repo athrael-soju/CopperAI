@@ -37,7 +37,7 @@ const useTextToSpeech = () => {
     }
   };
 
-  return { generateAudio, startOngoingAudio, stopOngoingAudio };
+  return { generateAudio, startOngoingAudio, stopOngoingAudio, audioRef };
 };
 
 export default useTextToSpeech;

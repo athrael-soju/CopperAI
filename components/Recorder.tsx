@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useMachine } from '@xstate/react';
 import { createMachine } from 'xstate';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
@@ -6,7 +6,6 @@ import { useSession } from 'next-auth/react';
 import useAudioSensitivity from '../hooks/useAudioSensitivity';
 import useProcessRecording from '../hooks/useProcessRecording';
 import { RecordButton, PauseResumeButton, StopButton } from './Buttons';
-import { useCallback } from 'react';
 
 type RecorderProps = {
   className?: string;
@@ -55,6 +54,7 @@ const Recorder: React.FC<RecorderProps> = ({
     setRecordingProcessed,
     startOngoingAudio,
     stopOngoingAudio,
+    audioRef,
   } = useProcessRecording(
     recordingBlob || null,
     session,

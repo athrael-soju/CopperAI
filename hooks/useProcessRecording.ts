@@ -28,7 +28,7 @@ export const useProcessRecording = (
 
   const sendAudioForTranscription = useTranscription();
   const sendTranscriptForProcessing = useSendMessage(session, namespace);
-  const { generateAudio, startOngoingAudio, stopOngoingAudio } =
+  const { generateAudio, startOngoingAudio, stopOngoingAudio, audioRef } =
     useTextToSpeech();
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export const useProcessRecording = (
     session,
     recordingProcessed,
     lastProcessedBlob,
-    generateAudio, // Add generateAudio to the dependency array
+    generateAudio,
     startOngoingAudio,
     stopOngoingAudio,
     response,
@@ -104,6 +104,7 @@ export const useProcessRecording = (
     setRecordingProcessed,
     startOngoingAudio,
     stopOngoingAudio,
+    audioRef,
   };
 };
 
