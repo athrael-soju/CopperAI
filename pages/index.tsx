@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import Recorder from '../components/Recorder';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import ChatTypeContext from '../lib/context/ChatType';
 import Spinner from '../components/Spinner';
 import SyncButton from '../components/SyncButton';
+import Visualizer from '../components/Visualizer/Visualizer';
 
 export default function Home() {
   const router = useRouter();
@@ -23,14 +24,29 @@ export default function Home() {
   const [selectionMade, setSelectionMade] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [namespace, setNamespace] = useState<string | null>(null);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
+    null
+  );
 
   const chooseChatType = (type: string) => {
     setChatType(type);
     setSelectionMade(true);
   };
 
+  const handleAudioElement = (audio: HTMLAudioElement | null) => {
+    setAudioElement(audio);
+  };
+
+  useEffect(() => {
+    if (audioElement) {
+      audioElement.play();
+    }
+  }, [audioElement]);
+
   return (
     <main className="flex flex-col h-screen justify-center items-center p-24 pb-8">
+      <Visualizer audioElement={audioElement} />
+
       {session && isLoading && <Spinner />}
       {!session && (
         <h1 className="text-shadow-default text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-palette2564_1 via-palette2564_3 to-palette2564_5 mb-10">
@@ -74,6 +90,7 @@ export default function Home() {
             className="mb-10"
             setIsLoading={setIsLoading}
             namespace={namespace}
+            handleAudioElement={handleAudioElement}
           />
         </div>
       )}

@@ -11,6 +11,7 @@ type RecorderProps = {
   className?: string;
   setIsLoading: (loading: boolean) => void;
   namespace: string | null;
+  handleAudioElement: (audio: HTMLAudioElement | null) => void;
 };
 
 const recorderMachine = createMachine({
@@ -34,6 +35,7 @@ const Recorder: React.FC<RecorderProps> = ({
   className,
   setIsLoading,
   namespace,
+  handleAudioElement,
 }) => {
   const [current, send] = useMachine(recorderMachine);
   const {
@@ -95,10 +97,11 @@ const Recorder: React.FC<RecorderProps> = ({
   useEffect(() => {
     console.log('status', status);
     if (status === 'generated') {
-      startOngoingAudio();
+      //startOngoingAudio();
+      handleAudioElement(audioRef.current);
       setStatus('idle');
     }
-  }, [status, startOngoingAudio, setStatus]);
+  }, [status, startOngoingAudio, setStatus, handleAudioElement, audioRef]);
 
   return (
     <div className={className}>

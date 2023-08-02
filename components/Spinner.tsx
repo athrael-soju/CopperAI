@@ -3,11 +3,19 @@ import { ColorRing, Dna } from 'react-loader-spinner';
 
 const Spinner = () => {
   return (
-    <div className="spinner-container">
+    <div
+      className="spinner-container"
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+      }}
+    >
       <ColorRing
         visible={true}
-        height="800"
-        width="800"
+        height={200}
+        width={200}
         ariaLabel="blocks-loading"
         wrapperStyle={{}}
         wrapperClass="blocks-wrapper"
