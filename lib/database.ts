@@ -15,7 +15,7 @@ export const updateHistory = async (
     prompt,
     response,
     namespace,
-    new Date().toLocaleString()
+    new Date()
   );
   const client = (await clientPromise) as any;
   const db = client.db('myapp');
@@ -36,7 +36,7 @@ export const getHistory = async (username: string, namespace: string) => {
   let history = await db
     .collection('Conversation')
     .find({ username: username, namespace: namespace })
-    .sort({ datetime: -1 })
+    .sort({ date: -1 })
     .limit(10)
     .toArray();
 
@@ -57,7 +57,7 @@ const createConversationObject = (
   message: string,
   response: string,
   namespace: string,
-  date: string
+  date: Date
 ) => {
   return {
     username: username,

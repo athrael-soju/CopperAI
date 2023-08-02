@@ -3,5 +3,5 @@ export interface Conversation {
   message: string;
   response: string;
   namespace: string;
-  date: string;
+  date: Date;
 }

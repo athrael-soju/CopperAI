@@ -33,7 +33,8 @@ const textToSpeechHandler = async (
             'Content-Disposition',
             'attachment; filename=audio.mp3'
           );
-          res.send(audio);
+          res.status(200).send(audio);
+          return resolve();
         });
       } else if (ttsProvider === 'elevenlabs') {
         const apiKey = process.env.NEXT_PUBLIC_ELEVENLABS_TTS_API_KEY;
@@ -53,9 +54,9 @@ const textToSpeechHandler = async (
           responseType: 'arraybuffer', // Set the responseType to arraybuffer to receive binary data as response.
         };
         const speechDetails = await axios.request(options);
-        res.send(speechDetails.data);
+        res.status(200).send(speechDetails.data);
+        return resolve();
       }
-      return resolve();
     });
   });
 };

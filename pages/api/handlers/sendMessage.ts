@@ -64,7 +64,7 @@ const sendMessageHandler = async (
       if (useHistory) {
         history = await getHistory(username, namespace);
       }
-      console.log(history);
+
       let response;
       if (namespace === 'document') {
         response = await chain?.call({
