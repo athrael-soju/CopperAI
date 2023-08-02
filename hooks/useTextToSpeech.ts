@@ -22,7 +22,6 @@ const useTextToSpeech = () => {
     const data = await response.arrayBuffer();
     const blob = new Blob([data], { type: 'audio/mpeg' });
     const url = URL.createObjectURL(blob);
-    console.log('Generated audio: ', url);
     audioRef.current = new Audio(url);
   };
 
