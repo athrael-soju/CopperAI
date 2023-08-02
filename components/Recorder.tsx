@@ -1,3 +1,4 @@
+import { useEffect, useCallback } from 'react';
 import { useMachine } from '@xstate/react';
 import { createMachine } from 'xstate';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
@@ -5,12 +6,12 @@ import { useSession } from 'next-auth/react';
 import useAudioSensitivity from '../hooks/useAudioSensitivity';
 import useProcessRecording from '../hooks/useProcessRecording';
 import { RecordButton, PauseResumeButton, StopButton } from './Buttons';
-import { useCallback } from 'react';
 
 type RecorderProps = {
   className?: string;
   setIsLoading: (loading: boolean) => void;
   namespace: string | null;
+  handleAudioElement: (audio: HTMLAudioElement | null) => void;
 };
 
 const recorderMachine = createMachine({
@@ -34,6 +35,7 @@ const Recorder: React.FC<RecorderProps> = ({
   className,
   setIsLoading,
   namespace,
+  handleAudioElement,
 }) => {
   const [current, send] = useMachine(recorderMachine);
   const {
@@ -54,6 +56,7 @@ const Recorder: React.FC<RecorderProps> = ({
     setRecordingProcessed,
     startOngoingAudio,
     stopOngoingAudio,
+    audioRef,
   } = useProcessRecording(
     recordingBlob || null,
     session,
@@ -90,6 +93,15 @@ const Recorder: React.FC<RecorderProps> = ({
       send('RESUME');
     }
   }, [togglePauseResume, current, send]);
+
+  useEffect(() => {
+    console.log('status', status);
+    if (status === 'generated') {
+      //startOngoingAudio();
+      handleAudioElement(audioRef.current);
+      setStatus('idle');
+    }
+  }, [status, startOngoingAudio, setStatus, handleAudioElement, audioRef]);
 
   return (
     <div className={className}>

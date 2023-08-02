@@ -48,7 +48,6 @@ const processUploadHandler = async (
         }
       });
       if (uploadedFiles.length > 0) {
-        console.log('uploadedFiles: ', uploadedFiles);
         res.status(200).json({
           successful: true,
           response: `Files ${uploadedFiles.join(', ')} have been Uploaded!`,

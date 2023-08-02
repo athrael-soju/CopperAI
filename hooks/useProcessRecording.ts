@@ -16,6 +16,8 @@ export const useProcessRecording = (
     | 'transcribed'
     | 'sending'
     | 'sent'
+    | 'generating'
+    | 'generated'
     | 'error'
     | 'recording'
   >('idle');
@@ -26,33 +28,26 @@ export const useProcessRecording = (
 
   const sendAudioForTranscription = useTranscription();
   const sendTranscriptForProcessing = useSendMessage(session, namespace);
-  const { startOngoingAudio, stopOngoingAudio } = useTextToSpeech();
+  const { generateAudio, startOngoingAudio, stopOngoingAudio, audioRef } =
+    useTextToSpeech();
 
   useEffect(() => {
-    console.log(
-      'state:',
-      status,
-      'recordingProcessed:',
-      recordingProcessed,
-      'transcript:',
-      transcript
-    );
     const processRecording = async () => {
       try {
         // If we have a recording and we haven't sent it yet, send it.
         if (
           recordingBlob &&
-          recordingBlob !== lastProcessedBlob && // Add this condition
+          recordingBlob !== lastProcessedBlob &&
           status === 'idle' &&
           transcript === null &&
           !recordingProcessed
         ) {
-          setIsLoading(true); // Set loading state to true when recording starts processing
+          setIsLoading(true);
           setStatus('transcribing');
           sendAudioForTranscription(recordingBlob).then((newTranscript) => {
             setTranscript(newTranscript);
             setStatus('transcribed');
-            setLastProcessedBlob(recordingBlob); // Update lastProcessedBlob
+            setLastProcessedBlob(recordingBlob);
           });
         }
         // If the transcript is ready and we haven't sent it yet, send it.
@@ -65,24 +60,20 @@ export const useProcessRecording = (
             setTranscript(null);
           });
         }
-        // If the response is ready and we haven't played it yet, play it.
+        // If the response is ready and we haven't generated the audio yet, generate it.
         if (status === 'sent' && recordingProcessed && transcript === null) {
-          setIsLoading(false); // Set loading state to false when processing has finished
-          setStatus('idle');
-          if (response) {
-            stopOngoingAudio();
-            startOngoingAudio(response, namespace);
-          } else {
-            startOngoingAudio(
-              'Sorry, I did not understand that. Please try again.',
-              namespace
-            );
-          }
+          setStatus('generating');
+          generateAudio(response, namespace).then(() => {
+            setIsLoading(false);
+            setStatus('idle');
+            setStatus('generated'); // set status to 'generated'
+            //startOngoingAudio();
+          });
         }
       } catch (error) {
         console.error('Error processing recording:', error);
         setStatus('error');
-        setIsLoading(false); // Also set loading state to false in case of an error
+        setIsLoading(false);
       }
     };
 
@@ -96,8 +87,9 @@ export const useProcessRecording = (
     session,
     recordingProcessed,
     lastProcessedBlob,
-    stopOngoingAudio,
+    generateAudio,
     startOngoingAudio,
+    stopOngoingAudio,
     response,
     setIsLoading,
     namespace,
@@ -112,6 +104,7 @@ export const useProcessRecording = (
     setRecordingProcessed,
     startOngoingAudio,
     stopOngoingAudio,
+    audioRef,
   };
 };
 
