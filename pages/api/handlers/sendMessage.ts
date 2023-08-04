@@ -68,6 +68,7 @@ const sendMessageHandler = async (
 
       const response = await chain?.call({
         question: sanitizedPrompt,
+        chat_history: history || [],
       });
 
       let newId = await updateHistory(

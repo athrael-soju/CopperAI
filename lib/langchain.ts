@@ -5,11 +5,7 @@ import logger from '../lib/winstonConfig';
 import templates from './templates';
 import { BaseLanguageModel } from 'langchain/dist/base_language';
 import { PromptTemplate } from 'langchain/prompts';
-import {
-  VectorStoreRetrieverMemory,
-  BufferMemory,
-  CombinedMemory,
-} from 'langchain/memory';
+import { VectorStoreRetrieverMemory } from 'langchain/memory';
 
 export const getChain = (
   vectorstore: PineconeStore,
@@ -55,20 +51,12 @@ const getDocumentChain = (
   topK: number,
   returnSourceDocuments: boolean
 ) => {
-  const vectorMemory = new VectorStoreRetrieverMemory({
-    vectorStoreRetriever: vectorstore.asRetriever(topK),
-    memoryKey: 'chat_history',
-  });
-
   const chain = ConversationalRetrievalQAChain.fromLLM(
     model,
     vectorstore.asRetriever(topK),
     {
-      memory: vectorMemory,
-      questionGeneratorChainOptions: {
-        template: templates.document_qa.qa_prompt,
-      },
-      qaTemplate: templates.document_qa.rephrase_prompt,
+      qaTemplate: templates.document_qa.qa_prompt,
+      questionGeneratorTemplate: templates.document_qa.rephrase_prompt,
       returnSourceDocuments,
     }
   );
