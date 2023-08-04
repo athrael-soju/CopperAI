@@ -37,6 +37,7 @@ const processUploadHandler = async (
       const files = req.files as Express.Multer.File[];
       // Iterate over the files and print their filenames and contents
       files.forEach((file) => {
+        logger.info('Uploading File: ', file.originalname);
         if (process.env.NODE_ENV !== 'production') {
           const projectTmpDir = path.join(process.cwd(), 'tmp');
           fs.mkdirSync(projectTmpDir, { recursive: true });
@@ -48,9 +49,10 @@ const processUploadHandler = async (
         }
       });
       if (uploadedFiles.length > 0) {
+        logger.info(`Files: ${uploadedFiles.join(', ')} have been Uploaded!`);
         res.status(200).json({
           successful: true,
-          response: `Files ${uploadedFiles.join(', ')} have been Uploaded!`,
+          response: `Files: ${uploadedFiles.join(', ')} have been Uploaded!`,
         });
         return resolve();
       } else {

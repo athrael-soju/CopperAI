@@ -92,7 +92,7 @@ export const getIndex = async () => {
     logger.info(`index ${PINECONE_INDEX} created.`);
   } else {
     index = pineconeClient.Index(PINECONE_INDEX);
-    logger.info(`index ${PINECONE_INDEX} exists.`);
+    logger.info(`Using Existing Index ${PINECONE_INDEX}`);
   }
   return index;
 };

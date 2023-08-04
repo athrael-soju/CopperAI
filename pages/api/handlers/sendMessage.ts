@@ -18,6 +18,7 @@ const chatTemperature = Number(process.env.NEXT_PUBLIC_USE_CHAT_TEMPERATURE);
 const returnSourceDocuments =
   process.env.NEXT_PUBLIC_RETURN_SOURCE_DOCS === 'true';
 const useHistory = process.env.NEXT_PUBLIC_USE_CHAT_HISTORY === 'true';
+
 const sendMessageHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -55,7 +56,7 @@ const sendMessageHandler = async (
 
       const chain = getChain(
         vectorStore,
-        returnSourceDocuments === true,
+        returnSourceDocuments,
         temperature,
         namespace
       );
