@@ -1,15 +1,15 @@
 import { OpenAI } from 'langchain/llms/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
-import {
-  ConversationChain,
-  ConversationalRetrievalQAChain,
-  LLMChain,
-} from 'langchain/chains';
+import { ConversationalRetrievalQAChain, LLMChain } from 'langchain/chains';
 import logger from '../lib/winstonConfig';
 import templates from './templates';
 import { BaseLanguageModel } from 'langchain/dist/base_language';
 import { PromptTemplate } from 'langchain/prompts';
-import { VectorStoreRetrieverMemory } from 'langchain/memory';
+import {
+  VectorStoreRetrieverMemory,
+  BufferMemory,
+  CombinedMemory,
+} from 'langchain/memory';
 
 export const getChain = (
   vectorstore: PineconeStore,
@@ -39,12 +39,13 @@ const getGeneralChain = (
   vectorstore: PineconeStore,
   topK: number
 ) => {
-  const memory = new VectorStoreRetrieverMemory({
+  const vectorMemory = new VectorStoreRetrieverMemory({
     vectorStoreRetriever: vectorstore.asRetriever(topK),
     memoryKey: 'chat_history',
   });
+
   const prompt = PromptTemplate.fromTemplate(templates.general.general_prompt);
-  const chain = new LLMChain({ llm: model, prompt, memory });
+  const chain = new LLMChain({ llm: model, prompt, memory: vectorMemory });
   return chain;
 };
 
@@ -54,12 +55,20 @@ const getDocumentChain = (
   topK: number,
   returnSourceDocuments: boolean
 ) => {
-  let chain = ConversationalRetrievalQAChain.fromLLM(
+  const vectorMemory = new VectorStoreRetrieverMemory({
+    vectorStoreRetriever: vectorstore.asRetriever(topK),
+    memoryKey: 'chat_history',
+  });
+
+  const chain = ConversationalRetrievalQAChain.fromLLM(
     model,
     vectorstore.asRetriever(topK),
     {
-      qaTemplate: templates.document_qa.qa_prompt,
-      questionGeneratorTemplate: templates.document_qa.rephrase_prompt,
+      memory: vectorMemory,
+      questionGeneratorChainOptions: {
+        template: templates.document_qa.qa_prompt,
+      },
+      qaTemplate: templates.document_qa.rephrase_prompt,
       returnSourceDocuments,
     }
   );

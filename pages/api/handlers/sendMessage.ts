@@ -54,6 +54,11 @@ const sendMessageHandler = async (
           ? docTemperature
           : 0;
 
+      let history: ChatMessage[] = [];
+      if (useHistory) {
+        history = await getHistory(username, namespace);
+      }
+
       const chain = getChain(
         vectorStore,
         returnSourceDocuments,
@@ -61,24 +66,9 @@ const sendMessageHandler = async (
         namespace
       );
 
-      let history: ChatMessage[] = [];
-      if (useHistory) {
-        history = await getHistory(username, namespace);
-      }
-
-      let response;
-      if (namespace === 'document') {
-        response = await chain?.call({
-          question: sanitizedPrompt,
-          chat_history: history,
-        });
-      } else if (namespace === 'general') {
-        response = await chain?.call({
-          question: sanitizedPrompt,
-        });
-      } else {
-        response = { text: 'Unable to generate response' };
-      }
+      const response = await chain?.call({
+        question: sanitizedPrompt,
+      });
 
       let newId = await updateHistory(
         username,
