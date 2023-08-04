@@ -85,7 +85,7 @@ const sendMessageHandler = async (
         sanitizedPrompt,
         response?.text
       );
-
+      logger.info('Message Response:', response);
       res.status(200).json({
         successful: true,
         prompt: sanitizedPrompt,

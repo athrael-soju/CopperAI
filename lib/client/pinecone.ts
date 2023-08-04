@@ -9,8 +9,8 @@ const startPinecone = async () => {
   try {
     const pinecone = new PineconeClient();
     await pinecone.init({
-      environment: PINECONE_ENVIRONMENT,
       apiKey: API_KEY,
+      environment: PINECONE_ENVIRONMENT,
     });
     logger.info('Connected to Pinecone');
     return pinecone;

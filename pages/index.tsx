@@ -85,24 +85,34 @@ export default function Home() {
         </div>
       )}
       {chatType && session && (
-        <div style={{ marginTop: 'auto' }}>
+        <div
+          style={{
+            marginTop: 'auto',
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
           <Recorder
-            className="mb-10"
+            className="mb-50"
             setIsLoading={setIsLoading}
             namespace={namespace}
             handleAudioElement={handleAudioElement}
           />
         </div>
       )}
-      {chatType && session && (
-        <SyncButton
-          resetSelection={() => {
-            setChatType(null);
-            setSelectionMade(false);
-            setNamespace(null);
-          }}
-        />
-      )}
+      <div>
+        {chatType && session && (
+          <SyncButton
+            resetSelection={() => {
+              setChatType(null);
+              setSelectionMade(false);
+              setNamespace(null);
+            }}
+          />
+        )}
+      </div>
     </main>
   );
 }

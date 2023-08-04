@@ -59,7 +59,6 @@ const processIngestHandler = async (
         namespace: `${username}_${namespace}`,
         textKey: 'pageContent',
       });
-      console.log('response', response);
       const filesToDelete = fs
         .readdirSync(filePath)
         .filter(
