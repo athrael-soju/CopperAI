@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import multer from 'multer';
-import { ChatMessage } from 'langchain/schema';
 
 import {
   queryMessageInPinecone,

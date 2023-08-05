@@ -1,10 +1,6 @@
 import { OpenAI } from 'langchain/llms/openai';
-import { VectorStoreRetrieverMemory } from 'langchain/memory';
 import { LLMChain } from 'langchain/chains';
 import { PromptTemplate } from 'langchain/prompts';
-import { MemoryVectorStore } from 'langchain/vectorstores/memory';
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { ConversationSummaryMemory } from 'langchain/memory';
 import logger from '../../lib/winstonConfig';
 const model = new OpenAI({
   temperature: 0.9,
