@@ -16,7 +16,7 @@ const useSendMessage = (session: Session | null, namespace: string | null) => {
         body: formData,
       });
       const data = await response.json();
-      console.log('Send Message Response:', data.response);
+      console.log('Message Response:', `"${data.response}"`);
       return data.response;
     },
     [namespace, session?.user?.email, session?.user?.name]

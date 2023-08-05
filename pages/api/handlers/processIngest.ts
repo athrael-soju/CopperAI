@@ -54,29 +54,38 @@ const processIngestHandler = async (
         openAIApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY as string,
       });
       let index = await getIndex();
-      let response = await PineconeStore.fromDocuments(docs, embeddings, {
+      logger.info('Data Ingestion Started...');
+      PineconeStore.fromDocuments(docs, embeddings, {
         pineconeIndex: index,
         namespace: `${username}_${namespace}`,
         textKey: 'pageContent',
-      });
-      console.log('response', response);
-      const filesToDelete = fs
-        .readdirSync(filePath)
-        .filter(
-          (file) =>
-            file.endsWith('.pdf') ||
-            file.endsWith('.docx') ||
-            file.endsWith('.txt') ||
-            file.endsWith('.log')
-        );
-      filesToDelete.forEach((file) => {
-        fs.unlinkSync(`${filePath}/${file}`);
-      });
-      logger.info('Data Ingestion Completed!');
-      res
-        .status(200)
-        .json({ successful: true, message: 'Data Ingestion Completed!' });
-      return resolve();
+      })
+        .then(() => {
+          logger.info('Data Ingestion Completed');
+          // Delete the temporary files. More file types can be added here
+          const filesToDelete = fs
+            .readdirSync(filePath)
+            .filter(
+              (file) =>
+                file.endsWith('.pdf') ||
+                file.endsWith('.docx') ||
+                file.endsWith('.txt') ||
+                file.endsWith('.log')
+            );
+          filesToDelete.forEach((file) => {
+            fs.unlinkSync(`${filePath}/${file}`);
+          });
+          logger.info('Temporary files deleted');
+          res
+            .status(200)
+            .json({ successful: true, message: 'Data Ingestion Completed' });
+          return resolve();
+        })
+        .catch((err) => {
+          logger.error('Data Ingestion Failed', { error: err });
+          res.status(500).json({ successful: false, error: err.message });
+          return reject();
+        });
     });
   });
 };

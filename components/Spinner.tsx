@@ -6,10 +6,10 @@ const Spinner = () => {
     <div
       className="spinner-container"
       style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)'
       }}
     >
       <ColorRing

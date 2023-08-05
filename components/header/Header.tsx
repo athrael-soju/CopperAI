@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ namespace }) => {
       ? 'general'
       : '';
   return (
-    <header className="fixed top-0 left-0 right-0 text-center text-white bg-copper-200 h-16 flex items-center justify-center px-20 shadow-md">
+    <header className="fixed top-0 left-0 right-0 text-center text-white bg-copper-200 h-16 flex items-center justify-center px-5 shadow-md">
       <div className="flex justify-between w-full items-center">
         <nav>
           {session && (

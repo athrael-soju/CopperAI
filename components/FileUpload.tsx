@@ -39,8 +39,7 @@ const FileUpload: React.FC<FileUploaderProps> = ({ username, namespace }) => {
           ) => {
             let formData = new FormData();
             formData.append(fieldName, file, file.name);
-            //formData.append('userName', username);
-
+            console.log('File Upload Initiated...');
             const request = new XMLHttpRequest();
             request.open('POST', '/api/processUpload');
 
@@ -59,28 +58,21 @@ const FileUpload: React.FC<FileUploaderProps> = ({ username, namespace }) => {
                 formData.append('namespace', namespace);
                 const anotherRequest = new XMLHttpRequest();
                 anotherRequest.open('POST', '/api/processIngest', true);
-                setIngesting(true); // Start the Ingesting state
-                // Add any necessary headers and/or data.
-                // anotherRequest.setRequestHeader(
-                //   'Content-Type',
-                //   'application/json'
-                // );
-
+                setIngesting(true);
                 anotherRequest.send(formData);
-
                 anotherRequest.onload = function () {
                   if (
                     anotherRequest.status >= 200 &&
                     anotherRequest.status < 300
                   ) {
                     setIngesting(false); // End the Ingesting state
-                    console.log('Data Ingest API Call Successful');
+                    console.log('File Upload Successful');
                   } else {
-                    console.log('Data Ingest API Call Failed');
+                    console.log('File Upload Failed');
                   }
                 };
               } else {
-                error('Failed to Upload File');
+                error('File Upload Failed');
               }
             };
             request.send(formData);

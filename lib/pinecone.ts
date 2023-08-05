@@ -10,44 +10,45 @@ const PINECONE_SIMILARITY_CUTOFF = process.env
   .NEXT_PUBLIC_PINECONE_SIMILARITY_CUTOFF as string;
 
 export const upsertConversationToPinecone = async (
-  newConversation: Conversation,
-  newId: string,
-  namespace: string
+  username: string,
+  prompt: string,
+  response: string,
+  namespace: string,
+  newId: string
 ) => {
   let index = await getIndex();
-  let newConversationEmbedding = (await createEmbedding(
-    `${newConversation.message}. ${newConversation.response}. ${newConversation.date}.`
-  )) as number[];
+  const conversation = `${username}: ${prompt} AI: ${response} Date: ${new Date()}`;
+  let embedding = (await createEmbedding(conversation)) as number[];
+
   logger.info(`Upserting New Embedding for id: ${newId}...`);
-  const response = await index.upsert({
+  const upsertResponse = await index.upsert({
     upsertRequest: {
       vectors: [
         {
           id: newId,
-          values: newConversationEmbedding,
+          values: embedding,
           metadata: {
             id: newId,
-            username: newConversation.username,
+            conversation: conversation,
           },
         },
       ],
-      // This has to be customizable to the user's domain/organization/conversation type
-      namespace: `${newConversation.username}_${namespace}`,
+      namespace: `${username}_${namespace}`,
     },
   });
   logger.info('Upserted Successfully:', {
-    response: response,
+    response: upsertResponse,
   });
-  return response;
+  return upsertResponse;
 };
 
 export const queryMessageInPinecone = async (
   username: string,
-  transcript: string,
+  prompt: string,
   namespace: string
 ) => {
   let index = await getIndex();
-  let userPromptEmbedding = (await createEmbedding(transcript)) as number[];
+  let userPromptEmbedding = (await createEmbedding(prompt)) as number[];
 
   const queryResponse = await index.query({
     queryRequest: {
@@ -55,11 +56,6 @@ export const queryMessageInPinecone = async (
       topK: parseInt(PINECONE_TOPK),
       includeMetadata: true,
       vector: userPromptEmbedding,
-      // filter: {
-      //   //score: { $gte: parseInt(PINECONE_SIMILARITY_CUTOFF) },
-      //   //username: { $eq: username },
-      //   //$and: [{ score: { $gte: parseInt(PINECONE_SIMILARITY_CUTOFF) } }],
-      // },
     },
   });
 
@@ -68,7 +64,24 @@ export const queryMessageInPinecone = async (
     logger.info('Conversation Matches:', {
       response: queryResponse.matches?.length,
     });
-    return queryResponse.matches;
+    const namespaceMappings: {
+      document: string;
+      general: string;
+    } = {
+      document: 'pageContent',
+      general: 'conversation',
+    };
+
+    if (namespace in namespaceMappings) {
+      return queryResponse?.matches
+        ?.map(
+          (match: any) =>
+            match.metadata[
+              namespaceMappings[namespace as keyof typeof namespaceMappings]
+            ]
+        )
+        .join('\n');
+    }
   } else {
     logger.info('No Conversation Matches', {
       response: queryResponse,
@@ -92,7 +105,7 @@ export const getIndex = async () => {
     logger.info(`index ${PINECONE_INDEX} created.`);
   } else {
     index = pineconeClient.Index(PINECONE_INDEX);
-    logger.info(`index ${PINECONE_INDEX} exists.`);
+    logger.info(`Using Existing Index ${PINECONE_INDEX}`);
   }
   return index;
 };

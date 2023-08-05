@@ -2,7 +2,6 @@ import clientPromise from './client/mobgodb';
 import logger from '../lib/winstonConfig';
 // logger.defaultMeta = { service: 'lib/database.ts' };
 import { Conversation } from '../types/Conversation';
-import { ChatMessage } from 'langchain/schema';
 
 export const updateHistory = async (
   username: string,
@@ -37,22 +36,18 @@ export const getHistory = async (username: string, namespace: string) => {
     .collection('Conversation')
     .find({ username: username, namespace: namespace })
     .sort({ date: -1 })
-    .limit(10)
+    .limit(Number(process.env.NEXT_PUBLIC_PINECONE_TOPK))
     .toArray();
 
-  let langchainFormattedHistory: ChatMessage[] = [];
-  await history.forEach((conversation: Conversation) => {
-    langchainFormattedHistory.push(
-      new ChatMessage(conversation.message, 'user')
-    );
-    langchainFormattedHistory.push(
-      new ChatMessage(conversation.response, 'system')
-    );
-  });
-  return langchainFormattedHistory;
+  const formattedHistory = history
+    .map((conversation: Conversation) => {
+      return `${username}: ${conversation.message} AI: ${conversation.response} Date: ${conversation.date}`;
+    })
+    .join('\n');
+  return formattedHistory;
 };
 
-const createConversationObject = (
+export const createConversationObject = (
   username: string,
   message: string,
   response: string,

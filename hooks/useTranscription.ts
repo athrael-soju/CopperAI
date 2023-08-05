@@ -16,7 +16,7 @@ const useTranscription = () => {
 
     const data = await response.json();
 
-    console.log('Transcription response:', data.message);
+    console.log('Message Request:', `"${data.message}"`);
     return data.message;
   }, []);
 };

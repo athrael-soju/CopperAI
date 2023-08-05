@@ -11,7 +11,6 @@ const useTextToSpeech = () => {
       console.warn('No transcript or namespace provided');
       return;
     }
-    console.log('Sending message to text to speech', transcript);
     const formData = new FormData();
     formData.append('transcript', transcript);
     formData.append('namespace', namespace);

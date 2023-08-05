@@ -9,6 +9,7 @@ import { Request, Response } from 'express';
 type NextApiRequestWithExpress = NextApiRequest & Request;
 type NextApiResponseWithExpress = NextApiResponse & Response;
 const ttsProvider = process.env.NEXT_PUBLIC_TTS_PROVIDER;
+
 const textToSpeechHandler = async (
   req: NextApiRequestWithExpress,
   res: NextApiResponseWithExpress
@@ -37,8 +38,16 @@ const textToSpeechHandler = async (
           return resolve();
         });
       } else if (ttsProvider === 'elevenlabs') {
-        const apiKey = process.env.NEXT_PUBLIC_ELEVENLABS_TTS_API_KEY;
-        const voiceId = process.env.NEXT_PUBLIC_ELEVENLABS_TTS_VOICE_ID;
+        const apiKey = process.env.NEXT_PUBLIC_ELEVENLABS_TTS_API_KEY,
+          irisVoiceId = process.env.NEXT_PUBLIC_ELEVENLABS_TTS_VOICE_ID_IRIS,
+          judeVoiceId = process.env.NEXT_PUBLIC_ELEVENLABS_TTS_VOICE_ID_JUDE;
+          
+        const voiceId =
+          namespace === 'general'
+            ? irisVoiceId
+            : namespace === 'document'
+            ? judeVoiceId
+            : null;
 
         const options = {
           method: 'POST',

@@ -20,8 +20,7 @@ export const createChatCompletion = async (
 };
 
 export const createEmbedding = async (message: string) => {
-  
-  logger.info(`Creating Embedding for Message: ${message}`);
+  logger.info(`Creating Embedding...`);
   const response = await openai.createEmbedding({
     input: message,
     model: 'text-embedding-ada-002',

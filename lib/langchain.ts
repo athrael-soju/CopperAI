@@ -1,10 +1,6 @@
 import { OpenAI } from 'langchain/llms/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
-import {
-  ConversationChain,
-  ConversationalRetrievalQAChain,
-  LLMChain,
-} from 'langchain/chains';
+import { ConversationalRetrievalQAChain, LLMChain } from 'langchain/chains';
 import logger from '../lib/winstonConfig';
 import templates from './templates';
 import { BaseLanguageModel } from 'langchain/dist/base_language';
@@ -39,12 +35,13 @@ const getGeneralChain = (
   vectorstore: PineconeStore,
   topK: number
 ) => {
-  const memory = new VectorStoreRetrieverMemory({
-    vectorStoreRetriever: vectorstore.asRetriever(topK),
+  const vectorMemory = new VectorStoreRetrieverMemory({
+    vectorStoreRetriever: vectorstore.asRetriever(),
     memoryKey: 'chat_history',
   });
+
   const prompt = PromptTemplate.fromTemplate(templates.general.general_prompt);
-  const chain = new LLMChain({ llm: model, prompt, memory });
+  const chain = new LLMChain({ llm: model, prompt, memory: vectorMemory });
   return chain;
 };
 
@@ -54,9 +51,9 @@ const getDocumentChain = (
   topK: number,
   returnSourceDocuments: boolean
 ) => {
-  let chain = ConversationalRetrievalQAChain.fromLLM(
+  const chain = ConversationalRetrievalQAChain.fromLLM(
     model,
-    vectorstore.asRetriever(topK),
+    vectorstore.asRetriever(),
     {
       qaTemplate: templates.document_qa.qa_prompt,
       questionGeneratorTemplate: templates.document_qa.rephrase_prompt,
