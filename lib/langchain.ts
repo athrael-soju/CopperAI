@@ -36,7 +36,7 @@ const getGeneralChain = (
   topK: number
 ) => {
   const vectorMemory = new VectorStoreRetrieverMemory({
-    vectorStoreRetriever: vectorstore.asRetriever(topK),
+    vectorStoreRetriever: vectorstore.asRetriever(),
     memoryKey: 'chat_history',
   });
 
@@ -53,7 +53,7 @@ const getDocumentChain = (
 ) => {
   const chain = ConversationalRetrievalQAChain.fromLLM(
     model,
-    vectorstore.asRetriever(topK),
+    vectorstore.asRetriever(),
     {
       qaTemplate: templates.document_qa.qa_prompt,
       questionGeneratorTemplate: templates.document_qa.rephrase_prompt,
