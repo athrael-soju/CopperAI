@@ -6,6 +6,8 @@ import ChatTypeContext from '../lib/context/ChatType';
 import Spinner from '../components/Spinner';
 import SyncButton from '../components/SyncButton';
 import Visualizer from '../components/Visualizer/Visualizer';
+import React from 'react';
+import RecorderX from '../components/RecorderX';
 
 export default function Home() {
   const router = useRouter();
@@ -94,12 +96,18 @@ export default function Home() {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          <Recorder
+          <RecorderX
             className="mb-50"
             setIsLoading={setIsLoading}
             namespace={namespace}
             handleAudioElement={handleAudioElement}
           />
+          {/* <Recorder
+            className="mb-50"
+            setIsLoading={setIsLoading}
+            namespace={namespace}
+            handleAudioElement={handleAudioElement}
+          /> */}
         </div>
       )}
       <div>

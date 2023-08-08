@@ -9,7 +9,18 @@ const useAudioSensitivity = (): boolean => {
       audioStreamSource: MediaStreamAudioSourceNode;
 
     const checkAudioLevel = async () => {
-      let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const constraints = {
+        audio: {
+          sampleRate: 48000,
+          channelCount: 1,
+          volume: 1.0,
+          echoCancellation: true,
+          noiseSuppression: true,
+        },
+        video: false,
+      };
+
+      let stream = await navigator.mediaDevices.getUserMedia(constraints);
       audioContext = new AudioContext();
       audioStreamSource = audioContext.createMediaStreamSource(stream);
       analyser = audioContext.createAnalyser();
