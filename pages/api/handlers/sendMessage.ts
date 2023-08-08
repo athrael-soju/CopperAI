@@ -17,7 +17,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 const docTemperature = Number(process.env.NEXT_PUBLIC_USE_DOC_TEMPERATURE);
 const chatTemperature = Number(process.env.NEXT_PUBLIC_USE_CHAT_TEMPERATURE);
 const useHistory = process.env.NEXT_PUBLIC_USE_CHAT_HISTORY === 'true';
-
+const topK = Number(process.env.NEXT_PUBLIC_TOP_K_MESSAGES);
 const sendMessageHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -50,22 +50,22 @@ const sendMessageHandler = async (
         history = await getHistory(username, namespace);
         messages.push({
           role: 'system',
-          content: 'history:' + history,
+          content: `History of Last ${topK} Messages:\n${history}`,
         });
       }
 
       let context = await queryMessageInPinecone(username, prompt, namespace);
 
-      const content =
+      let templatedContext =
         namespace === 'document'
-          ? templates.document_qa.simplified_qa_prompt + '\n' + context
+          ? templates.document_qa.simplified_qa_prompt
           : namespace === 'general'
-          ? templates.general.simplified_general + '\n' + context
+          ? templates.general.simplified_general
           : '';
-
+      templatedContext += `Related Context:\n${context}`;
       messages.push({
         role: 'system',
-        content: content,
+        content: templatedContext,
       });
 
       messages.push({
