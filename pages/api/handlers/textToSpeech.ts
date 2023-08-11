@@ -41,7 +41,7 @@ const textToSpeechHandler = async (
         const apiKey = process.env.NEXT_PUBLIC_ELEVENLABS_TTS_API_KEY,
           irisVoiceId = process.env.NEXT_PUBLIC_ELEVENLABS_TTS_VOICE_ID_IRIS,
           judeVoiceId = process.env.NEXT_PUBLIC_ELEVENLABS_TTS_VOICE_ID_JUDE;
-          
+
         const voiceId =
           namespace === 'general'
             ? irisVoiceId

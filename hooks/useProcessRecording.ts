@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Session } from 'next-auth';
-import useTranscription from './useTranscription';
 import useSendMessage from './useSendMessage';
 import useTextToSpeech from './useTextToSpeech';
 
@@ -28,7 +27,6 @@ export const useProcessRecording = (
     string | null
   >(null);
 
-  const sendAudioForTranscription = useTranscription();
   const sendTranscriptForProcessing = useSendMessage(session, namespace);
   const { generateAudio, startOngoingAudio, stopOngoingAudio, audioRef } =
     useTextToSpeech();
@@ -77,22 +75,7 @@ export const useProcessRecording = (
     };
 
     processRecording();
-  }, [
-    status,
-    sendAudioForTranscription,
-    sendTranscriptForProcessing,
-    transcript,
-    session,
-    recordingProcessed,
-    generateAudio,
-    startOngoingAudio,
-    stopOngoingAudio,
-    response,
-    setIsLoading,
-    namespace,
-    newTranscript,
-    lastProcessedTranscript,
-  ]);
+  }, [status, sendTranscriptForProcessing, transcript, session, recordingProcessed, generateAudio, startOngoingAudio, stopOngoingAudio, response, setIsLoading, namespace, newTranscript, lastProcessedTranscript]);
 
   return {
     transcript,

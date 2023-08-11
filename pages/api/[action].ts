@@ -2,7 +2,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Request, Response } from 'express';
 
-import transcribeHandler from './handlers/transcribeInput';
 import sendMessageHandler from './handlers/sendMessage';
 import textToSpeechHandler from './handlers/textToSpeech';
 import processUploadHandler from './handlers/processUpload';
@@ -30,9 +29,7 @@ export default function handler(
 
   const { action } = req.query;
 
-  if (action === 'transcribe') {
-    return transcribeHandler(req, res);
-  } else if (action === 'sendMessage') {
+  if (action === 'sendMessage') {
     return sendMessageHandler(req, res);
   } else if (action === 'textToSpeech') {
     return textToSpeechHandler(req, res);
