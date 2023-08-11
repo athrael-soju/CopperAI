@@ -35,7 +35,9 @@ const sendMessageHandler = async (
       const prompt = req.body.transcript;
       const namespace = req.body.namespace;
       const sanitizedPrompt = prompt.trim().replaceAll('\n', ' ');
-
+      logger.info('Chat Completion Prompt:', {
+        response: prompt,
+      });
       let messages: ChatCompletionRequestMessage[] = [];
 
       let temperature =
@@ -77,7 +79,7 @@ const sendMessageHandler = async (
         .then(async (response) => {
           const responseContent = response?.data?.choices[0]?.message
             ?.content as string;
-          logger.info('Chat Completion Request Successful!', {
+          logger.info('Chat Completion Response:', {
             response: responseContent,
           });
           let newId = await updateHistory(

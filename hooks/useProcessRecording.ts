@@ -36,18 +36,6 @@ export const useProcessRecording = (
   useEffect(() => {
     const processRecording = async () => {
       try {
-        console.log(
-          'newTranscript',
-          newTranscript,
-          'status',
-          status,
-          'recordingProcessed',
-          recordingProcessed,
-          'transcript',
-          transcript,
-          'lastProcessedTranscript',
-          lastProcessedTranscript
-        );
         // If we have a transcript and we haven't saved it yet, save it
         if (
           newTranscript &&
@@ -56,6 +44,7 @@ export const useProcessRecording = (
           transcript === null &&
           !recordingProcessed
         ) {
+          console.log('Message Prompt: ', newTranscript);
           setIsLoading(true);
           setStatus('transcribing');
           setTranscript(newTranscript);

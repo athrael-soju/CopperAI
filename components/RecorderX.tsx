@@ -46,7 +46,6 @@ const RecorderX: React.FC<RecorderXProps> = ({
           clearTimeout(timeoutId.current);
         }
         timeoutId.current = setTimeout(() => {
-          console.log('Processed Transcript:', transcript);
           resetTranscript();
           setNewTranscript(transcript);
           setStatus('idle'); // Set status to 'idle' when recording stops
@@ -64,6 +63,7 @@ const RecorderX: React.FC<RecorderXProps> = ({
     resetTranscript,
     setRecordingProcessed,
     setStatus,
+    stopOngoingAudio,
     transcript,
   ]);
 
@@ -84,6 +84,7 @@ const RecorderX: React.FC<RecorderXProps> = ({
   };
 
   const stopButtonEvent = () => {
+    stopOngoingAudio();
     toggleListening();
     setStatus('idle'); // Set status to 'idle' when recording stops
   };
