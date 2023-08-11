@@ -1,4 +1,3 @@
-// src/api/[action].ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Request, Response } from 'express';
 
