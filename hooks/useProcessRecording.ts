@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Session } from 'next-auth';
-import useTranscription from './useTranscription';
 import useSendMessage from './useSendMessage';
 import useTextToSpeech from './useTextToSpeech';
 
 export const useProcessRecording = (
-  recordingBlob: Blob | null,
+  newTranscript: string | null,
   session: Session | null,
   setIsLoading: (loading: boolean) => void,
   namespace: string | null
@@ -24,9 +23,10 @@ export const useProcessRecording = (
   const [transcript, setTranscript] = useState<string | null>(null);
   const [response, setResponse] = useState<string | null>(null);
   const [recordingProcessed, setRecordingProcessed] = useState(false);
-  const [lastProcessedBlob, setLastProcessedBlob] = useState<Blob | null>(null);
+  const [lastProcessedTranscript, setLastProcessedTranscript] = useState<
+    string | null
+  >(null);
 
-  const sendAudioForTranscription = useTranscription();
   const sendTranscriptForProcessing = useSendMessage(session, namespace);
   const { generateAudio, startOngoingAudio, stopOngoingAudio, audioRef } =
     useTextToSpeech();
@@ -34,23 +34,22 @@ export const useProcessRecording = (
   useEffect(() => {
     const processRecording = async () => {
       try {
-        // If we have a recording and we haven't sent it yet, send it.
+        // If we have a transcript and we haven't saved it yet, save it
         if (
-          recordingBlob &&
-          recordingBlob !== lastProcessedBlob &&
+          newTranscript &&
+          newTranscript !== lastProcessedTranscript &&
           status === 'idle' &&
           transcript === null &&
           !recordingProcessed
         ) {
+          console.log('Message Prompt: ', newTranscript);
           setIsLoading(true);
           setStatus('transcribing');
-          sendAudioForTranscription(recordingBlob).then((newTranscript) => {
-            setTranscript(newTranscript);
-            setStatus('transcribed');
-            setLastProcessedBlob(recordingBlob);
-          });
+          setTranscript(newTranscript);
+          setStatus('transcribed');
+          setLastProcessedTranscript(newTranscript);
         }
-        // If the transcript is ready and we haven't sent it yet, send it.
+        // If the transcript is ready and we haven't sent it yet, send it
         if (transcript && status === 'transcribed') {
           setStatus('sending');
           sendTranscriptForProcessing(transcript).then((newResponse) => {
@@ -65,9 +64,7 @@ export const useProcessRecording = (
           setStatus('generating');
           generateAudio(response, namespace).then(() => {
             setIsLoading(false);
-            setStatus('idle');
             setStatus('generated'); // set status to 'generated'
-            //startOngoingAudio();
           });
         }
       } catch (error) {
@@ -78,22 +75,7 @@ export const useProcessRecording = (
     };
 
     processRecording();
-  }, [
-    recordingBlob,
-    status,
-    sendAudioForTranscription,
-    sendTranscriptForProcessing,
-    transcript,
-    session,
-    recordingProcessed,
-    lastProcessedBlob,
-    generateAudio,
-    startOngoingAudio,
-    stopOngoingAudio,
-    response,
-    setIsLoading,
-    namespace,
-  ]);
+  }, [status, sendTranscriptForProcessing, transcript, session, recordingProcessed, generateAudio, startOngoingAudio, stopOngoingAudio, response, setIsLoading, namespace, newTranscript, lastProcessedTranscript]);
 
   return {
     transcript,

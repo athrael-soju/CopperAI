@@ -6,6 +6,8 @@ import ChatTypeContext from '../lib/context/ChatType';
 import Spinner from '../components/Spinner';
 import SyncButton from '../components/SyncButton';
 import Visualizer from '../components/Visualizer/Visualizer';
+import React from 'react';
+import RecorderX from '../components/Recorder';
 
 export default function Home() {
   const router = useRouter();
