@@ -1,80 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { createSpeechlySpeechRecognition } from '@speechly/speech-recognition-polyfill';
 import SpeechRecognition, {
   useSpeechRecognition,
 } from 'react-speech-recognition';
-import { useMachine } from '@xstate/react';
-import { createMachine, assign } from 'xstate';
 import { RecordButton, StopButton } from './Buttons';
-import { createSpeechlySpeechRecognition } from '@speechly/speech-recognition-polyfill';
-import useAudioSensitivity from '../hooks/useAudioSensitivity';
+import useProcessRecording from '../hooks/useProcessRecording';
+import { useSession } from 'next-auth/react';
 const appId: string = process.env.NEXT_PUBLIC_SPEECHLY_APP_ID || '';
 const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
 SpeechRecognition.applyPolyfill(SpeechlySpeechRecognition);
-
-const listenContinuously = () =>
-  SpeechRecognition.startListening({
-    continuous: true,
-    language: 'en-GB',
-  });
-
-type RecorderContext = {
-  transcript: string;
-};
-
-type RecorderEvent =
-  | { type: 'START' }
-  | { type: 'STOP' }
-  | { type: 'TRANSCRIBE'; data: string };
-
-const recorderMachine = createMachine<RecorderContext, RecorderEvent>(
-  {
-    id: 'recorder',
-    initial: 'stopped',
-    context: {
-      transcript: '',
-    },
-    states: {
-      stopped: {
-        on: {
-          START: 'recording',
-        },
-      },
-      recording: {
-        entry: 'startListening',
-        exit: 'stopListening',
-        on: {
-          STOP: 'stopped',
-          TRANSCRIBE: {
-            target: 'transcribing',
-            actions: ['updateTranscript'],
-          },
-        },
-      },
-      transcribing: {
-        after: {
-          0: 'recording',
-        },
-      },
-    },
-    predictableActionArguments: true,
-  },
-  {
-    actions: {
-      startListening: listenContinuously,
-      stopListening: () => {
-        SpeechRecognition.stopListening();
-      },
-      updateTranscript: assign({
-        transcript: (context, event) => {
-          if (event.type === 'TRANSCRIBE') {
-            return event.data;
-          }
-          return context.transcript; // or some default value if needed
-        },
-      }),
-    },
-  }
-);
 
 type RecorderXProps = {
   className?: string;
@@ -89,76 +23,88 @@ const RecorderX: React.FC<RecorderXProps> = ({
   namespace,
   handleAudioElement,
 }) => {
-  const [current, send] = useMachine(recorderMachine);
-  const lastUpdateRef = useRef<Date>(new Date());
-  const isMicActive = useAudioSensitivity();
-  const inactivityTimeoutRef = useRef<null | NodeJS.Timeout>(null);
-
-  const commands = [
-    {
-      command: 'stop',
-      callback: () => {
-        send('STOP');
-      },
-      matchInterim: false,
-    },
-  ];
-
+  const { data: session } = useSession();
+  const [newTranscript, setNewTranscript] = useState<string | null>(null);
+  const { transcript, browserSupportsSpeechRecognition, resetTranscript } =
+    useSpeechRecognition();
   const {
-    transcript,
+    status,
+    setStatus,
+    setRecordingProcessed,
+    startOngoingAudio,
+    stopOngoingAudio,
+    audioRef,
+  } = useProcessRecording(newTranscript, session, setIsLoading, namespace);
+  const [isListening, setIsListening] = useState(false);
+  const timeoutId = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (isListening) {
+      if (transcript) {
+        setRecordingProcessed(false);
+        if (timeoutId.current) {
+          clearTimeout(timeoutId.current);
+        }
+        timeoutId.current = setTimeout(() => {
+          console.log('Processed Transcript:', transcript);
+          resetTranscript();
+          setNewTranscript(transcript);
+          setStatus('idle'); // Set status to 'idle' when recording stops
+        }, 3000);
+      }
+
+      return () => {
+        if (timeoutId.current) {
+          clearTimeout(timeoutId.current);
+        }
+      };
+    }
+  }, [
+    isListening,
     resetTranscript,
-    listening,
-    browserSupportsSpeechRecognition,
-    isMicrophoneAvailable,
-    interimTranscript,
-  } = useSpeechRecognition({
-    transcribing: true,
-    clearTranscriptOnListen: true,
-    commands,
-  });
+    setRecordingProcessed,
+    setStatus,
+    transcript,
+  ]);
 
   useEffect(() => {
-    if (transcript !== '') {
-      lastUpdateRef.current = new Date();
+    if (status === 'generated') {
+      handleAudioElement(audioRef.current);
+      setStatus('idle');
     }
-  }, [transcript]);
+  }, [status, startOngoingAudio, setStatus, handleAudioElement, audioRef]);
 
-  useEffect(() => {
-    console.log('transcript', transcript);
-    if (isMicActive) {
-      if (inactivityTimeoutRef.current) {
-        console.log('User is speaking...');
-        clearTimeout(inactivityTimeoutRef.current);
-      }
+  const toggleListening = () => {
+    if (isListening) {
+      SpeechRecognition.stopListening();
     } else {
-      inactivityTimeoutRef.current = setTimeout(() => {
-        console.log('User has finished speaking.', transcript); // create a new state for transcript and show that one instead.
-        send({ type: 'TRANSCRIBE', data: transcript });
-        resetTranscript();
-      }, 2000);
+      SpeechRecognition.startListening({ continuous: true });
     }
+    setIsListening(!isListening);
+  };
 
-    return () => {
-      if (inactivityTimeoutRef.current) {
-        clearTimeout(inactivityTimeoutRef.current);
-      }
-    };
-  }, [isMicActive, resetTranscript, send, transcript]);
+  const stopButtonEvent = () => {
+    toggleListening();
+    setStatus('idle'); // Set status to 'idle' when recording stops
+  };
+
+  const recordButtonEvent = () => {
+    toggleListening();
+    stopOngoingAudio();
+    setStatus('recording');
+    setRecordingProcessed(false);
+  };
 
   if (!browserSupportsSpeechRecognition) {
-    return <span>Browser does not support speech recognition.</span>;
-  }
-  if (!isMicrophoneAvailable) {
-    return <span>Please allow access to the microphone</span>;
+    return <span>Browser doesn&apos;t support speech recognition.</span>;
   }
 
   return (
-    <div className={className}>
-      {current.matches('stopped') && (
-        <RecordButton onClick={() => send('START')} />
-      )}
-      {(current.matches('recording') || current.matches('transcribing')) && (
-        <StopButton onClick={() => send('STOP')} />
+    <div>
+      {isListening ? (
+        <StopButton onClick={stopButtonEvent} />
+      ) : (
+        <RecordButton onClick={recordButtonEvent} />
       )}
     </div>
   );
