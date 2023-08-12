@@ -46,23 +46,29 @@ const Recorder: React.FC<RecorderProps> = ({
     audioRef,
   } = useProcessRecording(newTranscript, session, setIsLoading, namespace);
   const timeoutRef = useRef<number | null>(null);
+  const [buttonState, setButtonState] = useState<'record' | 'stop' | null>(
+    null
+  );
 
   useEffect(() => {
     console.log('status', status);
-    if (isMicActive) {
-      // Stop any ongoing audio playback when user starts speaking
-      stopOngoingAudio();
-    } else if (finalTranscript) {
-      console.log('finalTranscript', finalTranscript);
-      if (finalTranscript !== newTranscript) {
-        setNewTranscript(finalTranscript);
-        setRecordingProcessed(false);
-        resetTranscript();
-        setStatus('idle');
+    if (buttonState === 'record') {
+      if (isMicActive) {
+        // Stop any ongoing audio playback when user starts speaking
+        stopOngoingAudio();
+      } else if (finalTranscript) {
+        console.log('finalTranscript', finalTranscript);
+        if (finalTranscript !== newTranscript) {
+          setNewTranscript(finalTranscript);
+          setRecordingProcessed(false);
+          resetTranscript();
+          setStatus('idle');
+        }
       }
     }
   }, [
     audioRef,
+    buttonState,
     finalTranscript,
     interimTranscript,
     isMicActive,
@@ -95,12 +101,14 @@ const Recorder: React.FC<RecorderProps> = ({
     stopOngoingAudio();
     toggleListening();
     setStatus('idle');
+    setButtonState('stop');
   };
 
   const recordButtonEvent = () => {
     toggleListening();
     stopOngoingAudio();
     setStatus('recording');
+    setButtonState('record');
   };
 
   if (!browserSupportsSpeechRecognition) {
