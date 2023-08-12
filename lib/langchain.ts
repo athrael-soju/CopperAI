@@ -36,7 +36,7 @@ const getGeneralChain = (
   topK: number
 ) => {
   const vectorMemory = new VectorStoreRetrieverMemory({
-    vectorStoreRetriever: vectorstore.asRetriever(),
+    vectorStoreRetriever: vectorstore.asRetriever(topK), // If the topK retrieves a large number of tokens, openAI will throw an error. So, further chunking maybe required.
     memoryKey: 'chat_history',
   });
 
@@ -51,12 +51,16 @@ const getDocumentChain = (
   topK: number,
   returnSourceDocuments: boolean
 ) => {
+  console.log('Using document chain');
+  const prompt = PromptTemplate.fromTemplate(templates.document_qa.qa_prompt);
   const chain = ConversationalRetrievalQAChain.fromLLM(
     model,
-    vectorstore.asRetriever(),
+    vectorstore.asRetriever(topK),
     {
-      qaTemplate: templates.document_qa.qa_prompt,
-      questionGeneratorTemplate: templates.document_qa.rephrase_prompt,
+      qaTemplate: templates.document_qa.qa_prompt, //qaChainOptions: { prompt: prompt } does not seem to work in this state, so using deprecated method for now.
+      questionGeneratorChainOptions: {
+        template: templates.document_qa.rephrase_prompt, // If the topK retrieves a large number of tokens, openAI will throw an error. So, further chunking maybe required.
+      },
       returnSourceDocuments,
     }
   );
