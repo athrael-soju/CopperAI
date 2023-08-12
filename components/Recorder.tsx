@@ -52,32 +52,42 @@ const Recorder: React.FC<RecorderProps> = ({
 
   useEffect(() => {
     console.log('status', status);
+  }, [isMicActive, status]);
+
+  useEffect(() => {
     if (buttonState === 'record') {
+      // If the mic is active (user is speaking)
       if (isMicActive) {
-        // Stop any ongoing audio playback when user starts speaking
-        stopOngoingAudio();
-      } else if (finalTranscript) {
-        console.log('finalTranscript', finalTranscript);
-        if (finalTranscript !== newTranscript) {
-          setNewTranscript(finalTranscript);
+        SpeechRecognition.startListening({ continuous: true });
+        // Clear any existing timeout (if present)
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+      } else if (transcript?.length > 0) {
+        // If mic is not active, start a timeout of 2 seconds
+        timeoutRef.current = window.setTimeout(() => {
+          SpeechRecognition.stopListening();
+          console.log('transcript', transcript);
+          setNewTranscript(transcript);
           setRecordingProcessed(false);
           resetTranscript();
           setStatus('idle');
-        }
+        }, 3000); // 3 second grace period
       }
+      // Clear the timeout when the component is unmounted
+      return () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+      };
     }
   }, [
-    audioRef,
     buttonState,
-    finalTranscript,
-    interimTranscript,
     isMicActive,
-    newTranscript,
     resetTranscript,
     setRecordingProcessed,
     setStatus,
-    status,
-    stopOngoingAudio,
     transcript,
   ]);
 
