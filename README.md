@@ -39,7 +39,7 @@ Professionals across various fields often confront unfamiliar or intricate situa
 ## 💡 Idea / Solution <a name = "idea"></a>
 
 CopperAI offers a hands-free, voice-to-voice interaction system with a Large Language Model (LLM). Using voice commands, professionals can get instant guidance, troubleshooting steps, or relevant information without diverting their attention. Features:
-- Fully voiced, hands free(ish) interaction.
+- Fully voiced, hands free interaction.
 - Persistent, multi user Vector based memory.
 - The Ability to ingest and interact with custom documents, or even books.
 - The ability to adjust its persona and response type based on user profile and professional aptitude.
