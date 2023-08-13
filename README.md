@@ -26,7 +26,7 @@
 - [Idea / Solution](#idea)
 - [Dependencies / Limitations](#limitations)
 - [Future Scope](#future_scope)
-- [Setting up a local environment](#getting_started)
+- [Getting Started](#getting_started)
 - [Usage](#usage)
 - [Technology Stack](#tech_stack)
 - [Contributing](../CONTRIBUTING.md)
@@ -123,7 +123,7 @@ npm install
 
 After setting up, run `npm run dev` to launch the application. Visit `http://localhost:3000` to access CopperAI.
 
-## ⛏️ Built With <a name = "tech_stack"></a>
+## ⛏️ Tech Stack <a name = "tech_stack"></a>
 
 - [Next.js](https://nextjs.org/) - Web Framework
 - [Docker](https://www.docker.com/) - Containerization and deployment.
