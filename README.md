@@ -6,7 +6,6 @@
 
 <div align="center">
 
-[![Hackathon](https://img.shields.io/badge/hackathon-name-orange.svg)](http://hackathon.url.com)
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/athrael-soju/CopperAI/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/athrael-soju/CopperAI/pulls)
@@ -62,33 +61,32 @@ These instructions will guide you on setting up CopperAI on your local machine f
 
 - Ensure you have Node.js, MongoDB, and other related dependencies installed. 
 - Copy your .env.public file to .env.local and populate required environment variables.
-
 ```
-# OpenAI
+# OpenAI - Required
 NEXT_PUBLIC_OPENAI_API_MODEL= 
 NEXT_PUBLIC_OPENAI_API_KEY=
 
-# Auth
+# Auth - Required
 NEXTAUTH_URL="http://localhost:3000"
 GOOGLE_ID= // Google Authentication
 GOOGLE_SECRET= // Google Authentication
 
-# TTS - google | elevenlabs
+# TTS - google | elevenlabs - Optional
 NEXT_PUBLIC_TTS_PROVIDER="google" // Default
 
-# Google Cloud TTS
+# Google Cloud TTS - Optional
 NEXT_PUBLIC_GOOGLE_CLOUD_TTS_ENCODING=MP3
 NEXT_PUBLIC_GOOGLE_CLOUD_TTS_API_KEY=""
 
-# Eleven Labs TTS
+# Eleven Labs TTS - Optional
 NEXT_PUBLIC_ELEVENLABS_TTS_API_KEY=
 NEXT_PUBLIC_ELEVENLABS_TTS_VOICE_ID_IRIS=
 NEXT_PUBLIC_ELEVENLABS_TTS_VOICE_ID_JUDE=
 
-# MongoDB
+# MongoDB - Required
 MONGODB_URI="mongodb://admin:secret@localhost:27017/myapp?authSource=admin" //Default
 
-# Pinecone
+# Pinecone - Required
 NEXT_PUBLIC_PINECONE_API_KEY=
 NEXT_PUBLIC_PINECONE_ENVIRONMENT=
 NEXT_PUBLIC_PINECONE_NAMESPACE=
@@ -96,7 +94,7 @@ NEXT_PUBLIC_PINECONE_INDEX=
 NEXT_PUBLIC_PINECONE_SIMILARITY_CUTOFF=0.75
 NEXT_PUBLIC_PINECONE_TOPK=1
 
-# Langchain 
+# Langchain - Optional
 NEXT_PUBLIC_LANGCHAIN_ENABLED="false" // If not enabled, application will use the OpenAI completion API
 NEXT_PUBLIC_LANGCHAIN_CHUNK_SIZE=2000 // Customize as needed
 NEXT_PUBLIC_LANGCHAIN_OVERLAP_SIZE=0.2 // Customize as needed
@@ -105,8 +103,8 @@ NEXT_PUBLIC_USE_CHAT_TEMPERATURE=0 // Customize as needed
 NEXT_PUBLIC_USE_DOC_TEMPERATURE=0 // Customize as needed
 NEXT_PUBLIC_RETURN_SOURCE_DOCS="false" // Customize as needed
 
-# Speechly Polyfill
-NEXT_PUBLIC_SPEECHLY_APP_ID= // This is for polyfill
+# Speechly Polyfill - Required
+NEXT_PUBLIC_SPEECHLY_APP_ID=
 ```
 
 ### Installing
