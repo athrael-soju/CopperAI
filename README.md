@@ -62,6 +62,8 @@ These instructions will guide you on setting up CopperAI on your local machine f
 - Ensure you have Node.js, MongoDB, and other related dependencies installed. 
 - Copy your .env.public file to .env.local and populate required environment variables.
 - if you want to use Google TTS, copy your pages\api\auth\google.api.public.json to pages\api\auth\google.api.local.json and paste your google JSON there.
+- In windows, you will need to create an environment variable pointing to google.api.local.json![image](https://github.com/athrael-soju/CopperAI/assets/25455658/09aebac6-0868-4642-a2a7-685b0aea30c2)
+  
 ```
 # OpenAI - Required
 NEXT_PUBLIC_OPENAI_API_MODEL= 
