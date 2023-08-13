@@ -27,13 +27,8 @@ const Recorder: React.FC<RecorderProps> = ({
 }) => {
   const isMicActive = useAudioSensitivity();
   const { data: session } = useSession();
-  const {
-    transcript,
-    interimTranscript,
-    finalTranscript,
-    browserSupportsSpeechRecognition,
-    resetTranscript,
-  } = useSpeechRecognition();
+  const { transcript, browserSupportsSpeechRecognition, resetTranscript } =
+    useSpeechRecognition();
 
   const [isListening, setIsListening] = useState(false);
   const [newTranscript, setNewTranscript] = useState<string | null>(null);
@@ -41,7 +36,6 @@ const Recorder: React.FC<RecorderProps> = ({
     status,
     setStatus,
     setRecordingProcessed,
-    startOngoingAudio,
     stopOngoingAudio,
     audioRef,
   } = useProcessRecording(newTranscript, session, setIsLoading, namespace);
