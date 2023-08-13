@@ -1,5 +1,5 @@
 
-![image](https://github.com/athrael-soju/CopperAI/assets/25455658/28c3d8f3-82f2-4fb1-a9da-25eafab2fa55)
+<img src="header.svg" width="800" height="400">
 
 </p>
 <h3 align="center">Copper AI</h3>
