@@ -35,7 +35,7 @@ yarn-error.log*
 next-env.d.ts
 
 # credentials
-/pages/api/auth/google.api.json
+/pages/api/auth/google.api.local.json
 
 # history
 .history/
