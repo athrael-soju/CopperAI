@@ -3,7 +3,7 @@ import { createSpeechlySpeechRecognition } from '@speechly/speech-recognition-po
 import { RecordButton, StopButton } from './Buttons';
 import { useRecorder } from '../hooks/useRecorder'; // Make sure to correctly import the path
 import SpeechRecognition from 'react-speech-recognition';
-const appId: string = process.env.NEXT_PUBLIC_SPEECHLY_APP_ID || '';
+const appId: string = process.env.NEXT_PUBLIC_SPEECHLY_APP_ID ?? '';
 const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
 SpeechRecognition.applyPolyfill(SpeechlySpeechRecognition);
 
