@@ -21,6 +21,8 @@ services:
       - '3000:3000'
     depends_on:
       - mongodb
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=./pages/api/auth/google.api.local.json      
     networks:
       - copper-network
 

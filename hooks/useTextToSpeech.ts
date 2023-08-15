@@ -25,7 +25,9 @@ const useTextToSpeech = () => {
   };
 
   const startOngoingAudio = () => {
-    audioRef.current && audioRef.current.play();
+    if (audioRef.current) {
+      audioRef.current.play();
+    }
   };
 
   const stopOngoingAudio = () => {

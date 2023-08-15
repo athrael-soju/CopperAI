@@ -32,7 +32,7 @@ export const useProcessRecording = (
     useTextToSpeech();
 
   useEffect(() => {
-    const processRecording = async () => {
+    const processRecording = () => {
       try {
         // If we have a transcript and we haven't saved it yet, save it
         if (
@@ -75,7 +75,21 @@ export const useProcessRecording = (
     };
 
     processRecording();
-  }, [status, sendTranscriptForProcessing, transcript, session, recordingProcessed, generateAudio, startOngoingAudio, stopOngoingAudio, response, setIsLoading, namespace, newTranscript, lastProcessedTranscript]);
+  }, [
+    status,
+    sendTranscriptForProcessing,
+    transcript,
+    session,
+    recordingProcessed,
+    generateAudio,
+    startOngoingAudio,
+    stopOngoingAudio,
+    response,
+    setIsLoading,
+    namespace,
+    newTranscript,
+    lastProcessedTranscript,
+  ]);
 
   return {
     transcript,

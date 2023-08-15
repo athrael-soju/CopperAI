@@ -1,8 +1,7 @@
-import React from 'react';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 
-import ChatTypeContext from '../../lib/context/ChatType';
+import ChatTypeContext from '@/lib/context/ChatType';
 import User from './buttons/User';
 import SignInButton from './buttons/SignInButton';
 import SignedOutIcon from './buttons/SignedOutIcon';
@@ -14,14 +13,14 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({ namespace }) => {
   const { data: session } = useSession();
-  const chatTypeContext = useContext(ChatTypeContext);
+  const context = useContext(ChatTypeContext);
 
-  if (!chatTypeContext) {
+  if (!context) {
     throw new Error('Header must be used within a ChatTypeContextProvider');
   }
   const user = session?.user ?? {};
-  const username = user?.name || '';
-  const { chatType } = chatTypeContext;
+  const username = user?.name ?? '';
+  const { chatType } = context;
   namespace =
     chatType === 'documentChat'
       ? 'document'

@@ -60,7 +60,7 @@ const textToSpeechHandler = async (
           data: {
             text: transcript, // Pass in the inputText as the text to be converted to speech.
           },
-          responseType: 'arraybuffer', // Set the responseType to arraybuffer to receive binary data as response.
+          responseType: 'arraybuffer' as const, // Specify the type explicitly
         };
         const speechDetails = await axios.request(options);
         res.status(200).send(speechDetails.data);

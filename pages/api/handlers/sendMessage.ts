@@ -55,7 +55,7 @@ const sendMessageHandler = async (
           namespace
         );
       }
-      if (response?.successful) {
+      if ('conversationId' in response && response.successful) {
         res.status(200).json({
           successful: true,
           conversationId: response?.conversationId,

@@ -1,28 +1,24 @@
-import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import Recorder from '../components/Recorder';
-import { useContext, useState, useEffect, useRef } from 'react';
-import ChatTypeContext from '../lib/context/ChatType';
+import React, { useContext, useState, useEffect } from 'react';
+import ChatTypeContext from '@/lib/context/ChatType';
 import Spinner from '../components/Spinner';
 import SyncButton from '../components/SyncButton';
 import Visualizer from '../components/Visualizer/Visualizer';
-import React from 'react';
-import RecorderX from '../components/Recorder';
 
 export default function Home() {
-  const router = useRouter();
-  const { data: session, status } = useSession({
+  const { data: session } = useSession({
     required: true,
     onUnauthenticated: () => {},
   });
 
-  const chatTypeContext = useContext(ChatTypeContext);
+  const context = useContext(ChatTypeContext);
 
-  if (!chatTypeContext) {
+  if (!context) {
     throw new Error('Home must be used within a ChatTypeContextProvider');
   }
 
-  const { chatType, setChatType } = chatTypeContext;
+  const { chatType, setChatType } = context;
   const [selectionMade, setSelectionMade] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [namespace, setNamespace] = useState<string | null>(null);
