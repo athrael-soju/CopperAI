@@ -33,8 +33,7 @@ export const useRecorder = (
 
   const startRecording = useCallback(() => {
     if (!isListening) {
-      SpeechRecognition.startListening();
-      setIsListening(true);
+      startListening();
     }
     setStatus('recording');
     if (timeoutRef.current) {
@@ -96,12 +95,16 @@ export const useRecorder = (
     setIsListening(false);
   };
 
+  const startListening = () => {
+    SpeechRecognition.startListening();
+    setIsListening(true);
+  };
+
   const toggleListening = () => {
     if (isListening) {
       stopListening();
     } else {
-      SpeechRecognition.startListening();
-      setIsListening(true);
+      startListening();
     }
   };
 
