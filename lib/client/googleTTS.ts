@@ -1,6 +1,14 @@
 import textToSpeech from '@google-cloud/text-to-speech';
 import logger from '../../lib/winstonConfig';
-const client = new textToSpeech.TextToSpeechClient();
+
+const client = new textToSpeech.TextToSpeechClient({
+  credentials: {
+    private_key: process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_API_KEY?.split(
+      String.raw`\n`
+    ).join('\n'),
+    client_email: process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_CLIENT_EMAIL,
+  },
+});
 
 interface TTSSettings {
   [key: string]: {
@@ -29,7 +37,7 @@ export async function getAudioFromTranscript(
 ) {
   const config = TTS_CONFIGS[namespace] || TTS_CONFIGS.general;
   const audioEncoding =
-    process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_ENCODING || 'MP3';
+    process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_ENCODING ?? 'MP3';
 
   if (!audioEncoding) {
     logger.error(
@@ -54,9 +62,7 @@ export async function getAudioFromTranscript(
 
   try {
     // @ts-ignore Argument of type '{ input: { text: string; }; voice: { languageCode: string | undefined; name: string | undefined; ssmlGender: string | undefined; }; audioConfig: { audioEncoding: string | undefined; }; }' is not assignable to parameter of type 'ISynthesizeSpeechRequest'.
-    const responses = await client.synthesizeSpeech(request);
-    // @ts-ignore Element implicitly has an 'any' type because expression of type '0' can't be used to index type 'Promise<[ISynthesizeSpeechResponse, ISynthesizeSpeechRequest | undefined, {} | undefined]> & void'.
-    const response = responses[0];
+    const [response] = await client.synthesizeSpeech(request);
     return response.audioContent;
   } catch (error: any) {
     logger.error('Failed to get audio from Google Text-to-Speech', {

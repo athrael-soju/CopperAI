@@ -5,9 +5,7 @@ services:
     container_name: copper-ai
     build: .
     ports:
-      - '3000:3000'
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=./pages/api/auth/google.api.local.json      
+      - '3000:3000'      
     networks:
       - copper-network
 

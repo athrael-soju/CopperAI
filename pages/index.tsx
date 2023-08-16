@@ -50,17 +50,21 @@ export default function Home() {
     <main className="flex flex-col h-screen justify-center items-center p-24 pb-8">
       <Visualizer audioElement={audioElement} />
       {session && isLoading && <Spinner />}
-      {!session && (
+      {!session ? (
         <h1 className="text-shadow-default text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-palette2564_1 via-palette2564_3 to-palette2564_5 mb-10">
           Welcome to Copper AI
           <span style={{ fontSize: 15 }}>Please login to continue</span>
         </h1>
-      )}
-      {session && !isUserAUthorized && (
-        <h1 className="text-shadow-default text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-palette2564_1 via-palette2564_3 to-palette2564_5 mb-10">
-          User not Authorized
-          <span style={{ fontSize: 15 }}>Please contact an administrator</span>
-        </h1>
+      ) : (
+        session &&
+        !isUserAUthorized && (
+          <h1 className="text-shadow-default text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-palette2564_1 via-palette2564_3 to-palette2564_5 mb-10">
+            User not Authorized
+            <span style={{ fontSize: 15 }}>
+              Please contact an administrator
+            </span>
+          </h1>
+        )
       )}
       {!chatType && session && isUserAUthorized && (
         <div className="h-4/5 w-full flex flex-col">
