@@ -3,20 +3,26 @@ import multer from 'multer';
 import { sendViaChatCompletion, sendViaLangChain } from '@/lib/utils';
 import logger from '../../../lib/winstonConfig';
 
-// Initialize multer
 const upload = multer({ storage: multer.memoryStorage() });
 const docTemperature = Number(process.env.NEXT_PUBLIC_USE_DOC_TEMPERATURE);
 const chatTemperature = Number(process.env.NEXT_PUBLIC_USE_CHAT_TEMPERATURE);
 const useLanchgain = process.env.NEXT_PUBLIC_LANGCHAIN_ENABLED === 'true';
 const returnSourceDocuments =
   process.env.NEXT_PUBLIC_RETURN_SOURCE_DOCS === 'true';
+
+import { Request, Response } from 'express';
+type NextApiRequestWithExpress = NextApiRequest & Request;
+type NextApiResponseWithExpress = NextApiResponse & Response;
+
+logger.defaultMeta = { service: 'sendMessage.ts' };
+
 const sendMessageHandler = async (
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: NextApiRequestWithExpress,
+  res: NextApiResponseWithExpress
 ) => {
   return new Promise<void>((resolve, reject) => {
     logger.defaultMeta = { service: 'sendMessage.ts' };
-    // @ts-ignore - Argument of type 'NextApiRequest' is not assignable to parameter of type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+
     upload.any()(req, res, async (err) => {
       if (err) {
         logger.error('Upload failed', { error: err });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ColorRing, Dna } from 'react-loader-spinner';
+import { ColorRing } from 'react-loader-spinner';
 
 const Spinner = () => {
   return (

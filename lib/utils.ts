@@ -29,7 +29,7 @@ export const sendViaLangChain = async (
     const index = await getIndex();
     const vectorStore = await PineconeStore.fromExistingIndex(
       new OpenAIEmbeddings({
-        openAIApiKey: openAIapiKey as string,
+        openAIApiKey: openAIapiKey,
       }),
       {
         pineconeIndex: index,
@@ -147,8 +147,10 @@ export const sendViaChatCompletion = async (
         conversationId: newId,
       };
     })
-    .catch((err) => {
-      logger.error('Chat Completion Request Unsuccessful', { error: err });
-      return { successful: false, message: err };
+    .catch((error) => {
+      logger.error('Chat Completion Request Unsuccessful', {
+        error: error.message,
+      });
+      return { successful: false, message: error };
     });
 };

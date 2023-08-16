@@ -2,12 +2,15 @@ import pineconeClient from './client/pinecone';
 import { createEmbedding } from './openAI';
 import logger from '../lib/winstonConfig';
 
-import { Conversation } from '../types/Conversation';
+const PINECONE_INDEX = process.env.NEXT_PUBLIC_PINECONE_INDEX;
+const PINECONE_TOPK = process.env.NEXT_PUBLIC_PINECONE_TOPK;
+const PINECONE_SIMILARITY_CUTOFF =
+  process.env.NEXT_PUBLIC_PINECONE_SIMILARITY_CUTOFF;
 
-const PINECONE_INDEX = process.env.NEXT_PUBLIC_PINECONE_INDEX as string;
-const PINECONE_TOPK = process.env.NEXT_PUBLIC_PINECONE_TOPK as string;
-const PINECONE_SIMILARITY_CUTOFF = process.env
-  .NEXT_PUBLIC_PINECONE_SIMILARITY_CUTOFF as string;
+if (!PINECONE_INDEX || !PINECONE_TOPK || !PINECONE_SIMILARITY_CUTOFF) {
+  logger.error('Invalid/Missing Pinecone environment variables');
+  throw new Error('Invalid/Missing Pinecone environment variables');
+}
 
 export const upsertConversationToPinecone = async (
   username: string,
@@ -15,31 +18,40 @@ export const upsertConversationToPinecone = async (
   response: string,
   namespace: string,
   newId: string
-) => {
-  let index = await getIndex();
-  const conversation = `${username}: ${prompt} AI: ${response} Date: ${new Date()}`;
-  let embedding = (await createEmbedding(conversation)) as number[];
+): Promise<any> => {
+  try {
+    const conversation = `${username}: ${prompt} AI: ${response} Date: ${new Date()}`;
+    const embedding = (await createEmbedding(conversation)) as number[];
 
-  logger.info(`Upserting New Embedding for id: ${newId}...`);
-  const upsertResponse = await index.upsert({
-    upsertRequest: {
-      vectors: [
-        {
-          id: newId,
-          values: embedding,
-          metadata: {
+    logger.info(`Upserting New Embedding for id: ${newId}...`);
+    const index = await getIndex();
+    const upsertResponse = await index.upsert({
+      upsertRequest: {
+        vectors: [
+          {
+            id: newId,
+            values: embedding,
+            metadata: {
             id: newId,
             conversation: conversation,
+            },
           },
-        },
-      ],
+        ],
       namespace: `${username}_${namespace}`,
-    },
-  });
-  logger.info('Upserted Successfully:', {
-    response: upsertResponse,
-  });
-  return upsertResponse;
+      },
+    });
+    return upsertResponse;
+  } catch (error: any) {
+    logger.error('Failed to upsert conversation to Pinecone', {
+      error: error.message,
+      username,
+      prompt,
+      response,
+      namespace,
+      newId,
+    });
+    throw error;
+  }
 };
 
 export const queryMessageInPinecone = async (

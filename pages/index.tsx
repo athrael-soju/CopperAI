@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import Recorder from '../components/Recorder';
 import React, { useContext, useState, useEffect } from 'react';
-import ChatTypeContext from '@/lib/context/ChatType';
+import ChatTypeContext from '@/lib/ChatType';
 import Spinner from '../components/Spinner';
 import SyncButton from '../components/SyncButton';
 import Visualizer from '../components/Visualizer/Visualizer';
