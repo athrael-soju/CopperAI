@@ -13,7 +13,7 @@ import { getIndex } from '@/lib/pinecone';
 
 const chunkSize = process.env.NEXT_PUBLIC_LANGCHAIN_CHUNK_SIZE;
 const overlapSize = process.env.NEXT_PUBLIC_LANGCHAIN_OVERLAP_SIZE;
-const uploadLimit = 10 * 1024 * 1024; // for example, 10MB
+const uploadLimit = 10 * 1024 * 1024;
 const upload = multer({
   limits: { fileSize: uploadLimit },
 });
