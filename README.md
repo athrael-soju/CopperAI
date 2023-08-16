@@ -60,52 +60,61 @@ These instructions will guide you on setting up CopperAI on your local machine f
 ### Prerequisites
 
 - Ensure you have Node.js, MongoDB, and other related dependencies installed. 
-- Copy your .env.public file to .env.local and populate required environment variables.
-
+- Copy your .env.public file to .env.local and populate environment variables.
 ```
-# OpenAI - Required
-NEXT_PUBLIC_OPENAI_API_MODEL= 
+# Main
+NEXT_PUBLIC_AUDIO_DB_SENSITIVITY='-55'
+
+# OpenAI
+NEXT_PUBLIC_OPENAI_API_MODEL=
 NEXT_PUBLIC_OPENAI_API_KEY=
 
-# Auth - Required
+# Auth
 NEXTAUTH_URL="http://localhost:3000"
-GOOGLE_ID= // Google Authentication
-GOOGLE_SECRET= // Google Authentication
+NEXTAUTH_SECRET='secret'
+GITHUB_ID=
+GITHUB_SECRET=
+GOOGLE_ID=
+GOOGLE_SECRET=
 
-# TTS - google | elevenlabs - Optional
-NEXT_PUBLIC_TTS_PROVIDER="google" // Default
+# TTS - google | elevenlabs
+NEXT_PUBLIC_TTS_PROVIDER="google"
 
-# Google Cloud TTS - Optional
+# Google Cloud TTS
 NEXT_PUBLIC_GOOGLE_CLOUD_TTS_ENCODING=MP3
-NEXT_PUBLIC_GOOGLE_CLOUD_TTS_API_KEY=""
+NEXT_PUBLIC_GOOGLE_CLOUD_TTS_CLIENT_EMAIL=
+NEXT_PUBLIC_GOOGLE_CLOUD_TTS_API_KEY=
 
-# Eleven Labs TTS - Optional
+# Eleven Labs TTS
 NEXT_PUBLIC_ELEVENLABS_TTS_API_KEY=
 NEXT_PUBLIC_ELEVENLABS_TTS_VOICE_ID_IRIS=
 NEXT_PUBLIC_ELEVENLABS_TTS_VOICE_ID_JUDE=
 
-# MongoDB - Required
-MONGODB_URI="mongodb://admin:secret@localhost:27017/myapp?authSource=admin" //Default
+# MongoDB
+MONGODB_URI="mongodb+srv://<username>:<password>@<collection>.mongodb.net/?retryWrites=true&w=majority"
 
-# Pinecone - Required
+# Pinecone
 NEXT_PUBLIC_PINECONE_API_KEY=
 NEXT_PUBLIC_PINECONE_ENVIRONMENT=
 NEXT_PUBLIC_PINECONE_NAMESPACE=
 NEXT_PUBLIC_PINECONE_INDEX=
 NEXT_PUBLIC_PINECONE_SIMILARITY_CUTOFF=0.75
-NEXT_PUBLIC_PINECONE_TOPK=1
+NEXT_PUBLIC_PINECONE_TOPK=5
 
-# Langchain - Optional
-NEXT_PUBLIC_LANGCHAIN_ENABLED="false" // If not enabled, application will use the OpenAI completion API
-NEXT_PUBLIC_LANGCHAIN_CHUNK_SIZE=2000 // Customize as needed
-NEXT_PUBLIC_LANGCHAIN_OVERLAP_SIZE=0.2 // Customize as needed
-NEXT_PUBLIC_USE_CHAT_HISTORY="false" // Customize as needed
-NEXT_PUBLIC_USE_CHAT_TEMPERATURE=0 // Customize as needed
-NEXT_PUBLIC_USE_DOC_TEMPERATURE=0 // Customize as needed
-NEXT_PUBLIC_RETURN_SOURCE_DOCS="false" // Customize as needed
+# Langchain 
+NEXT_PUBLIC_LANGCHAIN_ENABLED="false"
+NEXT_PUBLIC_LANGCHAIN_CHUNK_SIZE=1000
+NEXT_PUBLIC_LANGCHAIN_OVERLAP_SIZE=0.2
+NEXT_PUBLIC_USE_CHAT_HISTORY="false"
+NEXT_PUBLIC_USE_CHAT_TEMPERATURE=0
+NEXT_PUBLIC_USE_DOC_TEMPERATURE=0
+NEXT_PUBLIC_RETURN_SOURCE_DOCS="true"
 
-# Speechly Polyfill - Required
+# Speechly Polyfill
 NEXT_PUBLIC_SPEECHLY_APP_ID=
+
+# File Upload
+TMP_DIR="tmp"
 ```
 
 ### Installing
