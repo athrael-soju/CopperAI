@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 
-import ChatTypeContext from '../../lib/context/ChatType';
+import ChatTypeContext from '@/lib/context/ChatType';
 import User from './buttons/User';
 import SignInButton from './buttons/SignInButton';
 import SignedOutIcon from './buttons/SignedOutIcon';

@@ -37,7 +37,9 @@ next-env.d.ts
 # credentials
 /pages/api/auth/google.api.local.json
 
-# history
-.history/
+# misc
+/.history
+/.vscode
+
 combined.log
 error.log
