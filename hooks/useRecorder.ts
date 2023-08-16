@@ -49,8 +49,7 @@ export const useRecorder = (
         setRecordingProcessed(false);
         resetTranscript();
       }
-      SpeechRecognition.stopListening();
-      setIsListening(false);
+      stopListening();
       setStatus('idle');
     }, 2000);
   }, [transcript, setStatus, setRecordingProcessed, resetTranscript]);

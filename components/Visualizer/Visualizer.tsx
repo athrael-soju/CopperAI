@@ -28,13 +28,14 @@ const Visualizer: React.FC<VisualizerProps> = ({ audioElement }) => {
 
           canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 
-          const baseRadius = 75; // Adjust this for a smaller or larger circle
-          const numBars = 100; // Adjust this as needed
+          const baseRadius = 75;
+          const numBars = 100;
           const barWidth = (2 * Math.PI) / numBars;
 
           for (let i = 0; i < numBars; i++) {
-            // Take the corresponding frequency data, or the last one if it doesn't exist
             const barHeight = dataArray[i % dataArray.length];
+
+            const scaledBarHeight = Math.log(1 + barHeight) * 25;
 
             const rads = i * barWidth;
             const centerX = canvas.width / 2;
@@ -42,13 +43,29 @@ const Visualizer: React.FC<VisualizerProps> = ({ audioElement }) => {
 
             const x = centerX + Math.cos(rads) * baseRadius;
             const y = centerY + Math.sin(rads) * baseRadius;
-            const xEnd = centerX + Math.cos(rads) * (baseRadius + barHeight);
-            const yEnd = centerY + Math.sin(rads) * (baseRadius + barHeight);
+            const xEnd =
+              centerX + Math.cos(rads) * (baseRadius + scaledBarHeight);
+            const yEnd =
+              centerY + Math.sin(rads) * (baseRadius + scaledBarHeight);
 
-            // Choose color based on bar height
-            const colorIndex = Math.floor((barHeight / 512) * palette.length);
-            canvasContext.strokeStyle = palette[colorIndex];
-            canvasContext.lineWidth = 5;
+            // Create a gradient for each bar
+            const gradient = canvasContext.createLinearGradient(
+              x,
+              y,
+              xEnd,
+              yEnd
+            );
+            const colorIndex = Math.min(
+              palette.length - 1,
+              Math.floor(barHeight / (255 / palette.length))
+            );
+            gradient.addColorStop(0, palette[colorIndex]);
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)'); // Transparent at the end
+
+            canvasContext.strokeStyle = gradient;
+
+            // Dynamic bar width based on its height
+            canvasContext.lineWidth = 3 + scaledBarHeight / 200;
 
             canvasContext.beginPath();
             canvasContext.moveTo(x, y);
@@ -59,6 +76,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ audioElement }) => {
           requestAnimationFrame(draw);
         }
       }
+
       draw();
     }
   }, [audioElement]);

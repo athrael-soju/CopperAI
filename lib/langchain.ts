@@ -12,22 +12,42 @@ export const getChain = (
   returnSourceDocuments: boolean,
   modelTemperature: number,
   namespace: string
-) => {
-  const topK = Number(process.env.NEXT_PUBLIC_PINECONE_TOPK) || 5;
-  const openAIApiModelName = process.env.NEXT_PUBLIC_OPENAI_API_MODEL;
-  const openAIapiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY as string;
+): any => {
+  // Adjusted return type to 'any' as the exact type isn't clear
+  try {
+    const topK = Number(process.env.NEXT_PUBLIC_PINECONE_TOPK) || 5;
+    const openAIApiModelName = process.env.NEXT_PUBLIC_OPENAI_API_MODEL;
+    const openAIapiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY as string;
 
-  const model = new OpenAI({
-    temperature: modelTemperature,
-    modelName: openAIApiModelName,
-    openAIApiKey: openAIapiKey,
-  });
+    if (!openAIApiModelName || !openAIapiKey) {
+      logger.error(
+        'Environment variables for OpenAI are missing or not properly configured.'
+      );
+      throw new Error('OpenAI configuration is missing or incomplete.');
+    }
 
-  let chain =
-    namespace === 'general'
-      ? getGeneralChain(model, vectorstore, topK)
-      : getDocumentChain(model, vectorstore, topK, returnSourceDocuments);
-  return chain;
+    const model = new OpenAI({
+      temperature: modelTemperature,
+      modelName: openAIApiModelName,
+      openAIApiKey: openAIapiKey,
+    });
+
+    logger.info('Successfully created OpenAI model', {
+      modelName: openAIApiModelName,
+    });
+
+    let chain =
+      namespace === 'general'
+        ? getGeneralChain(model, vectorstore, topK)
+        : getDocumentChain(model, vectorstore, topK, returnSourceDocuments);
+    return chain;
+  } catch (error: any) {
+    logger.error('Failed to initialize chain', {
+      error: error.message,
+      namespace,
+    });
+    throw error;
+  }
 };
 
 const getGeneralChain = (
@@ -36,7 +56,7 @@ const getGeneralChain = (
   topK: number
 ) => {
   const vectorMemory = new VectorStoreRetrieverMemory({
-    vectorStoreRetriever: vectorstore.asRetriever(topK), // If the topK retrieves a large number of tokens, openAI will throw an error. So, further chunking maybe required.
+    vectorStoreRetriever: vectorstore.asRetriever(topK),
     memoryKey: 'chat_history',
   });
 
@@ -57,9 +77,9 @@ const getDocumentChain = (
     model,
     vectorstore.asRetriever(topK),
     {
-      qaTemplate: templates.document_qa.qa_prompt, //qaChainOptions: { prompt: prompt } does not seem to work in this state, so using deprecated method for now.
+      qaTemplate: templates.document_qa.qa_prompt,
       questionGeneratorChainOptions: {
-        template: templates.document_qa.rephrase_prompt, // If the topK retrieves a large number of tokens, openAI will throw an error. So, further chunking maybe required.
+        template: templates.document_qa.rephrase_prompt,
       },
       returnSourceDocuments,
     }
