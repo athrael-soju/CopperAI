@@ -1,12 +1,13 @@
 import { OpenAI } from 'langchain/llms/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { ConversationalRetrievalQAChain, LLMChain } from 'langchain/chains';
-import logger from '../lib/winstonConfig';
+import { createServiceLogger } from '@/lib/winstonConfig';
 import templates from './templates';
 import { BaseLanguageModel } from 'langchain/dist/base_language';
 import { PromptTemplate } from 'langchain/prompts';
 import { VectorStoreRetrieverMemory } from 'langchain/memory';
 
+const serviceLogger = createServiceLogger('lib/langchain.ts');
 export const getChain = (
   vectorstore: PineconeStore,
   returnSourceDocuments: boolean,
@@ -20,7 +21,7 @@ export const getChain = (
     const openAIapiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY as string;
 
     if (!openAIApiModelName || !openAIapiKey) {
-      logger.error(
+      serviceLogger.error(
         'Environment variables for OpenAI are missing or not properly configured.'
       );
       throw new Error('OpenAI configuration is missing or incomplete.');
@@ -32,7 +33,7 @@ export const getChain = (
       openAIApiKey: openAIapiKey,
     });
 
-    logger.info('Successfully created OpenAI model', {
+    serviceLogger.info('Successfully created OpenAI model', {
       modelName: openAIApiModelName,
     });
 
@@ -42,7 +43,7 @@ export const getChain = (
         : getDocumentChain(model, vectorstore, topK, returnSourceDocuments);
     return chain;
   } catch (error: any) {
-    logger.error('Failed to initialize chain', {
+    serviceLogger.error('Failed to initialize chain', {
       error: error.message,
       namespace,
     });

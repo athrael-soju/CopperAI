@@ -1,14 +1,14 @@
 import pineconeClient from './client/pinecone';
 import { createEmbedding } from './openAI';
-import logger from '../lib/winstonConfig';
-
+import { createServiceLogger } from '@/lib/winstonConfig';
+const serviceLogger = createServiceLogger('lib/pinecone.ts');
 const PINECONE_INDEX = process.env.NEXT_PUBLIC_PINECONE_INDEX;
 const PINECONE_TOPK = process.env.NEXT_PUBLIC_PINECONE_TOPK;
 const PINECONE_SIMILARITY_CUTOFF =
   process.env.NEXT_PUBLIC_PINECONE_SIMILARITY_CUTOFF;
 
 if (!PINECONE_INDEX || !PINECONE_TOPK || !PINECONE_SIMILARITY_CUTOFF) {
-  logger.error('Invalid/Missing Pinecone environment variables');
+  serviceLogger.error('Invalid/Missing Pinecone environment variables');
   throw new Error('Invalid/Missing Pinecone environment variables');
 }
 
@@ -23,7 +23,7 @@ export const upsertConversationToPinecone = async (
     const conversation = `${username}: ${prompt} AI: ${response} Date: ${new Date()}`;
     const embedding = (await createEmbedding(conversation)) as number[];
 
-    logger.info(`Upserting New Embedding for id: ${newId}...`);
+    serviceLogger.info(`Upserting New Embedding for id: ${newId}...`);
     const index = await getIndex();
     const upsertResponse = await index.upsert({
       upsertRequest: {
@@ -32,17 +32,17 @@ export const upsertConversationToPinecone = async (
             id: newId,
             values: embedding,
             metadata: {
-            id: newId,
-            conversation: conversation,
+              id: newId,
+              conversation: conversation,
             },
           },
         ],
-      namespace: `${username}_${namespace}`,
+        namespace: `${username}_${namespace}`,
       },
     });
     return upsertResponse;
   } catch (error: any) {
-    logger.error('Failed to upsert conversation to Pinecone', {
+    serviceLogger.error('Failed to upsert conversation to Pinecone', {
       error: error.message,
       username,
       prompt,
@@ -73,7 +73,7 @@ export const queryMessageInPinecone = async (
 
   const queryLength = queryResponse?.matches?.length as number;
   if (queryLength > 0) {
-    logger.info('Conversation Matches:', {
+    serviceLogger.info('Conversation Matches:', {
       response: queryResponse.matches?.length,
     });
     const namespaceMappings: {
@@ -95,7 +95,7 @@ export const queryMessageInPinecone = async (
         .join('\n');
     }
   } else {
-    logger.info('No Conversation Matches', {
+    serviceLogger.info('No Conversation Matches', {
       response: queryResponse,
     });
     return null;
@@ -105,7 +105,7 @@ export const queryMessageInPinecone = async (
 export const getIndex = async () => {
   let index = pineconeClient.Index(PINECONE_INDEX);
   if (!index) {
-    logger.info(`index ${PINECONE_INDEX} does not exist, creating...`);
+    serviceLogger.info(`index ${PINECONE_INDEX} does not exist, creating...`);
     await pineconeClient.createIndex({
       createRequest: {
         name: PINECONE_INDEX,
@@ -114,10 +114,10 @@ export const getIndex = async () => {
         podType: 'Starter',
       },
     });
-    logger.info(`index ${PINECONE_INDEX} created.`);
+    serviceLogger.info(`index ${PINECONE_INDEX} created.`);
   } else {
     index = pineconeClient.Index(PINECONE_INDEX);
-    logger.info(`Using Existing Index ${PINECONE_INDEX}`);
+    serviceLogger.info(`Using Existing Index ${PINECONE_INDEX}`);
   }
   return index;
 };

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import logger from '../../../lib/winstonConfig';
+import { createServiceLogger } from '@/lib/winstonConfig';
 import multer from 'multer';
 import fs from 'fs';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
@@ -24,7 +24,9 @@ import { Request, Response } from 'express';
 type NextApiRequestWithExpress = NextApiRequest & Request;
 type NextApiResponseWithExpress = NextApiResponse & Response;
 
-logger.defaultMeta = { service: 'processIngest.ts' };
+const serviceLogger = createServiceLogger(
+  'pages/api/handlers/processIngest.ts'
+);
 
 const processIngestHandler = async (
   req: NextApiRequestWithExpress,
@@ -33,7 +35,7 @@ const processIngestHandler = async (
   return new Promise<void>((resolve, reject) => {
     upload.any()(req, res, async (err) => {
       if (err) {
-        logger.error('Data Ingestion Failed', { error: err });
+        serviceLogger.error('Data Ingestion Failed', { error: err });
         res.status(500).json({ successful: false, response: err.message });
         return reject();
       }
@@ -60,14 +62,14 @@ const processIngestHandler = async (
       });
       let index = await getIndex();
 
-      logger.info('Data Ingestion Started...');
+      serviceLogger.info('Data Ingestion Started...');
       PineconeStore.fromDocuments(docs, embeddings, {
         pineconeIndex: index,
         namespace: `${username}_${namespace}`,
         textKey: 'pageContent',
       })
         .then(() => {
-          logger.info('Data Ingestion Completed');
+          serviceLogger.info('Data Ingestion Completed');
           const filesToDelete = fs
             .readdirSync(filePath)
             .filter(
@@ -80,14 +82,14 @@ const processIngestHandler = async (
           filesToDelete.forEach((file) => {
             fs.unlinkSync(`${filePath}/${file}`);
           });
-          logger.info('Temporary files deleted');
+          serviceLogger.info('Temporary files deleted');
           res
             .status(200)
             .json({ successful: true, response: 'Data Ingestion Completed' });
           return resolve();
         })
         .catch((err) => {
-          logger.error('Data Ingestion Failed', { error: err });
+          serviceLogger.error('Data Ingestion Failed', { error: err });
           res.status(500).json({ successful: false, response: err.message });
           return reject();
         });

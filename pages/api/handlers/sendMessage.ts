@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import multer from 'multer';
 import { sendViaChatCompletion, sendViaLangChain } from '@/lib/utils';
-import logger from '../../../lib/winstonConfig';
+import { createServiceLogger } from '@/lib/winstonConfig';
 
 const upload = multer({ storage: multer.memoryStorage() });
 const docTemperature = Number(process.env.NEXT_PUBLIC_USE_DOC_TEMPERATURE);
@@ -14,18 +14,16 @@ import { Request, Response } from 'express';
 type NextApiRequestWithExpress = NextApiRequest & Request;
 type NextApiResponseWithExpress = NextApiResponse & Response;
 
-logger.defaultMeta = { service: 'sendMessage.ts' };
+const serviceLogger = createServiceLogger('pages/api/handlers/sendMessage.ts');
 
 const sendMessageHandler = async (
   req: NextApiRequestWithExpress,
   res: NextApiResponseWithExpress
 ) => {
   return new Promise<void>((resolve, reject) => {
-    logger.defaultMeta = { service: 'sendMessage.ts' };
-
     upload.any()(req, res, async (err) => {
       if (err) {
-        logger.error('Upload failed', { error: err });
+        serviceLogger.error('Upload failed', { error: err });
         res.status(500).json({ error: err.message });
         return resolve();
       }
@@ -40,12 +38,12 @@ const sendMessageHandler = async (
           ? docTemperature
           : 0;
 
-      logger.info('Chat Completion Prompt:', {
+      serviceLogger.info('Chat Completion Prompt:', {
         response: prompt,
       });
       let response;
       if (useLanchgain) {
-        logger.info('Using Langchain for Chat Completion...');
+        serviceLogger.info('Using Langchain for Chat Completion...');
         response = await sendViaLangChain(
           username,
           sanitizedPrompt,
@@ -54,7 +52,9 @@ const sendMessageHandler = async (
           returnSourceDocuments
         );
       } else {
-        logger.info('Langchain disabled. Using OpenAI for Chat Completion...');
+        serviceLogger.info(
+          'Langchain disabled. Using OpenAI for Chat Completion...'
+        );
         response = await sendViaChatCompletion(
           username,
           sanitizedPrompt,
