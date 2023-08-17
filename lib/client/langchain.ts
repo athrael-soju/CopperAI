@@ -1,13 +1,13 @@
 import { OpenAI } from 'langchain/llms/openai';
 import { LLMChain } from 'langchain/chains';
 import { PromptTemplate } from 'langchain/prompts';
-import logger from '../../lib/winstonConfig';
-
+import { createServiceLogger } from '@/lib/winstonConfig';
+const serviceLogger = createServiceLogger('lib/client/langchain.ts');
 const MODEL_NAME = process.env.NEXT_PUBLIC_OPENAI_API_MODEL as string;
 const OPENAI_API_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY as string;
 
 if (!MODEL_NAME || !OPENAI_API_KEY) {
-  logger.error('Invalid/Missing OpenAI environment variables');
+  serviceLogger.error('Invalid/Missing OpenAI environment variables');
   throw new Error('Invalid/Missing OpenAI environment variables');
 }
 
@@ -47,7 +47,7 @@ export async function getResult(
       history,
     });
   } catch (error: any) {
-    logger.error('Failed to get result from Langchain', {
+    serviceLogger.error('Failed to get result from Langchain', {
       error: error.message,
     });
     throw error;

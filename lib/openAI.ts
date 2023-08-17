@@ -1,9 +1,12 @@
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from 'openai';
-import logger from '../lib/winstonConfig';
+import { createServiceLogger } from '@/lib/winstonConfig';
+const serviceLogger = createServiceLogger('lib/openAI.ts');
 
 const OPENAI_API_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 if (!OPENAI_API_KEY) {
-  logger.error('OPENAI_API_KEY is not defined in environment variables.');
+  serviceLogger.error(
+    'OPENAI_API_KEY is not defined in environment variables.'
+  );
   throw new Error('OPENAI_API_KEY is required.');
 }
 
@@ -20,7 +23,9 @@ export async function createChatCompletion(
   try {
     const MODEL = process.env.NEXT_PUBLIC_OPENAI_API_MODEL;
     if (!MODEL) {
-      logger.error('OPENAI_MODEL is not defined in environment variables.');
+      serviceLogger.error(
+        'OPENAI_MODEL is not defined in environment variables.'
+      );
       throw new Error('OPENAI_MODEL is required.');
     }
 
@@ -30,13 +35,13 @@ export async function createChatCompletion(
       user: user,
     });
 
-    logger.info('OpenAI chat completion successful', {
+    serviceLogger.info('OpenAI chat completion successful', {
       user: user,
       messages: messages.length,
     });
     return response;
   } catch (error: any) {
-    logger.error('OpenAI chat completion failed', {
+    serviceLogger.error('OpenAI chat completion failed', {
       user: user,
       messages: messages.length,
       error: error.message,
@@ -51,13 +56,13 @@ export async function createEmbedding(message: string): Promise<any> {
       input: message,
       model: 'text-embedding-ada-002',
     });
-    logger.info('OpenAI embedding creation successful', {
+    serviceLogger.info('OpenAI embedding creation successful', {
       message: message,
     });
 
     return response.data.data[0].embedding;
   } catch (error: any) {
-    logger.error('OpenAI embedding creation failed', {
+    serviceLogger.error('OpenAI embedding creation failed', {
       message: message,
       error: error.message,
     });

@@ -37,4 +37,15 @@ if (process.env.NODE_ENV !== 'production') {
   );
 }
 
-export default logger;
+function createServiceLogger(serviceName: string) {
+  return {
+    info: (message: string, meta?: object) => {
+      logger.info(message, { ...meta, service: serviceName });
+    },
+    error: (message: string, meta?: object) => {
+      logger.error(message, { ...meta, service: serviceName });
+    },
+  };
+}
+
+export { logger, createServiceLogger };

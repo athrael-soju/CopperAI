@@ -1,8 +1,8 @@
 import { MongoClient } from 'mongodb';
-import logger from '../../lib/winstonConfig';
-
+import { createServiceLogger } from '@/lib/winstonConfig';
+const serviceLogger = createServiceLogger('lib/client/mongodb.ts');
 if (!process.env.MONGODB_URI) {
-  logger.error('Missing environment variable: "MONGODB_URI"');
+  serviceLogger.error('Missing environment variable: "MONGODB_URI"');
   throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
 }
 
@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === 'development') {
   if (!globalWithMongo._mongoClientPromise) {
     client = new MongoClient(uri, options);
     globalWithMongo._mongoClientPromise = client.connect().catch((err) => {
-      logger.error('Failed to connect to MongoDB in development', {
+      serviceLogger.error('Failed to connect to MongoDB in development', {
         error: err.message,
       });
       throw err;
@@ -31,9 +31,9 @@ if (process.env.NODE_ENV === 'development') {
   try {
     client = new MongoClient(uri, options);
     clientPromise = client.connect();
-    logger.info('Connected to MongoDB');
+    serviceLogger.info('Connected to MongoDB');
   } catch (error: any) {
-    logger.error('Failed to connect to MongoDB', { error: error.message });
+    serviceLogger.error('Failed to connect to MongoDB', { error: error.message });
     throw error;
   }
 }

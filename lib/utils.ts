@@ -11,7 +11,8 @@ import { getHistory, updateHistory } from '@/lib/database';
 import { ChatCompletionRequestMessage } from 'openai';
 import { createChatCompletion } from '@/lib/openAI';
 import templates from './templates';
-import logger from './winstonConfig';
+import { createServiceLogger } from '@/lib/winstonConfig';
+const serviceLogger = createServiceLogger('lib/utils.ts');
 
 const openAIapiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY as string;
 const useHistory = process.env.NEXT_PUBLIC_USE_CHAT_HISTORY === 'true';
@@ -123,7 +124,7 @@ export const sendViaChatCompletion = async (
     .then(async (response) => {
       const responseContent = response?.data?.choices[0]?.message
         ?.content as string;
-      logger.info('Chat Completion Response:', {
+      serviceLogger.info('Chat Completion Response:', {
         response: responseContent,
       });
       let newId = await updateHistory(
@@ -148,7 +149,7 @@ export const sendViaChatCompletion = async (
       };
     })
     .catch((error) => {
-      logger.error('Chat Completion Request Unsuccessful', {
+      serviceLogger.error('Chat Completion Request Unsuccessful', {
         error: error.message,
       });
       return { successful: false, message: error };

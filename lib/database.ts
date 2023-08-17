@@ -1,8 +1,9 @@
 import clientPromise from './client/mobgodb';
-import logger from '../lib/winstonConfig';
+import { createServiceLogger } from '@/lib/winstonConfig';
 import { Conversation } from '../types/Conversation';
 
 const client = (await clientPromise) as any;
+const serviceLogger = createServiceLogger('lib/database.ts');
 
 export const updateHistory = async (
   username: string,
@@ -22,12 +23,12 @@ export const updateHistory = async (
     const result = await db
       .collection('Conversation')
       .insertOne(newConversation);
-    logger.info('Inserted conversation into database', {
+    serviceLogger.info('Inserted conversation into database', {
       conversationId: result.insertedId,
     });
     return result.insertedId.toString();
   } catch (error: any) {
-    logger.error('Failed to insert conversation into database', {
+    serviceLogger.error('Failed to insert conversation into database', {
       error: error,
     });
     throw error.message;
@@ -37,7 +38,7 @@ export const updateHistory = async (
 export const getHistory = async (username: string, namespace: string) => {
   try {
     const db = client.db('myapp');
-    logger.info('Retrieving User Message History...');
+    serviceLogger.info('Retrieving User Message History...');
     let history = await db
       .collection('Conversation')
       .find({ username: username, namespace: namespace })
@@ -49,12 +50,15 @@ export const getHistory = async (username: string, namespace: string) => {
         return `${username}: ${conversation.message} AI: ${conversation.response} Date: ${conversation.date}`;
       })
       .join('\n');
-    logger.info(`Retrieved ${history.length} conversations from database`, {
-      username,
-    });
+    serviceLogger.info(
+      `Retrieved ${history.length} conversations from database`,
+      {
+        username,
+      }
+    );
     return formattedHistory;
   } catch (error: any) {
-    logger.error('Failed to retrieve conversations from database', {
+    serviceLogger.error('Failed to retrieve conversations from database', {
       username,
       error: error.message,
     });

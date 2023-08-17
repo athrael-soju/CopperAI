@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getAudioFromTranscript } from '@/lib/client/googleTTS';
 import axios from 'axios';
 import multer from 'multer';
-import logger from '../../../lib/winstonConfig';
+import { createServiceLogger } from '@/lib/winstonConfig';
 
 const upload = multer();
 
@@ -12,7 +12,7 @@ type NextApiResponseWithExpress = NextApiResponse & Response;
 
 const ttsProvider = process.env.NEXT_PUBLIC_TTS_PROVIDER;
 
-logger.defaultMeta = { service: 'textToSpeech.ts' };
+const serviceLogger = createServiceLogger('pages/api/handlers/textToSpeech.ts');
 
 const textToSpeechHandler = async (
   req: NextApiRequestWithExpress,
@@ -22,7 +22,7 @@ const textToSpeechHandler = async (
     const uploadedFiles: string[] = [];
     upload.any()(req, res, async (err) => {
       if (err) {
-        logger.error('Upload Error: ', err.message);
+        serviceLogger.error('Upload Error: ', err.message);
         res.status(500).json({
           successful: false,
           response: 'Internal Server Error',
@@ -33,11 +33,11 @@ const textToSpeechHandler = async (
       const { transcript, namespace } = req.body;
 
       if (ttsProvider === 'google') {
-        logger.info('Processing speech', { message: transcript });
+        serviceLogger.info('Processing speech', { message: transcript });
         let audioContent = getAudioFromTranscript(transcript, namespace);
 
         audioContent.then((audio) => {
-          logger.info('Sending audio', { audio: audio.name });
+          serviceLogger.info('Sending audio', { audio: audio.name });
           res.setHeader('Content-Type', 'audio/mp3');
           res.setHeader(
             'Content-Disposition',

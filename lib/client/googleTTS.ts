@@ -1,5 +1,6 @@
 import textToSpeech from '@google-cloud/text-to-speech';
-import logger from '../../lib/winstonConfig';
+import { createServiceLogger } from '@/lib/winstonConfig';
+const serviceLogger = createServiceLogger('lib/client/database.ts');
 
 const client = new textToSpeech.TextToSpeechClient({
   credentials: {
@@ -40,7 +41,7 @@ export async function getAudioFromTranscript(
     process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_ENCODING ?? 'MP3';
 
   if (!audioEncoding) {
-    logger.error(
+    serviceLogger.error(
       'Missing environment variable: "NEXT_PUBLIC_GOOGLE_CLOUD_TTS_ENCODING"'
     );
     throw new Error(
@@ -65,7 +66,7 @@ export async function getAudioFromTranscript(
     const [response] = await client.synthesizeSpeech(request);
     return response.audioContent;
   } catch (error: any) {
-    logger.error('Failed to get audio from Google Text-to-Speech', {
+    serviceLogger.error('Failed to get audio from Google Text-to-Speech', {
       error: error.message,
     });
     throw error;
