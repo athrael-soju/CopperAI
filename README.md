@@ -128,17 +128,21 @@ npm install
 
 ## 🎈 Usage <a name="usage"></a>
 
-After setting up, run `npm run dev` to launch the application. Visit `http://localhost:3000` to access CopperAI.
+After setting up, run `npm run dev` to launch the application. Visit `http://localhost:3000` to access CopperAI. 
+Alternatively:
+- Run docker-compose up --build -d for a local container
+- Deploy the app on Vercel viat github.
 
 ## ⛏️ Tech Stack <a name = "tech_stack"></a>
 
 - [Next.js](https://nextjs.org/) - Web Framework
 - [Docker](https://www.docker.com/) - Containerization and deployment.
-- [ReactJs](https://react.dev/) - Web Framework for frontend service.
-- [NodeJs](https://nodejs.org/en/) - Server Environment for backend and pinecone services.
+- [NodeJs](https://nodejs.org/en/) - Backend, utilized by Next.js.
 - [OpenAI API](https://openai.com/blog/introducing-chatgpt-and-whisper-apis) - ChatGPT model integration for chatbot functionality.
 - [Google TTS](https://cloud.google.com/text-to-speech/) - Converts text into natural-sounding speech in a variety of languages and voices.
+- [Eleven Labs TTS](https://elevenlabs.io/) - Generative AI Text to Speech & Voice Cloning 
 - [Langchain](https://js.langchain.com/docs/) - Framework for developing applications powered by language models.
+- [MongoDB Atlas](https://www.mongodb.com/atlas/database) - Cloud Database
 
 ## ✍️ Authors <a name = "authors"></a>
 
