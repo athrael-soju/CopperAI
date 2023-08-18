@@ -73,6 +73,21 @@ body {
   animation: fadeOut 1s forwards;
 }
 
-/* FilePind styling must be added at the end */
+/* Status Text */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-text {
+  margin-top: 0px;
+  font-size: 14px;
+  color: #666;
+  text-transform: capitalize;
+}
+
+/* FilePond styling must be added at the end */
 @import 'filepond/dist/filepond.min.css';
 @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';

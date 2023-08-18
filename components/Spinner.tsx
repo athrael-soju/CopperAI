@@ -14,8 +14,8 @@ const Spinner = () => {
     >
       <ColorRing
         visible={true}
-        height={200}
-        width={200}
+        height={300}
+        width={300}
         ariaLabel="blocks-loading"
         wrapperStyle={{}}
         wrapperClass="blocks-wrapper"

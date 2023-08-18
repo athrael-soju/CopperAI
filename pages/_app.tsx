@@ -6,6 +6,7 @@ import AppHeader from '@/components/header/Header';
 import '@/styles/globals.css';
 import { useMemo, useState } from 'react';
 import ChatTypeContext from '@/lib/ChatType';
+import { Analytics } from '@vercel/analytics/react';
 
 type AppProps = NextAppProps & {
   session: Session;
@@ -22,6 +23,7 @@ function App({ Component, pageProps, session }: AppProps) {
           <main>
             <AppHeader namespace={null} />
             <Component {...pageProps} />
+            <Analytics />
           </main>
         </ChatTypeContext.Provider>
       </QueryClientProvider>

@@ -22,6 +22,7 @@
     "@pinecone-database/pinecone": "^0.1.6",
     "@speechly/speech-recognition-polyfill": "^1.3.0",
     "@tanstack/react-query": "^4.29.19",
+    "@vercel/analytics": "^1.0.2",
     "@xstate/inspect": "^0.8.0",
     "@xstate/react": "^3.2.2",
     "autoprefixer": "10.4.14",
