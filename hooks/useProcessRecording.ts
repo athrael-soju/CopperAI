@@ -19,6 +19,7 @@ export const useProcessRecording = (
     | 'generated'
     | 'error'
     | 'recording'
+    | 'playing'
   >('idle');
   const [transcript, setTranscript] = useState<string | null>(null);
   const [response, setResponse] = useState<string | null>(null);
@@ -29,7 +30,7 @@ export const useProcessRecording = (
 
   const sendTranscriptForProcessing = useSendMessage(session, namespace);
   const { generateAudio, startOngoingAudio, stopOngoingAudio, audioRef } =
-    useTextToSpeech();
+    useTextToSpeech(setStatus);
 
   useEffect(() => {
     const processRecording = () => {
@@ -53,8 +54,17 @@ export const useProcessRecording = (
         if (transcript && status === 'transcribed') {
           setStatus('sending');
           sendTranscriptForProcessing(transcript).then((newResponse) => {
-            setResponse(newResponse);
-            setStatus('sent');
+            if (!newResponse) {
+              //Placeholder until a better error message system is implemented.
+              setResponse(
+                "Whoops! Something went wrong. Please try again. Gently. Before I get angry. You wouldn't like me when I'm angry"
+              );
+              setStatus('sent');
+            } else {
+              setResponse(newResponse);
+              setStatus('sent');
+            }
+            setIsLoading(false);
             setRecordingProcessed(true);
             setTranscript(null);
           });

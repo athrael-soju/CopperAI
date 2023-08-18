@@ -1,7 +1,32 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-const useTextToSpeech = () => {
+const useTextToSpeech = (setStatus: any) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audio = audioRef.current;
+  useEffect(() => {
+    const handlePlay = () => {
+      setStatus('playing');
+    };
+
+    const handleEnded = () => {
+      setStatus('idle');
+    };
+
+    if (audio) {
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('ended', handleEnded);
+
+      audio.addEventListener('play', handlePlay);
+      audio.addEventListener('ended', handleEnded);
+    }
+
+    return () => {
+      if (audio) {
+        audio.removeEventListener('play', handlePlay);
+        audio.removeEventListener('ended', handleEnded);
+      }
+    };
+  }, [setStatus, audio]);
 
   const generateAudio = async (
     transcript: string | null,
@@ -21,7 +46,12 @@ const useTextToSpeech = () => {
     const data = await response.arrayBuffer();
     const blob = new Blob([data], { type: 'audio/mpeg' });
     const url = URL.createObjectURL(blob);
+
     audioRef.current = new Audio(url);
+
+    if (audioRef.current) {
+      audioRef.current.addEventListener('play', () => {});
+    }
   };
 
   const startOngoingAudio = () => {
