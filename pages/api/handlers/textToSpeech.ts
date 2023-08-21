@@ -3,10 +3,11 @@ import { getAudioFromTranscript } from '@/lib/client/googleTTS';
 import axios from 'axios';
 import multer from 'multer';
 import { createServiceLogger } from '@/lib/winstonConfig';
-
+import AWS from 'aws-sdk';
 const upload = multer();
 
 import { Request, Response } from 'express';
+import { SynthesizeSpeechInput } from 'aws-sdk/clients/polly';
 type NextApiRequestWithExpress = NextApiRequest & Request;
 type NextApiResponseWithExpress = NextApiResponse & Response;
 
@@ -76,6 +77,32 @@ const textToSpeechHandler = async (
         const speechDetails = await axios.request(options);
         res.status(200).send(speechDetails.data);
         return resolve();
+      } else if (ttsProvider === 'awsPolly') {
+        const polly = new AWS.Polly();
+
+        const params: SynthesizeSpeechInput = {
+          OutputFormat: process.env.AWS_POLLY_OUTPUT_FORMAT ?? 'mp3',
+          Text: transcript,
+          VoiceId: process.env.AWS_POLLY_VOICE_ID ?? 'Emma',
+          LanguageCode: process.env.AWS_REGION ?? 'en-GB',
+        };
+        try {
+          const pollyResponse = await polly.synthesizeSpeech(params).promise();
+          res.setHeader('Content-Type', 'audio/mp3');
+          res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=audio.mp3'
+          );
+          res.status(200).send(pollyResponse.AudioStream);
+          return resolve();
+        } catch (error: any) {
+          serviceLogger.error('Error with AWS Polly: ', error);
+          res.status(500).json({
+            successful: false,
+            response: 'Failed to generate speech with AWS Polly',
+          });
+          return reject(error);
+        }
       }
     });
   });

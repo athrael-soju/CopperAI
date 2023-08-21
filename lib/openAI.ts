@@ -57,7 +57,7 @@ export async function createEmbedding(message: string): Promise<any> {
       model: 'text-embedding-ada-002',
     });
     serviceLogger.info('OpenAI embedding creation successful', {
-      message: message,
+      message: message.length,
     });
 
     return response.data.data[0].embedding;
