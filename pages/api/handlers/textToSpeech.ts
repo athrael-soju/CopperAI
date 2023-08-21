@@ -86,28 +86,23 @@ const textToSpeechHandler = async (
           VoiceId: process.env.AWS_POLLY_VOICE_ID ?? 'Emma',
           LanguageCode: process.env.AWS_REGION ?? 'en-GB',
         };
-        const pollyStream = polly.synthesizeSpeech(params).createReadStream();
-
-        serviceLogger.info('Streaming speech from AWS Polly', {
-          message: transcript,
-        });
-
-        res.setHeader('Content-Type', 'audio/mp3');
-        pollyStream.pipe(res);
-
-        // Handle stream events
-        pollyStream.on('end', () => {
+        try {
+          const pollyResponse = await polly.synthesizeSpeech(params).promise();
+          res.setHeader('Content-Type', 'audio/mp3');
+          res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=audio.mp3'
+          );
+          res.status(200).send(pollyResponse.AudioStream);
           return resolve();
-        });
-
-        pollyStream.on('error', (err: any) => {
-          serviceLogger.error('Streaming Error: ', err.message);
+        } catch (error: any) {
+          serviceLogger.error('Error with AWS Polly: ', error);
           res.status(500).json({
             successful: false,
-            response: 'Internal Server Error with AWS Polly streaming',
+            response: 'Failed to generate speech with AWS Polly',
           });
-          return reject(err);
-        });
+          return reject(error);
+        }
       }
     });
   });
