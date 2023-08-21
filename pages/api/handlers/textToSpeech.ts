@@ -3,10 +3,11 @@ import { getAudioFromTranscript } from '@/lib/client/googleTTS';
 import axios from 'axios';
 import multer from 'multer';
 import { createServiceLogger } from '@/lib/winstonConfig';
-
+import AWS from 'aws-sdk';
 const upload = multer();
 
 import { Request, Response } from 'express';
+import { SynthesizeSpeechInput } from 'aws-sdk/clients/polly';
 type NextApiRequestWithExpress = NextApiRequest & Request;
 type NextApiResponseWithExpress = NextApiResponse & Response;
 
@@ -76,6 +77,37 @@ const textToSpeechHandler = async (
         const speechDetails = await axios.request(options);
         res.status(200).send(speechDetails.data);
         return resolve();
+      } else if (ttsProvider === 'awsPolly') {
+        const polly = new AWS.Polly();
+
+        const params: SynthesizeSpeechInput = {
+          OutputFormat: process.env.AWS_POLLY_OUTPUT_FORMAT ?? 'mp3',
+          Text: transcript,
+          VoiceId: process.env.AWS_POLLY_VOICE_ID ?? 'Emma',
+          LanguageCode: process.env.AWS_REGION ?? 'en-GB',
+        };
+        const pollyStream = polly.synthesizeSpeech(params).createReadStream();
+
+        serviceLogger.info('Streaming speech from AWS Polly', {
+          message: transcript,
+        });
+
+        res.setHeader('Content-Type', 'audio/mp3');
+        pollyStream.pipe(res);
+
+        // Handle stream events
+        pollyStream.on('end', () => {
+          return resolve();
+        });
+
+        pollyStream.on('error', (err: any) => {
+          serviceLogger.error('Streaming Error: ', err.message);
+          res.status(500).json({
+            successful: false,
+            response: 'Internal Server Error with AWS Polly streaming',
+          });
+          return reject(err);
+        });
       }
     });
   });
