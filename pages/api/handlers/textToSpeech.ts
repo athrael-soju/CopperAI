@@ -84,7 +84,7 @@ const textToSpeechHandler = async (
           OutputFormat: process.env.AWS_POLLY_OUTPUT_FORMAT ?? 'mp3',
           Text: transcript,
           VoiceId: process.env.AWS_POLLY_VOICE_ID ?? 'Emma',
-          LanguageCode: process.env.AWS_REGION ?? 'en-GB',
+          LanguageCode: process.env.AWS_POLLY_LANGUAGE ?? 'en-GB',
         };
         const pollyStream = polly.synthesizeSpeech(params).createReadStream();
 
