@@ -26,6 +26,7 @@ export const sendViaLangChain = async (
   temperature: number,
   returnSourceDocuments: boolean
 ) => {
+  console.time('time: sendViaLangChain');
   try {
     const index = await getIndex();
     const vectorStore = await PineconeStore.fromExistingIndex(
@@ -69,6 +70,7 @@ export const sendViaLangChain = async (
       sanitizedPrompt,
       response?.text
     );
+    console.timeEnd('time: sendViaLangChain');
     return {
       successful: true,
       prompt: sanitizedPrompt,
@@ -86,8 +88,8 @@ export const sendViaChatCompletion = async (
   sanitizedPrompt: string,
   namespace: string
 ) => {
+  console.time('time: sendViaChatCompletion');
   let messages: ChatCompletionRequestMessage[] = [];
-
   let history: string[] = [];
   if (useHistory) {
     history = await getHistory(username, namespace);
@@ -120,6 +122,7 @@ export const sendViaChatCompletion = async (
     role: 'user',
     content: sanitizedPrompt,
   });
+  
   return createChatCompletion(messages, username)
     .then(async (response) => {
       const responseContent = response?.data?.choices[0]?.message
@@ -140,7 +143,7 @@ export const sendViaChatCompletion = async (
         namespace,
         newId
       );
-
+      console.timeEnd('time: sendViaChatCompletion');
       return {
         successful: true,
         prompt: sanitizedPrompt,

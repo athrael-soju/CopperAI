@@ -51,6 +51,7 @@ export async function createChatCompletion(
 }
 
 export async function createEmbedding(message: string): Promise<any> {
+  console.time('time: createEmbedding');
   try {
     const response = await openai.createEmbedding({
       input: message,
@@ -59,7 +60,7 @@ export async function createEmbedding(message: string): Promise<any> {
     serviceLogger.info('OpenAI embedding creation successful', {
       message: message.length,
     });
-
+    console.timeEnd('time: createEmbedding');
     return response.data.data[0].embedding;
   } catch (error: any) {
     serviceLogger.error('OpenAI embedding creation failed', {

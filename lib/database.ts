@@ -11,6 +11,7 @@ export const updateHistory = async (
   prompt: string,
   response: string
 ) => {
+  console.time('time: updateHistory');
   const newConversation: Conversation = createConversationObject(
     username,
     prompt,
@@ -26,6 +27,7 @@ export const updateHistory = async (
     serviceLogger.info('Inserted conversation into database', {
       conversationId: result.insertedId,
     });
+    console.timeEnd('time: updateHistory');
     return result.insertedId.toString();
   } catch (error: any) {
     serviceLogger.error('Failed to insert conversation into database', {
@@ -36,6 +38,7 @@ export const updateHistory = async (
 };
 
 export const getHistory = async (username: string, namespace: string) => {
+  console.time('time: getHistory');
   try {
     const db = client.db('myapp');
     serviceLogger.info('Retrieving User Message History...');
@@ -56,6 +59,7 @@ export const getHistory = async (username: string, namespace: string) => {
         username,
       }
     );
+    console.timeEnd('time: getHistory');
     return formattedHistory;
   } catch (error: any) {
     serviceLogger.error('Failed to retrieve conversations from database', {

@@ -21,6 +21,7 @@ const sendMessageHandler = async (
   res: NextApiResponseWithExpress
 ) => {
   return new Promise<void>((resolve, reject) => {
+    console.time('time: sendMessageHandler');
     upload.any()(req, res, async (err) => {
       if (err) {
         serviceLogger.error('Upload failed', { error: err });
@@ -62,6 +63,7 @@ const sendMessageHandler = async (
         );
       }
       if ('conversationId' in response && response.successful) {
+        console.timeEnd('time: sendMessageHandler');
         res.status(200).json({
           successful: true,
           conversationId: response?.conversationId,

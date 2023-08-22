@@ -36,6 +36,7 @@ export async function getAudioFromTranscript(
   transcript: string,
   namespace: string
 ) {
+  console.time('time: getAudioFromTranscript');
   const config = TTS_CONFIGS[namespace] || TTS_CONFIGS.general;
   const audioEncoding =
     process.env.NEXT_PUBLIC_GOOGLE_CLOUD_TTS_ENCODING ?? 'MP3';
@@ -64,6 +65,7 @@ export async function getAudioFromTranscript(
   try {
     // @ts-ignore Argument of type '{ input: { text: string; }; voice: { languageCode: string | undefined; name: string | undefined; ssmlGender: string | undefined; }; audioConfig: { audioEncoding: string | undefined; }; }' is not assignable to parameter of type 'ISynthesizeSpeechRequest'.
     const [response] = await client.synthesizeSpeech(request);
+    console.timeEnd('time: getAudioFromTranscript');
     return response.audioContent;
   } catch (error: any) {
     serviceLogger.error('Failed to get audio from Google Text-to-Speech', {

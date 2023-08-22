@@ -33,6 +33,7 @@ const processIngestHandler = async (
   res: NextApiResponseWithExpress
 ) => {
   return new Promise<void>((resolve, reject) => {
+    console.time('time: processIngestHandler');
     upload.any()(req, res, async (err) => {
       if (err) {
         serviceLogger.error('Data Ingestion Failed', { error: err });
@@ -83,6 +84,7 @@ const processIngestHandler = async (
             fs.unlinkSync(`${filePath}/${file}`);
           });
           serviceLogger.info('Temporary files deleted');
+          console.timeEnd('time: processIngestHandler');
           res
             .status(200)
             .json({ successful: true, response: 'Data Ingestion Completed' });

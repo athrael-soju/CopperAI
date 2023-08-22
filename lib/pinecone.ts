@@ -20,9 +20,9 @@ export const upsertConversationToPinecone = async (
   newId: string
 ): Promise<any> => {
   try {
+    console.time('time: upsertConversationToPinecone');
     const conversation = `${username}: ${prompt} AI: ${response} Date: ${new Date()}`;
     const embedding = (await createEmbedding(conversation)) as number[];
-
     serviceLogger.info(`Upserting New Embedding for id: ${newId}...`);
     const index = await getIndex();
     const upsertResponse = await index.upsert({
@@ -40,6 +40,7 @@ export const upsertConversationToPinecone = async (
         namespace: `${username}_${namespace}`,
       },
     });
+    console.timeEnd('time: upsertConversationToPinecone');
     return upsertResponse;
   } catch (error: any) {
     serviceLogger.error('Failed to upsert conversation to Pinecone', {
@@ -59,6 +60,7 @@ export const queryMessageInPinecone = async (
   prompt: string,
   namespace: string
 ) => {
+  console.time('time: queryMessageInPinecone');
   let index = await getIndex();
   let userPromptEmbedding = (await createEmbedding(prompt)) as number[];
 
@@ -85,6 +87,7 @@ export const queryMessageInPinecone = async (
     };
 
     if (namespace in namespaceMappings) {
+      console.timeEnd('time: queryMessageInPinecone');
       return queryResponse?.matches
         ?.map(
           (match: any) =>
@@ -103,6 +106,7 @@ export const queryMessageInPinecone = async (
 };
 
 export const getIndex = async () => {
+  console.time('time: getIndex');
   let index = pineconeClient.Index(PINECONE_INDEX);
   if (!index) {
     serviceLogger.info(`index ${PINECONE_INDEX} does not exist, creating...`);
@@ -119,5 +123,6 @@ export const getIndex = async () => {
     index = pineconeClient.Index(PINECONE_INDEX);
     serviceLogger.info(`Using Existing Index ${PINECONE_INDEX}`);
   }
+  console.timeEnd('time: getIndex');
   return index;
 };

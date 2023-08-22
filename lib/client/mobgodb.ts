@@ -10,32 +10,40 @@ const uri = process.env.MONGODB_URI;
 const options = {};
 
 let client: MongoClient;
-let clientPromise: Promise<MongoClient> | undefined;
 
-if (process.env.NODE_ENV === 'development') {
-  let globalWithMongo = global as typeof globalThis & {
-    _mongoClientPromise?: Promise<MongoClient>;
-  };
+const getClientPromise = async (): Promise<MongoClient> => {
+  console.time('time: startMongoDB');
+  let clientPromise: Promise<MongoClient>;
+  if (process.env.NODE_ENV === 'development') {
+    let globalWithMongo = global as typeof globalThis & {
+      _mongoClientPromise?: Promise<MongoClient>;
+    };
 
-  if (!globalWithMongo._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    globalWithMongo._mongoClientPromise = client.connect().catch((err) => {
-      serviceLogger.error('Failed to connect to MongoDB in development', {
-        error: err.message,
+    if (!globalWithMongo._mongoClientPromise) {
+      client = new MongoClient(uri, options);
+      globalWithMongo._mongoClientPromise = client.connect().catch((err) => {
+        serviceLogger.error('Failed to connect to MongoDB in development', {
+          error: err.message,
+        });
+        throw err;
       });
-      throw err;
-    });
+    }
+    clientPromise = globalWithMongo._mongoClientPromise;
+  } else {
+    try {
+      client = new MongoClient(uri, options);
+      serviceLogger.info('Connected to MongoDB');
+      clientPromise = client.connect();
+    } catch (error: any) {
+      serviceLogger.error('Failed to connect to MongoDB', {
+        error: error.message,
+      });
+      throw error;
+    }
   }
-  clientPromise = globalWithMongo._mongoClientPromise;
-} else {
-  try {
-    client = new MongoClient(uri, options);
-    clientPromise = client.connect();
-    serviceLogger.info('Connected to MongoDB');
-  } catch (error: any) {
-    serviceLogger.error('Failed to connect to MongoDB', { error: error.message });
-    throw error;
-  }
-}
+  console.timeEnd('time: startMongoDB');
+  return clientPromise;
+};
+const clientPromise = getClientPromise();
 
 export default clientPromise;
