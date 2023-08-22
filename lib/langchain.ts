@@ -14,7 +14,7 @@ export const getChain = (
   modelTemperature: number,
   namespace: string
 ): any => {
-  // Adjusted return type to 'any' as the exact type isn't clear
+  console.time('time: getChain');
   try {
     const topK = Number(process.env.NEXT_PUBLIC_PINECONE_TOPK) || 5;
     const openAIApiModelName = process.env.NEXT_PUBLIC_OPENAI_API_MODEL;
@@ -41,6 +41,7 @@ export const getChain = (
       namespace === 'general'
         ? getGeneralChain(model, vectorstore, topK)
         : getDocumentChain(model, vectorstore, topK, returnSourceDocuments);
+    console.time('time: getChain');
     return chain;
   } catch (error: any) {
     serviceLogger.error('Failed to initialize chain', {
@@ -56,6 +57,8 @@ const getGeneralChain = (
   vectorstore: PineconeStore,
   topK: number
 ) => {
+  console.time('time: getGeneralChain');
+  console.log('Using general chain');
   const vectorMemory = new VectorStoreRetrieverMemory({
     vectorStoreRetriever: vectorstore.asRetriever(topK),
     memoryKey: 'chat_history',
@@ -63,6 +66,7 @@ const getGeneralChain = (
 
   const prompt = PromptTemplate.fromTemplate(templates.general.general_prompt);
   const chain = new LLMChain({ llm: model, prompt, memory: vectorMemory });
+  console.time('time: getGeneralChain');
   return chain;
 };
 
@@ -85,5 +89,6 @@ const getDocumentChain = (
       returnSourceDocuments,
     }
   );
+  console.time('time: getDocumentChain');
   return chain;
 };

@@ -26,6 +26,7 @@ const processUploadHandler = async (
   res: NextApiResponseWithExpress
 ) => {
   return new Promise<void>((resolve, reject) => {
+    console.time('time: processUploadHandler');
     const uploadedFiles: string[] = [];
     uploadMiddleware(req, res, async (err) => {
       if (err) {
@@ -54,6 +55,7 @@ const processUploadHandler = async (
         serviceLogger.info(
           `Files: ${uploadedFiles.join(', ')} have been Uploaded!`
         );
+        console.timeEnd('time: processUploadHandler');
         res.status(200).json({
           successful: true,
           response: `Files: ${uploadedFiles.join(', ')} have been Uploaded!`,

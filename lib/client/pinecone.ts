@@ -11,6 +11,7 @@ if (!API_KEY || !PINECONE_ENVIRONMENT) {
 }
 
 const startPinecone = async (): Promise<PineconeClient> => {
+  console.time('time: startPinecone');
   try {
     const pinecone = new PineconeClient();
     await pinecone.init({
@@ -18,6 +19,7 @@ const startPinecone = async (): Promise<PineconeClient> => {
       environment: PINECONE_ENVIRONMENT,
     });
     serviceLogger.info('Connected to Pinecone');
+    console.timeEnd('time: startPinecone');
     return pinecone;
   } catch (error: any) {
     serviceLogger.error('Error connecting to Pinecone', {

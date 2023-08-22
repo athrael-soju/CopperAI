@@ -51,5 +51,5 @@ export async function getResult(
       error: error.message,
     });
     throw error;
-  }
+  }  
 }

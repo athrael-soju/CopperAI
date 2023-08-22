@@ -20,7 +20,7 @@ const textToSpeechHandler = async (
   res: NextApiResponseWithExpress
 ) => {
   return new Promise<void>((resolve, reject) => {
-    const uploadedFiles: string[] = [];
+    console.time('time: textToSpeechHandler');
     upload.any()(req, res, async (err) => {
       if (err) {
         serviceLogger.error('Upload Error: ', err.message);
@@ -44,6 +44,7 @@ const textToSpeechHandler = async (
             'Content-Disposition',
             'attachment; filename=audio.mp3'
           );
+          console.timeEnd('time: textToSpeechHandler');
           res.status(200).send(audio);
           return resolve();
         });
@@ -75,6 +76,7 @@ const textToSpeechHandler = async (
           responseType: 'arraybuffer' as const,
         };
         const speechDetails = await axios.request(options);
+        console.timeEnd('time: textToSpeechHandler');
         res.status(200).send(speechDetails.data);
         return resolve();
       } else if (ttsProvider === 'awsPolly') {
@@ -88,14 +90,13 @@ const textToSpeechHandler = async (
         };
         const pollyStream = polly.synthesizeSpeech(params).createReadStream();
 
-        serviceLogger.info('Streaming speech from AWS Polly', {
+        serviceLogger.info('Streaming Response: ', {
           message: transcript,
         });
 
         res.setHeader('Content-Type', 'audio/mp3');
         pollyStream.pipe(res);
-
-        // Handle stream events
+        console.timeEnd('time: textToSpeechHandler');
         pollyStream.on('end', () => {
           return resolve();
         });
